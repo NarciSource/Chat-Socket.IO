@@ -3,6 +3,7 @@ import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import vitePluginSingleSpa, { SingleSpaPluginOptions } from "vite-plugin-single-spa";
 import vue from "@vitejs/plugin-vue";
+import { quasar } from "@quasar/vite-plugin";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js"
 
 // https://github.com/WJSoftware/vite-plugin-single-spa
@@ -38,6 +39,9 @@ export default defineConfig(({ mode }) => {
             vitePluginSingleSpa(vitePluginSingleSpaOptions), // single-spa 라이브러리 적용
             vue({
                 // Vue 플러그인 적용
+            }),
+            quasar({
+                // Quasar 플러그인 적용
             }),
             cssInjectedByJsPlugin(), // css 파일을 js 파일에 삽입
         ],
