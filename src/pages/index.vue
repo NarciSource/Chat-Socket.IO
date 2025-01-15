@@ -19,16 +19,20 @@
 import { ref } from "vue";
 import { io, Socket } from "socket.io-client";
 
+const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
+const SOCKET_EVENT_MESSAGE = import.meta.env.VITE_SOCKET_EVENT_MESSAGE;
+const SOCKET_EVENT_RESPONSE = import.meta.env.VITE_SOCKET_EVENT_RESPONSE;
+
 const text = ref<string>("");
 const reply = ref<string>("");
 
-const socket: Socket = io("http://localhost:3000", {
+const socket: Socket = io(SOCKET_SERVER_URL, {
   transports: ["websocket"],
 });
 
-socket.on("reply", (message: string) => {
+socket.on(SOCKET_EVENT_RESPONSE, (message: string) => {
   reply.value = message;
 });
 
-const send = () => socket.emit("message", text.value);
+const send = () => socket.emit(SOCKET_EVENT_MESSAGE, text.value);
 </script>
