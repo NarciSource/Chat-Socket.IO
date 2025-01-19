@@ -17,6 +17,7 @@ jobs:
     env:
       VITE_PUBLIC_URL: ${{ vars.VITE_PUBLIC_URL }}
       VITE_MF_TYPE: ${{ vars.VITE_MF_TYPE }}
+      VITE_AUTH_PARCEL_URL: ${{ vars.VITE_AUTH_PARCEL_URL }}
 
     steps:
       - name: Checkout repository
@@ -37,8 +38,11 @@ jobs:
         run: npm run lint # 린트 실행
 
       - name: Build Vite project
-        env:
-          VITE_PARCEL_URL: ${{ secrets.VITE_PARCEL_URL }} # 환경 변수 설정
+        env: # 환경 변수 설정
+          VITE_SOCKET_SERVER_URL: ${{ vars.VITE_SOCKET_SERVER_URL }}
+          VITE_SOCKET_EVENT_SYSTEM: ${{ vars.VITE_SOCKET_EVENT_SYSTEM }}
+          VITE_SOCKET_EVENT_MESSAGE: ${{ vars.VITE_SOCKET_EVENT_MESSAGE }}
+          VITE_SOCKET_EVENT_RESPONSE: ${{ vars.VITE_SOCKET_EVENT_RESPONSE }}
         run: |
           npm run build # Vite 프로젝트 빌드
           npm run build:single-spa # single-spa 앱 빌드
