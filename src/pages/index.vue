@@ -6,7 +6,6 @@
         <div class="q-mx-auto text-h6">채팅 창</div>
         <save />
       </q-card-section>
-      <q-separator dark inset />
 
       <q-scroll-area>
         <q-card-section class="q-px-md">
