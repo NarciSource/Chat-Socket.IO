@@ -9,7 +9,7 @@
 
       <q-scroll-area>
         <q-card-section class="q-px-md">
-          <display />
+          <chat-content />
         </q-card-section>
       </q-scroll-area>
 
@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { Display, Submit, Search, Save } from "./ui";
+import { ChatContent, Submit, Search, Save } from "./ui";
 </script>
 
 <style scoped>
