@@ -48,14 +48,22 @@ const socket: Socket = io(SOCKET_SERVER_URL, {
   transports: ["websocket"],
 });
 
-socket.on(SOCKET_EVENT_RESPONSE, (text: string) => {
-  messages.push({ text: [text], sent: false });
+const insert_message = (message: string, sent: boolean) => {
+  if (messages.length > 0 && messages[messages.length - 1].sent === sent) {
+    messages[messages.length - 1].text.push(message);
+  } else {
+    messages.push({ text: [message], sent });
+  }
+};
+
+socket.on(SOCKET_EVENT_RESPONSE, (response: string) => {
+  insert_message(response, false);
 });
 
 const send = () => {
   socket.emit(SOCKET_EVENT_MESSAGE, send_message.value);
 
-  messages.push({ text: [send_message.value], sent: true });
+  insert_message(send_message.value, true);
 };
 </script>
 
