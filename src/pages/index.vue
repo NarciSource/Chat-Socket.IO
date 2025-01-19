@@ -5,8 +5,13 @@
       <q-separator dark inset />
 
       <q-card-section>
-        <q-chat-message :text="[send_message]" sent bg-color="yellow" />
-        <q-chat-message :text="[reply_message]" bg-color="white" />
+        <q-chat-message
+          v-for="(message, index) in messages"
+          :key="index"
+          :sent="message.sent"
+          :text="message.text"
+          :bg-color="message.sent ? 'yellow' : 'white'"
+        />
       </q-card-section>
 
       <q-card-section class="row items-end justify-end no-margin q-gutter-x-md bg-white">
@@ -24,25 +29,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { io, Socket } from "socket.io-client";
 
 const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
 const SOCKET_EVENT_MESSAGE = import.meta.env.VITE_SOCKET_EVENT_MESSAGE;
 const SOCKET_EVENT_RESPONSE = import.meta.env.VITE_SOCKET_EVENT_RESPONSE;
 
-const send_message = ref<string>("입력해주세요");
-const reply_message = ref<string>("응답 대기");
+interface Message {
+  text: string[];
+  sent: boolean;
+}
+
+const messages = reactive<Message[]>([]);
+const send_message = ref("입력해주세요");
 
 const socket: Socket = io(SOCKET_SERVER_URL, {
   transports: ["websocket"],
 });
 
-socket.on(SOCKET_EVENT_RESPONSE, (message: string) => {
-  reply_message.value = message;
+socket.on(SOCKET_EVENT_RESPONSE, (text: string) => {
+  messages.push({ text: [text], sent: false });
 });
 
-const send = () => socket.emit(SOCKET_EVENT_MESSAGE, send_message.value);
+const send = () => {
+  socket.emit(SOCKET_EVENT_MESSAGE, send_message.value);
+
+  messages.push({ text: [send_message.value], sent: true });
+};
 </script>
 
 <style scoped>
