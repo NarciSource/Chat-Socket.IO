@@ -4,6 +4,7 @@
       <q-card-section class="row items-center">
         <search />
         <div class="q-mx-auto text-h6">채팅 창</div>
+        <save />
       </q-card-section>
       <q-separator dark inset />
 
@@ -21,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { Display, Submit, Search } from "./ui";
+import { Display, Submit, Search, Save } from "./ui";
 </script>
 
 <style scoped>

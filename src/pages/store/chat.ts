@@ -5,7 +5,7 @@ import Message from "@/entities/Message";
 
 export const useChatStore = defineStore("chat", () => {
   const messages = reactive<Message[]>([]);
-  const query = ref("1");
+  const query = ref("");
 
   return { messages, query };
 });
