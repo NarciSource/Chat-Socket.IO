@@ -18,6 +18,10 @@
 
 <img src="https://github.com/user-attachments/assets/ed4a2a60-4d85-423f-a5ca-3c4661d9bf1c" title="screenshot" width=250px />
 
+## 🧩 컴포넌트 구성
+
+![chat-component](https://github.com/user-attachments/assets/4991f24c-e25a-48ad-ab44-3d160d7b4a6c)
+
 ## 🚀 실행 방법
 
 ### 의존성 설치
