@@ -12,18 +12,7 @@ import Message from "@/entities/Message";
 
 // 반응형 변수
 const message_input = ref("");
-const { messages } = useChatStore();
-
-// 메시지 관리 삽입 함수
-const insert_message = (message: Message) => {
-  const last_index = messages.length - 1;
-
-  if (messages[last_index]?.sent === message.sent && !message.is_system) {
-    messages[last_index].add_text(message.text[0]);
-  } else {
-    messages.push(message);
-  }
-};
+const { insert_message } = useChatStore();
 
 // 메시지 전송 함수
 const send = () => {
