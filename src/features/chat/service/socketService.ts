@@ -24,9 +24,15 @@ type MessageHandler = (message: Message) => void;
 
 // 이벤트 리스너 등록
 export const setup_socket_listeners = (
+  on_connect: () => void,
+  on_disconnect: () => void,
   on_message: MessageHandler,
   on_system_message: MessageHandler,
 ) => {
+  socket.on("connect", on_connect);
+  socket.on("connect_error", on_disconnect);
+  socket.on("disconnect", on_disconnect);
+
   socket.on(SOCKET_EVENT_RESPONSE, (response: ResponseDTO) => {
     const message = response_dto_to_message(response);
     on_message(message);

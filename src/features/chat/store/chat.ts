@@ -7,6 +7,7 @@ export const useChatStore = defineStore("chat", () => {
   const messages = reactive<Message[]>([]);
   const query = ref("");
   const searching = ref(false);
+  const connecting = ref(false);
 
   // 메시지 삽입 함수
   const insert_message = (message: Message) => {
@@ -19,5 +20,5 @@ export const useChatStore = defineStore("chat", () => {
     }
   };
 
-  return { messages, query, insert_message, searching };
+  return { connecting, messages, query, insert_message, searching };
 });
