@@ -5,13 +5,15 @@
       <q-separator dark inset />
 
       <q-card-section>
-        <q-chat-message
-          v-for="(message, index) in messages"
-          :key="index"
-          :sent="message.sent"
-          :text="message.text"
-          :bg-color="message.sent ? 'yellow' : 'white'"
-        />
+        <q-scroll-area>
+          <q-chat-message
+            v-for="(message, index) in messages"
+            :key="index"
+            :sent="message.sent"
+            :text="message.text"
+            :bg-color="message.sent ? 'yellow' : 'white'"
+          />
+        </q-scroll-area>
       </q-card-section>
 
       <q-card-section class="row items-end justify-end no-margin q-gutter-x-md bg-white">
@@ -20,7 +22,7 @@
           class="q-mt-md float-right"
           color="yellow"
           text-color="black"
-          label="Send"
+          label="전송"
           @click="send"
         />
       </q-card-section>
@@ -71,5 +73,8 @@ const send = () => {
 .card {
   background-color: #464647;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.q-scrollarea {
+  height: 500px;
 }
 </style>
