@@ -3,7 +3,7 @@
     <q-card dark bordered class="card">
       <q-card-section class="row items-center">
         <search />
-        <div class="q-mx-auto text-h6">채팅 창</div>
+        <Title />
         <save />
       </q-card-section>
 
@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ChatContent, Submit, Search, Save } from "./ui";
+import { ChatContent, Title, Submit, Search, Save } from "./ui";
 </script>
 
 <style scoped>
