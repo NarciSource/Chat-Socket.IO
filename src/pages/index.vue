@@ -17,56 +17,19 @@
       </q-scroll-area>
 
       <q-card-section class="row items-end justify-end no-margin q-gutter-x-md bg-white">
-        <q-input class="w-200" v-model="send_message" label="메시지 입력" @keyup.enter="send" />
-        <q-btn
-          class="q-mt-md float-right"
-          color="yellow"
-          text-color="black"
-          label="전송"
-          @click="send"
-        />
+        <Submit v-model="messages" />
       </q-card-section>
     </q-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue";
-import { io, Socket } from "socket.io-client";
+import { reactive } from "vue";
 
-const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
-const SOCKET_EVENT_MESSAGE = import.meta.env.VITE_SOCKET_EVENT_MESSAGE;
-const SOCKET_EVENT_RESPONSE = import.meta.env.VITE_SOCKET_EVENT_RESPONSE;
-
-interface Message {
-  text: string[];
-  sent: boolean;
-}
+import Message from "./model/Message";
+import Submit from "./ui/submit.vue";
 
 const messages = reactive<Message[]>([]);
-const send_message = ref();
-
-const socket: Socket = io(SOCKET_SERVER_URL, {
-  transports: ["websocket"],
-});
-
-const insert_message = (message: string, sent: boolean) => {
-  if (messages.length > 0 && messages[messages.length - 1].sent === sent) {
-    messages[messages.length - 1].text.push(message);
-  } else {
-    messages.push({ text: [message], sent });
-  }
-};
-
-socket.on(SOCKET_EVENT_RESPONSE, (response: string) => {
-  insert_message(response, false);
-});
-
-const send = () => {
-  socket.emit(SOCKET_EVENT_MESSAGE, send_message.value);
-
-  insert_message(send_message.value, true);
-};
 </script>
 
 <style scoped>
