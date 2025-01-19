@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 
-import Message from "./model/Message";
+import Message from "@/entities/Message";
 import Submit from "./ui/submit.vue";
 
 const messages = reactive<Message[]>([]);

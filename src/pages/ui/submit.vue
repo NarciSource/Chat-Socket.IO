@@ -7,7 +7,7 @@
 import { ref } from "vue";
 import { io, Socket } from "socket.io-client";
 
-import Message from "../model/Message";
+import Message from "@/entities/Message";
 
 const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
 const SOCKET_EVENT_MESSAGE = import.meta.env.VITE_SOCKET_EVENT_MESSAGE;
@@ -18,13 +18,14 @@ const messages = defineModel<Message[]>({ required: true });
 const send_message = ref();
 
 // 메시지 관리 삽입 함수
-const insert_message = (message: string, sent: boolean) => {
+const insert_message = (text: string, sent: boolean) => {
   const last_index = messages.value.length - 1;
 
-  if (messages.value.length > 0 && messages.value[last_index].sent === sent) {
-    messages.value[last_index].text.push(message);
+  if (messages.value[last_index]?.sent === sent) {
+    messages.value[last_index].add_text(text);
   } else {
-    messages.value.push({ text: [message], sent });
+    const new_message = new Message([text], sent);
+    messages.value.push(new_message);
   }
 };
 
