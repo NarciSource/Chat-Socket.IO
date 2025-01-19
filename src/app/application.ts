@@ -1,8 +1,11 @@
 import singleSpaVue from "single-spa-vue";
 import { createApp, h } from "vue";
+import { createPinia } from "pinia";
 import { Quasar } from "quasar";
 
 import App from "./App.vue";
+
+const pinia = createPinia();
 
 const vueLifecycles = singleSpaVue({
   createApp,
@@ -16,7 +19,7 @@ const vueLifecycles = singleSpaVue({
     },
   },
   handleInstance: (app) => {
-    app.use(Quasar);
+    app.use(pinia).use(Quasar);
   },
 });
 

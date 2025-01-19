@@ -6,25 +6,19 @@
 
       <q-scroll-area>
         <q-card-section class="q-px-md">
-          <display :messages="messages" />
+          <display />
         </q-card-section>
       </q-scroll-area>
 
       <q-card-section class="row items-end justify-end no-margin q-gutter-x-md bg-white">
-        <Submit v-model="messages" />
+        <submit />
       </q-card-section>
     </q-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive } from "vue";
-
-import Message from "@/entities/Message";
-import Submit from "./ui/submit.vue";
-import Display from "./ui/display.vue";
-
-const messages = reactive<Message[]>([]);
+import { Display, Submit } from "./ui";
 </script>
 
 <style scoped>

@@ -7,6 +7,7 @@
 import { ref } from "vue";
 import { io, Socket } from "socket.io-client";
 
+import { useChatStore } from "../store/chat";
 import Message from "@/entities/Message";
 
 const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
@@ -14,18 +15,18 @@ const SOCKET_EVENT_MESSAGE = import.meta.env.VITE_SOCKET_EVENT_MESSAGE;
 const SOCKET_EVENT_RESPONSE = import.meta.env.VITE_SOCKET_EVENT_RESPONSE;
 
 // 반응형 변수
-const messages = defineModel<Message[]>({ required: true });
+const { messages } = useChatStore();
 const send_message = ref();
 
 // 메시지 관리 삽입 함수
 const insert_message = (text: string, sent: boolean) => {
-  const last_index = messages.value.length - 1;
+  const last_index = messages.length - 1;
 
-  if (messages.value[last_index]?.sent === sent) {
-    messages.value[last_index].add_text(text);
+  if (messages[last_index]?.sent === sent) {
+    messages[last_index].add_text(text);
   } else {
     const new_message = new Message([text], sent);
-    messages.value.push(new_message);
+    messages.push(new_message);
   }
 };
 

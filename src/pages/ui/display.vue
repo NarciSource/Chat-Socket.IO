@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import Message from "@/entities/Message";
+import { useChatStore } from "../store/chat";
 
-defineProps<{ messages: Message[] }>();
+const { messages } = useChatStore();
 </script>
