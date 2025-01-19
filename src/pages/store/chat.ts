@@ -1,10 +1,11 @@
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { defineStore } from "pinia";
 
 import Message from "@/entities/Message";
 
 export const useChatStore = defineStore("chat", () => {
   const messages = reactive<Message[]>([]);
+  const query = ref("1");
 
-  return { messages };
+  return { messages, query };
 });

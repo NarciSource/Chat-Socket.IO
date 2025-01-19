@@ -1,7 +1,10 @@
 <template>
   <div class="q-pa-md row justify-center">
     <q-card dark bordered class="card">
-      <q-card-section class="text-h6">채팅 창</q-card-section>
+      <q-card-section class="row items-center">
+        <search />
+        <div class="q-mx-auto text-h6">채팅 창</div>
+      </q-card-section>
       <q-separator dark inset />
 
       <q-scroll-area>
@@ -18,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { Display, Submit } from "./ui";
+import { Display, Submit, Search } from "./ui";
 </script>
 
 <style scoped>

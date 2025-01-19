@@ -4,4 +4,8 @@ export default class Message {
   public add_text(text: string) {
     this.text.push(text);
   }
+
+  public include(text: string) {
+    return this.text.some((t) => t.includes(text));
+  }
 }
