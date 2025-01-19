@@ -2,8 +2,9 @@
   <q-chat-message
     v-for="(message, index) in filtered_messages"
     :key="index"
+    :label="message.is_system ? message.text[0] : ''"
+    :text="!message.is_system ? message.text : []"
     :sent="message.sent"
-    :text="message.text"
     :bg-color="message.sent ? 'yellow' : 'white'"
   />
 </template>
