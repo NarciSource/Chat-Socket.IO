@@ -4,8 +4,8 @@
       <q-card-section class="text-h6">채팅 창</q-card-section>
       <q-separator dark inset />
 
-      <q-card-section>
-        <q-scroll-area>
+      <q-scroll-area>
+        <q-card-section class="q-px-md">
           <q-chat-message
             v-for="(message, index) in messages"
             :key="index"
@@ -13,11 +13,11 @@
             :text="message.text"
             :bg-color="message.sent ? 'yellow' : 'white'"
           />
-        </q-scroll-area>
-      </q-card-section>
+        </q-card-section>
+      </q-scroll-area>
 
       <q-card-section class="row items-end justify-end no-margin q-gutter-x-md bg-white">
-        <q-input class="w-200" v-model="send_message" label="Message" @keyup.enter="send" />
+        <q-input class="w-200" v-model="send_message" label="메시지 입력" @keyup.enter="send" />
         <q-btn
           class="q-mt-md float-right"
           color="yellow"
@@ -44,7 +44,7 @@ interface Message {
 }
 
 const messages = reactive<Message[]>([]);
-const send_message = ref("입력해주세요");
+const send_message = ref();
 
 const socket: Socket = io(SOCKET_SERVER_URL, {
   transports: ["websocket"],
