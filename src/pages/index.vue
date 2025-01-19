@@ -1,35 +1,7 @@
 <template>
-  <div class="q-pa-md row justify-center">
-    <q-card dark bordered class="card">
-      <q-card-section class="row items-center">
-        <search />
-        <div class="q-mx-auto text-h6">채팅 창</div>
-        <save />
-      </q-card-section>
-
-      <q-scroll-area>
-        <q-card-section class="q-px-md">
-          <chat-content />
-        </q-card-section>
-      </q-scroll-area>
-
-      <q-card-section class="row items-end justify-end no-margin q-gutter-x-md bg-white">
-        <submit />
-      </q-card-section>
-    </q-card>
-  </div>
+  <Chat />
 </template>
 
-<script setup lang="ts">
-import { ChatContent, Submit, Search, Save } from "./ui";
+<script setup>
+import Chat from "@/features/chat";
 </script>
-
-<style scoped>
-.card {
-  background-color: #464647;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-.q-scrollarea {
-  height: 500px;
-}
-</style>

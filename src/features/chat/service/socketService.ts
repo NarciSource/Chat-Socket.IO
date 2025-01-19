@@ -1,7 +1,7 @@
 import { io, Socket } from "socket.io-client";
 
 import { ResponseDTO, SendDTO } from "../api/dto";
-import { message_to_send_dto, response_dto_to_message } from "../service/mapper";
+import { message_to_send_dto, response_dto_to_message } from "./mapper";
 import Message from "@/entities/Message";
 
 // 환경 변수
