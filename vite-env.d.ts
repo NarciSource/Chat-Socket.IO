@@ -8,6 +8,7 @@ interface ImportMetaEnv {
     readonly VITE_SOCKET_EVENT_SYSTEM: string;
     readonly VITE_SOCKET_EVENT_MESSAGE: string;
     readonly VITE_SOCKET_EVENT_RESPONSE: string;
+    readonly VITE_ID_TOKEN: string;
 }
 
 interface ImportMeta {
