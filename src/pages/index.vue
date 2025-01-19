@@ -6,13 +6,7 @@
 
       <q-scroll-area>
         <q-card-section class="q-px-md">
-          <q-chat-message
-            v-for="(message, index) in messages"
-            :key="index"
-            :sent="message.sent"
-            :text="message.text"
-            :bg-color="message.sent ? 'yellow' : 'white'"
-          />
+          <display :messages="messages" />
         </q-card-section>
       </q-scroll-area>
 
@@ -28,6 +22,7 @@ import { reactive } from "vue";
 
 import Message from "@/entities/Message";
 import Submit from "./ui/submit.vue";
+import Display from "./ui/display.vue";
 
 const messages = reactive<Message[]>([]);
 </script>
