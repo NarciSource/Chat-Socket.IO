@@ -4,17 +4,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { storeToRefs } from "pinia";
+import { ref } from "vue";
 
 import { useChatStore } from "../store/chat";
-import { setup_socket_listeners, send_message } from "../service/socketService";
+import { send_message } from "../service/socketService";
 import Message from "@/entities/Message";
 
 // 반응형 변수
 const message_input = ref("");
 const { insert_message } = useChatStore();
-const { connecting } = storeToRefs(useChatStore());
 
 // 메시지 전송 함수
 const send = () => {
@@ -28,14 +26,4 @@ const send = () => {
   // 입력폼 초기화
   message_input.value = "";
 };
-
-// 소켓 이벤트 리스너 설정
-onMounted(() => {
-  setup_socket_listeners(
-    () => (connecting.value = true), // 연결 성공
-    () => (connecting.value = false), // 연결 종료
-    (message) => insert_message(message), // 일반 메시지 처리
-    (system_message) => insert_message(system_message), // 시스템 메시지 처리
-  );
-});
 </script>

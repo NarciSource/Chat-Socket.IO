@@ -7,13 +7,13 @@
         <save />
       </q-card-section>
 
-      <q-scroll-area>
-        <q-card-section class="q-px-md">
-          <chat-content />
-        </q-card-section>
-      </q-scroll-area>
-
-      <q-inner-loading :showing="!connecting" label="채팅 서버 연결 중..." />
+      <connect>
+        <q-scroll-area>
+          <q-card-section class="q-px-md">
+            <chat-content />
+          </q-card-section>
+        </q-scroll-area>
+      </connect>
 
       <q-card-section class="row items-end justify-end no-margin q-gutter-x-md bg-white">
         <submit />
@@ -23,12 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-
-import { useChatStore } from "./store/chat";
-import { ChatContent, Title, Submit, Search, Save } from "./ui";
-
-const { connecting } = storeToRefs(useChatStore());
+import { Connect, ChatContent, Title, Submit, Search, Save } from "./ui";
 </script>
 
 <style scoped>
