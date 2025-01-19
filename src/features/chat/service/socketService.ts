@@ -2,6 +2,7 @@ import { io, Socket } from "socket.io-client";
 
 import { ResponseDTO, SendDTO } from "../api/dto";
 import { message_to_send_dto, response_dto_to_message } from "./mapper";
+import { accessToken } from "@/shared/tokens";
 import Message from "@/entities/Message";
 
 // 환경 변수
@@ -9,13 +10,12 @@ const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
 const SOCKET_EVENT_SYSTEM = import.meta.env.VITE_SOCKET_EVENT_SYSTEM;
 const SOCKET_EVENT_MESSAGE = import.meta.env.VITE_SOCKET_EVENT_MESSAGE;
 const SOCKET_EVENT_RESPONSE = import.meta.env.VITE_SOCKET_EVENT_RESPONSE;
-const ID_TOKEN = import.meta.env.VITE_ID_TOKEN;
 
 // 소켓 초기화
 const socket: Socket = io(SOCKET_SERVER_URL, {
   transports: ["websocket"],
   auth: {
-    idToken: ID_TOKEN,
+    accessToken,
   },
 });
 
