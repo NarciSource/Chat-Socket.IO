@@ -29,6 +29,9 @@ import { ChatContent, Submit, Search, Save } from "./ui";
   background-color: #464647;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
+.q-card__section {
+  max-width: 300px;
+}
 .q-scrollarea {
   height: 500px;
 }

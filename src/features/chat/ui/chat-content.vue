@@ -19,3 +19,9 @@ const filtered_messages = computed(() => {
   return store.messages.filter((message) => message.include(store.query));
 });
 </script>
+
+<style scoped>
+::v-deep(.q-message-label) {
+  word-break: break-word;
+}
+</style>
