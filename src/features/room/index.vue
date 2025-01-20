@@ -18,12 +18,19 @@
 import { storeToRefs } from "pinia";
 
 import { useRoomStore } from "./store/room";
-import { register } from "@/entities/service/socketService";
+import { connect } from "@/entities/service/socketService";
 import drawerLayout from "./ui/drawer-layout.vue";
 
-const { my_nick, opponent_nick } = storeToRefs(useRoomStore());
+const { my_nick, opponent_nick, connecting } = storeToRefs(useRoomStore());
 
 const create_room = () => {
+  // 소켓 연결
+  const { register, success } = connect();
+
+  // 서버에 사용자 등록
   register(my_nick.value);
+
+  // 연결 성공시 콜백
+  success(() => (connecting.value = true));
 };
 </script>

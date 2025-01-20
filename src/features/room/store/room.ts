@@ -4,6 +4,7 @@ import { defineStore } from "pinia";
 export const useRoomStore = defineStore("room", () => {
   const my_nick = ref("");
   const opponent_nick = ref("");
+  const connecting = ref(false);
 
-  return { my_nick, opponent_nick };
+  return { my_nick, opponent_nick, connecting };
 });

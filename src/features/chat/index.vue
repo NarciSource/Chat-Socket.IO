@@ -23,7 +23,13 @@
 </template>
 
 <script setup lang="ts">
+import { useChatStore } from "./store/chat";
 import { Connect, ChatContent, Title, Submit, Search, Save } from "./ui";
+
+const store = useChatStore();
+const { connecting } = defineProps({ connecting: Boolean });
+
+store.connecting = connecting;
 </script>
 
 <style scoped>

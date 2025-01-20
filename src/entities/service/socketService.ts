@@ -12,13 +12,31 @@ const SOCKET_ON_RESPONSE = import.meta.env.VITE_SOCKET_ON_RESPONSE;
 const SOCKET_EMIT_REGISTER = import.meta.env.VITE_SOCKET_EMIT_REGISTER;
 const SOCKET_EMIT_MESSAGE = import.meta.env.VITE_SOCKET_EMIT_MESSAGE;
 
+let socket: Socket;
 // 소켓 초기화
-const socket: Socket = io(SOCKET_SERVER_URL, {
-  transports: ["websocket"],
-  auth: {
-    accessToken,
-  },
-});
+export function connect() {
+  socket = io(SOCKET_SERVER_URL, {
+    transports: ["websocket"],
+    auth: {
+      accessToken,
+    },
+  });
+
+  // 서버에 클라이언트 등록
+  const register = (id: string) => {
+    socket.emit(SOCKET_EMIT_REGISTER, { userId: id });
+  };
+
+  const success = (callback: () => void) => {
+    socket.on("connect", callback);
+  };
+
+  return { register, success };
+}
+
+export function disconnect() {
+  socket?.disconnect();
+}
 
 // 메시지 관리용 콜백 타입 정의
 type MessageHandler = (message: Message) => void;
@@ -43,11 +61,6 @@ export const setup_socket_listeners = (
     const message = response_dto_to_message(response, true);
     on_system_message(message);
   });
-};
-
-// 서버에 클라이언트 등록
-export const register = (id: string) => {
-  socket.emit(SOCKET_EMIT_REGISTER, { userId: id });
 };
 
 // 메시지 전송
