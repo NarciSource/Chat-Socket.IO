@@ -3,12 +3,15 @@ import { defineStore } from "pinia";
 
 import Message from "@/entities/chat/model/Message";
 
-
 export const useChatStore = defineStore("chat", () => {
-  const messages = reactive<Message[]>([]);
-  const query = ref("");
-  const searching = ref(false);
+  // 채팅방 상태
   const connecting = ref(false);
+  const my_nick = ref<string>("");
+  const opponent_nick = ref<string | null>(null);
+
+  const messages = reactive<Message[]>([]); // 메시지 목록
+  const query = ref(""); // 검색어
+  const searching = ref(false); // 검색 중 여부
 
   // 메시지 삽입 함수
   const insert_message = (message: Message) => {
@@ -21,5 +24,5 @@ export const useChatStore = defineStore("chat", () => {
     }
   };
 
-  return { connecting, messages, query, insert_message, searching };
+  return { connecting, my_nick, opponent_nick, messages, query, insert_message, searching };
 });

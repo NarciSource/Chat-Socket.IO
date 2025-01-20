@@ -27,9 +27,15 @@ import { useChatStore } from "./store/chat";
 import { Connect, ChatContent, Title, Submit, Search, Save } from "./ui";
 
 const store = useChatStore();
-const { connecting } = defineProps({ connecting: Boolean });
+const { connecting, my_nick, opponent_nick } = defineProps({
+  connecting: Boolean,
+  my_nick: String,
+  opponent_nick: String,
+});
 
 store.connecting = connecting;
+store.my_nick = my_nick!;
+store.opponent_nick = opponent_nick || null;
 </script>
 
 <style scoped>
