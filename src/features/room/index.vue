@@ -18,7 +18,7 @@
 import { storeToRefs } from "pinia";
 
 import { useRoomStore } from "./store/room";
-import { connect } from "@/entities/service/socketService";
+import { connect } from "@/entities/chat/service/socketService";
 import drawerLayout from "./ui/drawer-layout.vue";
 
 const { my_nick, opponent_nick, connecting } = storeToRefs(useRoomStore());

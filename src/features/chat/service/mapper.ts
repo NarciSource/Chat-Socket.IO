@@ -1,5 +1,5 @@
 import { ResponseDTO, SendDTO } from "../api/dto";
-import Message from "@/entities/model/Message";
+import Message from "@/entities/chat/model/Message";
 
 export const response_dto_to_message = (dto: ResponseDTO, is_system?: boolean): Message => {
   const { content, senderId } = dto;

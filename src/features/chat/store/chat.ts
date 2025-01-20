@@ -1,7 +1,8 @@
 import { reactive, ref } from "vue";
 import { defineStore } from "pinia";
 
-import Message from "@/entities/model/Message";
+import Message from "@/entities/chat/model/Message";
+
 
 export const useChatStore = defineStore("chat", () => {
   const messages = reactive<Message[]>([]);

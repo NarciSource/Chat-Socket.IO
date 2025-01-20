@@ -8,8 +8,8 @@ import { ref } from "vue";
 import { storeToRefs } from "pinia";
 
 import { useChatStore } from "../store/chat";
-import { send_message } from "@/entities/service/socketService";
-import Message from "@/entities/model/Message";
+import { send_message } from "@/entities/chat/service/socketService";
+import Message from "@/entities/chat/model/Message";
 import { useRoomStore } from "@/features/room/store/room";
 
 // 반응형 변수

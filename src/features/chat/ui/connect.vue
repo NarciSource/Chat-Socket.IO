@@ -9,7 +9,7 @@ import { watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 
 import { useChatStore } from "../store/chat";
-import { setup_socket_listeners } from "@/entities/service/socketService";
+import { setup_socket_listeners } from "@/entities/chat/service/socketService";
 
 const { insert_message } = useChatStore();
 const { connecting } = storeToRefs(useChatStore());
