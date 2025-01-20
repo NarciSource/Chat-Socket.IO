@@ -7,7 +7,7 @@
 import { ref } from "vue";
 
 import { useChatStore } from "../store/chat";
-import { send_message } from "../service/socketService";
+import { send_message } from "@/entities/service/socketService";
 import Message from "@/entities/Message";
 
 // 반응형 변수

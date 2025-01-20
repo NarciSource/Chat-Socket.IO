@@ -1,7 +1,7 @@
 import { io, Socket } from "socket.io-client";
 
-import { ResponseDTO, SendDTO } from "../api/dto";
-import { message_to_send_dto, response_dto_to_message } from "./mapper";
+import { ResponseDTO, SendDTO } from "../../features/chat/api/dto";
+import { message_to_send_dto, response_dto_to_message } from "../../features/chat/service/mapper";
 import { accessToken } from "@/shared/tokens";
 import Message from "@/entities/Message";
 
