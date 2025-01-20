@@ -3,7 +3,7 @@ import { io, Socket } from "socket.io-client";
 import { ResponseDTO, SendDTO } from "../../features/chat/api/dto";
 import { message_to_send_dto, response_dto_to_message } from "../../features/chat/service/mapper";
 import { accessToken } from "@/shared/tokens";
-import Message from "@/entities/Message";
+import Message from "@/entities/model/Message";
 
 // 환경 변수
 const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
