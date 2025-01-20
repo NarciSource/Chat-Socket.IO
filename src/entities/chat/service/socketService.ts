@@ -8,7 +8,7 @@ import { accessToken } from "@/shared/tokens";
 // 환경 변수
 const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
 const SOCKET_ON_SYSTEM = import.meta.env.VITE_SOCKET_ON_SYSTEM;
-const SOCKET_ON_RESPONSE = import.meta.env.VITE_SOCKET_ON_RESPONSE;
+const SOCKET_ON_MESSAGE = import.meta.env.VITE_SOCKET_ON_MESSAGE;
 const SOCKET_EMIT_REGISTER = import.meta.env.VITE_SOCKET_EMIT_REGISTER;
 const SOCKET_EMIT_MESSAGE = import.meta.env.VITE_SOCKET_EMIT_MESSAGE;
 
@@ -52,7 +52,7 @@ export const setup_socket_listeners = (
   socket.on("connect_error", on_disconnect);
   socket.on("disconnect", on_disconnect);
 
-  socket.on(SOCKET_ON_RESPONSE, (response: ResponseDTO) => {
+  socket.on(SOCKET_ON_MESSAGE, (response: ResponseDTO) => {
     const message = response_dto_to_message(response);
     on_message(message);
   });
