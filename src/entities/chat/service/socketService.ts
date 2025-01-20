@@ -1,9 +1,9 @@
 import { io, Socket } from "socket.io-client";
 
+import Message from "../model/Message";
+import { ResponseDTO, SendDTO } from "../api/dto";
+import { response_dto_to_message, message_to_send_dto } from "./mapper";
 import { accessToken } from "@/shared/tokens";
-import Message from "@/entities/chat/model/Message";
-import { ResponseDTO, SendDTO } from "@/features/chat/api/dto";
-import { message_to_send_dto, response_dto_to_message } from "@/features/chat/service/mapper";
 
 // 환경 변수
 const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
