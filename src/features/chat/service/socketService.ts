@@ -9,6 +9,7 @@ import Message from "@/entities/Message";
 const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
 const SOCKET_ON_SYSTEM = import.meta.env.VITE_SOCKET_ON_SYSTEM;
 const SOCKET_ON_RESPONSE = import.meta.env.VITE_SOCKET_ON_RESPONSE;
+const SOCKET_EMIT_REGISTER = import.meta.env.VITE_SOCKET_EMIT_REGISTER;
 const SOCKET_EMIT_MESSAGE = import.meta.env.VITE_SOCKET_EMIT_MESSAGE;
 
 // 소켓 초기화
@@ -42,6 +43,11 @@ export const setup_socket_listeners = (
     const message = response_dto_to_message(response, true);
     on_system_message(message);
   });
+};
+
+// 서버에 클라이언트 등록
+export const register = (id: string) => {
+  socket.emit(SOCKET_EMIT_REGISTER, { userId: id });
 };
 
 // 메시지 전송
