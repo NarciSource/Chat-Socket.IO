@@ -16,7 +16,7 @@ const { insert_message } = useChatStore();
 
 // 메시지 전송 함수
 const send = () => {
-  const message = new Message([message_input.value], true);
+  const message = new Message("testuser", [message_input.value], true);
 
   // 메시지 기록
   insert_message(message);

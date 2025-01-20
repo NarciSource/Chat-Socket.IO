@@ -1,5 +1,10 @@
 export default class Message {
-  constructor(public text: string[], public sent: boolean, public is_system: boolean = false) {}
+  constructor(
+    public name: string,
+    public text: string[],
+    public sent: boolean,
+    public is_system: boolean = false,
+  ) {}
 
   public add_text(text: string) {
     this.text.push(text);
