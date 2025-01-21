@@ -45,20 +45,33 @@ import {
   
     /**
      * 클라이언트가 본인의 userId를 등록하는 이벤트
+     * (예) 클라이언트에서 "register" 이벤트로 { userId: '123' } 전송
      * 
-     * - (예) 클라이언트에서 "register" 이벤트로 { userId: '123' } 전송
+     * - 이미 동일한 userId가 등록되어 있다면, 추가 등록(새 소켓) 불가 → 새 연결 거부
      */
     @SubscribeMessage('register')
     handleRegister(client: Socket, data: { userId: string }) {
       const { userId } = data;
+  
+      // 이미 해당 userId가 등록되어 있는 경우 → 새 연결 거부
+      if (this.userSocketMap.has(userId)) {
+        console.log(`이미 userId=${userId} 로 등록된 소켓이 존재합니다. 새 연결 거부.`);
+        client.emit('register_failed', {
+          message: `이미 userId=${userId}로 연결된 소켓이 있습니다.`,
+        });
+        // 클라이언트 연결 해제
+        client.disconnect(true);
+        return;
+      }
+  
+      // userId가 없다면 정상 등록
       this.userSocketMap.set(userId, client.id);
-      console.log(`유저 등록: userId = ${userId}, socketId = ${client.id}`);
+      console.log(`유저 등록: userId=${userId}, socketId=${client.id}`);
     }
   
     /**
      * 1:1 메시지 전송을 처리하는 이벤트
-     * 
-     * - (예) 클라이언트에서 "send_message" 이벤트로 { senderId, recipientId, content } 전송
+     * (예) 클라이언트에서 "send_message" 이벤트로 { senderId, recipientId, content } 전송
      */
     @SubscribeMessage('send_message')
     handleSendMessage(client: Socket, payload: MessagePayload) {
