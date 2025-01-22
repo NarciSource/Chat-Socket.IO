@@ -63,6 +63,16 @@ export const setup_socket_listeners = (
   });
 };
 
+// 일대일 채팅방 입장
+export const join_room = (id: string, opponent_id: string) => {
+  socket.emit("join_room", { myId: id, otherId: opponent_id });
+};
+
+// 일대일 채팅방 퇴장
+export const leave_room = (id: string, opponent_id: string) => {
+  socket.emit("leave_room", { myId: id, otherId: opponent_id });
+};
+
 // 메시지 전송
 export const send_message = (recipient: string, message: Message) => {
   const dto: SendDTO = message_to_send_dto(recipient, message);
