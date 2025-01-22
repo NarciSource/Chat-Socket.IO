@@ -6,10 +6,10 @@ export const response_dto_to_message = (dto: ResponseDTO, is_system?: boolean): 
   return new Message(senderId, [content], false, is_system);
 };
 
-export const message_to_send_dto = (recipient: string, message: Message): SendDTO => {
+export const message_to_send_dto = (room_id: string, message: Message): SendDTO => {
   return {
     senderId: message.name,
-    recipientId: recipient,
+    recipientId: room_id,
     content: message.text.join("\n"),
   } as SendDTO;
 };

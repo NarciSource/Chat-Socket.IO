@@ -2,11 +2,11 @@
   <q-layout view="lhh LpR lff" container>
     <Room />
     <Chat
-      v-if="opponent_nick"
-      :key="opponent_nick"
+      v-if="room_id"
+      :key="room_id"
       :connecting="connecting"
+      :room_id="room_id"
       :my_nick="my_nick"
-      :opponent_nick="opponent_nick"
     />
   </q-layout>
 </template>
@@ -18,7 +18,7 @@ import Room from "@/features/room";
 import Chat from "@/features/chat";
 import { useRoomStore } from "@/features/room/store/room";
 
-const { connecting, my_nick, opponent_nick } = storeToRefs(useRoomStore());
+const { connecting, room_id, my_nick } = storeToRefs(useRoomStore());
 </script>
 
 <style>

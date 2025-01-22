@@ -74,8 +74,8 @@ export const leave_room = (id: string, opponent_id: string) => {
 };
 
 // 메시지 전송
-export const send_message = (recipient: string, message: Message) => {
-  const dto: SendDTO = message_to_send_dto(recipient, message);
+export const send_message = (room_id: string, message: Message) => {
+  const dto: SendDTO = message_to_send_dto(room_id, message);
 
   socket.emit(SOCKET_EMIT_MESSAGE, dto);
 };

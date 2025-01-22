@@ -14,7 +14,7 @@ import Message from "@/entities/chat/model/Message";
 // 반응형 변수
 const message_input = ref("");
 const { insert_message } = useChatStore();
-const { my_nick, opponent_nick } = storeToRefs(useChatStore());
+const { my_nick, room_id } = storeToRefs(useChatStore());
 
 // 메시지 전송 함수
 const send = () => {
@@ -23,8 +23,8 @@ const send = () => {
   // 메시지 기록
   insert_message(message);
   // 메시지 전송
-  if (opponent_nick.value) {
-    send_message(opponent_nick.value, message);
+  if (room_id.value) {
+    send_message(room_id.value, message);
   }
 
   // 입력폼 초기화
