@@ -13,15 +13,12 @@ import Message from "@/entities/chat/model/Message";
 
 // 반응형 변수
 const message_input = ref("");
-const { insert_message } = useChatStore();
 const { my_nick, room_id } = storeToRefs(useChatStore());
 
 // 메시지 전송 함수
 const send = () => {
-  const message = new Message(my_nick.value, [message_input.value], true);
+  const message = new Message(my_nick.value, [message_input.value]);
 
-  // 메시지 기록
-  insert_message(message);
   // 메시지 전송
   if (room_id.value) {
     send_message(room_id.value, message);

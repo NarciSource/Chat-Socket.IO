@@ -2,7 +2,6 @@ export default class Message {
   constructor(
     public name: string,
     public text: string[],
-    public sent: boolean,
     public is_system: boolean = false,
   ) {}
 

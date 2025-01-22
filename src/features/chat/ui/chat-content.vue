@@ -5,8 +5,8 @@
     :name="!message.is_system ? message.name : ''"
     :label="message.is_system ? message.text[0] : ''"
     :text="!message.is_system ? message.text : []"
-    :sent="message.sent"
-    :bg-color="message.sent ? 'yellow' : 'white'"
+    :sent="message.name === store.my_nick"
+    :bg-color="message.name === store.my_nick ? 'yellow' : 'white'"
   />
 </template>
 

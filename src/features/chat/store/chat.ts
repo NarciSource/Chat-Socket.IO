@@ -24,7 +24,7 @@ export const useChatStore = defineStore("chat", () => {
     const last_index = messages[room_id.value].length - 1;
 
     // 마지막 메시지와 동일한 대상이 보낸 메시지인 경우
-    if (messages[room_id.value][last_index]?.sent === message.sent && !message.is_system) {
+    if (messages[room_id.value][last_index]?.name === message.name && !message.is_system) {
       messages[room_id.value][last_index].add_text(message.text[0]);
     } else {
       messages[room_id.value].push(message);
