@@ -12,10 +12,12 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+
 import { useChatStore } from "../store/chat";
 
 const store = useChatStore();
 
+// 검색 결과 필터링
 const filtered_messages = computed(() => {
   return (store.messages[store.room_id] || []).filter((message) => message.include(store.query));
 });

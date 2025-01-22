@@ -8,8 +8,8 @@
 import { watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 
-import { useChatStore } from "../store/chat";
 import { setup_socket_listeners } from "@/entities/chat/service/socketService";
+import { useChatStore } from "../store/chat";
 
 const { insert_message } = useChatStore();
 const { connecting } = storeToRefs(useChatStore());

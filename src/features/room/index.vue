@@ -32,8 +32,8 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 
-import { useRoomStore } from "./store/room";
 import { connect, join_room } from "@/entities/chat/service/socketService";
+import { useRoomStore } from "./store/room";
 import drawerLayout from "./ui/drawer-layout.vue";
 
 const { my_nick, connecting, room_id } = storeToRefs(useRoomStore());
@@ -56,8 +56,10 @@ const join = () => {
     alert("연결을 먼저 해주세요");
     return;
   }
+  // 일대일 채팅으로 상대방 이름을 방 이름으로 설정
   room_id.value = opponent_nick.value;
 
+  // 방 생성
   join_room(my_nick.value, room_id.value);
 };
 </script>

@@ -33,6 +33,7 @@ const { connecting, room_id, my_nick } = defineProps({
   my_nick: String,
 });
 
+// store에 props로 업데이트
 store.connecting = connecting;
 store.room_id = room_id!;
 store.my_nick = my_nick!;
