@@ -2,7 +2,7 @@ import { io, Socket } from "socket.io-client";
 
 import Message from "../model/Message";
 import { ResponseDTO, SendDTO } from "../api/dto";
-import { response_dto_to_message, message_to_send_dto } from "./mapper";
+import { response_dto_to_message, message_to_send_dto, id_to_room_handshake_dto } from "./mapper";
 import { accessToken } from "@/shared/tokens";
 
 // 환경 변수
@@ -65,12 +65,12 @@ export const setup_socket_listeners = (
 
 // 일대일 채팅방 입장
 export const join_room = (id: string, opponent_id: string) => {
-  socket.emit("join_room", { myId: id, otherId: opponent_id });
+  socket.emit("join_room", id_to_room_handshake_dto(id, opponent_id));
 };
 
 // 일대일 채팅방 퇴장
 export const leave_room = (id: string, opponent_id: string) => {
-  socket.emit("leave_room", { myId: id, otherId: opponent_id });
+  socket.emit("leave_room", id_to_room_handshake_dto(id, opponent_id));
 };
 
 // 메시지 전송

@@ -8,3 +8,8 @@ export type SendDTO = {
   recipientId: string;
   content: string;
 };
+
+export type RoomHandshake = {
+  myId: string;
+  otherId: string;
+};

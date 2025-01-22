@@ -1,4 +1,4 @@
-import { ResponseDTO, SendDTO } from "../api/dto";
+import { ResponseDTO, RoomHandshake, SendDTO } from "../api/dto";
 import Message from "@/entities/chat/model/Message";
 
 export const response_dto_to_message = (dto: ResponseDTO, is_system?: boolean): Message => {
@@ -12,4 +12,8 @@ export const message_to_send_dto = (room_id: string, message: Message): SendDTO 
     recipientId: room_id,
     content: message.text.join("\n"),
   } as SendDTO;
+};
+
+export const id_to_room_handshake_dto = (myId: string, otherId: string): RoomHandshake => {
+  return { myId, otherId } as RoomHandshake;
 };
