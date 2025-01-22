@@ -56,8 +56,8 @@ import {
       // 이미 해당 userId가 등록되어 있는 경우 → 새 연결 거부
       if (this.userSocketMap.has(userId)) {
         console.log(`이미 userId=${userId} 로 등록된 소켓이 존재합니다. 새 연결 거부.`);
-        client.emit('register_failed', {
-          message: `이미 userId=${userId}로 연결된 소켓이 있습니다.`,
+        client.emit('system', {
+          content: `이미 userId=${userId}로 연결된 소켓이 있습니다.`,
         });
         // 클라이언트 연결 해제
         client.disconnect(true);
