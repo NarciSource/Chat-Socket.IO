@@ -17,7 +17,7 @@ import { useChatStore } from "../store/chat";
 const store = useChatStore();
 
 const filtered_messages = computed(() => {
-  return store.messages.filter((message) => message.include(store.query));
+  return (store.messages[store.room] || []).filter((message) => message.include(store.query));
 });
 </script>
 

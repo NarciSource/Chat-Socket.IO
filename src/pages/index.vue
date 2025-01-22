@@ -2,7 +2,8 @@
   <q-layout view="lhh LpR lff" container>
     <Room />
     <Chat
-      :key="connecting"
+      v-if="opponent_nick"
+      :key="opponent_nick"
       :connecting="connecting"
       :my_nick="my_nick"
       :opponent_nick="opponent_nick"

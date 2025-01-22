@@ -35,7 +35,7 @@ import { useRoomStore } from "./store/room";
 import { connect, join_room } from "@/entities/chat/service/socketService";
 import drawerLayout from "./ui/drawer-layout.vue";
 
-const { my_nick, opponent_nick, connecting } = storeToRefs(useRoomStore());
+const { my_nick, opponent_nick, connecting, room_id } = storeToRefs(useRoomStore());
 
 const setup = () => {
   // 소켓 연결
@@ -50,6 +50,12 @@ const setup = () => {
 
 // 방 생성
 const join = () => {
+  if (!connecting.value) {
+    alert("연결을 먼저 해주세요");
+    return;
+  }
   join_room(my_nick.value, opponent_nick.value);
+
+  room_id.value = opponent_nick.value;
 };
 </script>

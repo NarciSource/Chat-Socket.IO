@@ -36,6 +36,7 @@ const { connecting, my_nick, opponent_nick } = defineProps({
 store.connecting = connecting;
 store.my_nick = my_nick!;
 store.opponent_nick = opponent_nick || null;
+store.room = opponent_nick!;
 </script>
 
 <style scoped>
