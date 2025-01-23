@@ -1,5 +1,12 @@
-import Message from "@/entities/chat/model/Message";
-import { CreateRoomPayload, LeaveRoomPayload, ResponseDTO, SendDTO } from "../api/dto";
+import Message from "../model/Message";
+import Status from "../model/Status";
+import {
+  CreateRoomPayload,
+  LeaveRoomPayload,
+  ResponseDTO,
+  RoomCreatedPayload,
+  SendDTO,
+} from "../api/dto";
 
 export const response_dto_to_message = (dto: ResponseDTO, is_system?: boolean): Message => {
   const { content, senderId } = dto;
@@ -19,6 +26,13 @@ export const to_create_room_payload = (
   selected_users: string[],
 ): CreateRoomPayload => {
   return { hostId: host_id, participants: selected_users };
+};
+
+export const room_created_payload_to_status = ({
+  roomId,
+  participants,
+}: RoomCreatedPayload): Status => {
+  return new Status(roomId, participants);
 };
 
 export const to_leave_room_payload = (user_id: string, room_id: string): LeaveRoomPayload => {

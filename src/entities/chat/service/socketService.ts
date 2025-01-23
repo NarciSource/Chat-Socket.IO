@@ -2,10 +2,12 @@ import { io, Socket } from "socket.io-client";
 
 import { accessToken } from "@/shared/tokens";
 import Message from "../model/Message";
+import Status from "../model/Status";
 import { ResponseDTO, SendDTO } from "../api/dto";
 import {
   response_dto_to_message,
   message_to_send_dto,
+  room_created_payload_to_status,
   to_create_room_payload,
   to_leave_room_payload,
 } from "./mapper";
@@ -65,6 +67,14 @@ export const setup_socket_listeners = (
   socket.on(SOCKET_ON_SYSTEM, (response: ResponseDTO) => {
     const message = response_dto_to_message(response, true);
     on_system_message(message);
+  });
+};
+
+// 채팅방 생성 리스너
+export const make_room_listener = (callback: (status: Status) => void) => {
+  socket.on("room_created", (data: any) => {
+    const status = room_created_payload_to_status(data);
+    callback(status);
   });
 };
 

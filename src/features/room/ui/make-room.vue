@@ -15,11 +15,12 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 
-import { make_room } from "@/entities/chat/service/socketService";
+import Status from "@/entities/chat/model/Status";
+import { make_room, make_room_listener } from "@/entities/chat/service/socketService";
 import { useRoomStore } from "../store/room";
 import UserList from "./user-list.vue";
 
-const { connecting, my_nick } = storeToRefs(useRoomStore());
+const { connecting, my_nick, room_id } = storeToRefs(useRoomStore());
 const selected_users = ref<string[]>([]);
 
 // 방 생성
@@ -28,6 +29,8 @@ const make = () => {
     alert("연결을 먼저 해주세요");
     return;
   }
+
+  make_room_listener((status: Status) => (room_id.value = status.room_id)); // 방 정보 업데이트
 
   // 다대다 채팅으로 방 생성하고 초대
   make_room(my_nick.value, selected_users.value);
