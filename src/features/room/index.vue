@@ -2,10 +2,10 @@
   <drawer-layout>
     <submit-user />
 
-    <user-list />
+    <make-room />
   </drawer-layout>
 </template>
 
 <script setup lang="ts">
-import { DrawerLayout, UserList, SubmitUser } from "./ui";
+import { DrawerLayout, MakeRoom, SubmitUser } from "./ui";
 </script>
