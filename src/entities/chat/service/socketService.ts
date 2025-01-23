@@ -1,9 +1,14 @@
 import { io, Socket } from "socket.io-client";
 
+import { accessToken } from "@/shared/tokens";
 import Message from "../model/Message";
 import { ResponseDTO, SendDTO } from "../api/dto";
-import { response_dto_to_message, message_to_send_dto, id_to_room_handshake_dto } from "./mapper";
-import { accessToken } from "@/shared/tokens";
+import {
+  response_dto_to_message,
+  message_to_send_dto,
+  to_create_room_payload,
+  to_leave_room_payload,
+} from "./mapper";
 
 // 환경 변수
 const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
@@ -64,18 +69,13 @@ export const setup_socket_listeners = (
 };
 
 // 다대다 채팅방 생성
-export const make_room = (hostId: string, participants: string[]) => {
-  socket.emit("create_room", { hostId, participants });
-};
-
-// 일대일 채팅방 입장
-export const join_room = (id: string, opponent_id: string) => {
-  socket.emit("join_room", id_to_room_handshake_dto(id, opponent_id));
+export const make_room = (id: string, selected_users: string[]) => {
+  socket.emit("create_room", to_create_room_payload(id, selected_users));
 };
 
 // 일대일 채팅방 퇴장
 export const leave_room = (id: string, opponent_id: string) => {
-  socket.emit("leave_room", id_to_room_handshake_dto(id, opponent_id));
+  socket.emit("leave_room", to_leave_room_payload(id, opponent_id));
 };
 
 // 메시지 전송
