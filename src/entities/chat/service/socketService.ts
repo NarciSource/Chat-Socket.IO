@@ -63,6 +63,11 @@ export const setup_socket_listeners = (
   });
 };
 
+// 다대다 채팅방 생성
+export const make_room = (hostId: string, participants: string[]) => {
+  socket.emit("create_room", { hostId, participants });
+};
+
 // 일대일 채팅방 입장
 export const join_room = (id: string, opponent_id: string) => {
   socket.emit("join_room", id_to_room_handshake_dto(id, opponent_id));
