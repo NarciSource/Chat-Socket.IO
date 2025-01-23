@@ -20,12 +20,13 @@ export const useChatStore = defineStore("chat", () => {
 
   // 메시지 삽입 함수
   const insert_message = (message: Message) => {
-    // 마지막 메시지 인덱스
-    const last_index = message_dictionary[room_id.value].length - 1;
+    // 마지막 메시지
+    const last_index = messages.value.length - 1;
+    const last_message = messages.value[last_index];
 
     // 마지막 메시지와 동일한 대상이 보낸 메시지인 경우 이어서 추가
-    if (messages.value[last_index]?.name === message.name && !message.is_system) {
-      messages.value[last_index].add_text(message.text[0]);
+    if (message.name === last_message?.name && !message.is_system) {
+      last_message.add_text(message.text[0]);
     } else {
       messages.value.push(message);
     }
