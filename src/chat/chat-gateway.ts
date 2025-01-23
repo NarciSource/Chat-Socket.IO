@@ -53,17 +53,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private roomMembersMap: Map<string, Set<string>> = new Map();
 
   // 소켓 연결 시
-  handleConnection(client: Socket) {
-    console.log('클라이언트 연결:', client.id);
+  handleConnection(socket: Socket) {
+    console.log('클라이언트 연결:', socket.id);
   }
 
   // 소켓 연결 해제 시
-  handleDisconnect(client: Socket) {
-    console.log('클라이언트 연결 해제:', client.id);
+  handleDisconnect(socket: Socket) {
+    console.log('클라이언트 연결 해제:', socket.id);
 
-    // userSocketMap에서 client.id를 사용 중인 userId 찾기
+    // userSocketMap에서 socket.id를 사용 중인 userId 찾기
     for (const [userId, socketId] of this.userSocketMap.entries()) {
-      if (socketId === client.id) {
+      if (socketId === socket.id) {
         this.userSocketMap.delete(userId);
 
         // userRoomsMap에서 해당 유저가 참여 중이던 roomId들을 구해
@@ -95,20 +95,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    * - 이미 같은 userId로 등록된 소켓이 있다면 거부할 수도 있음
    */
   @SubscribeMessage('register')
-  handleRegister(client: Socket, payload: { userId: string }) {
+  handleRegister(socket: Socket, payload: { userId: string }) {
     const { userId } = payload;
 
     // 중복 접속 제어 (정책에 따라)
     if (this.userSocketMap.has(userId)) {
       console.log(`이미 userId=${userId}로 연결된 소켓이 존재합니다.`);
-      client.emit('system', { content: `userId=${userId}가 이미 존재합니다.` });
-      client.disconnect(true);
+      socket.emit('system', { content: `userId=${userId}가 이미 존재합니다.` });
+      socket.disconnect(true);
       return;
     }
 
-    this.userSocketMap.set(userId, client.id);
+    this.userSocketMap.set(userId, socket.id);
     this.userRoomsMap.set(userId, new Set()); // 초기화
-    console.log(`유저 등록: userId=${userId}, socketId=${client.id}`);
+    console.log(`유저 등록: userId=${userId}, socketId=${socket.id}`);
   }
 
   /**
@@ -131,7 +131,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    *  -> roomId를 클라이언트에 반환 (필요시)
    */
   @SubscribeMessage('create_room')
-  handleCreateRoom(client: Socket, payload: CreateRoomPayload) {
+  handleCreateRoom(socket: Socket, payload: CreateRoomPayload) {
     const { hostId, participants } = payload;
 
     // 새 roomId 생성
@@ -159,7 +159,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`방 생성: roomId=${roomId}, 참가자=${participants.join(', ')}`);
 
     // 생성된 roomId를 요청 보낸 클라이언트에게 알림
-    client.emit('room_created', {
+    socket.emit('room_created', {
       roomId,
       participants,
     });
@@ -171,13 +171,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    *  - (예) socket.emit('join_room', { userId:'userA', roomId:'abc123' })
    */
   @SubscribeMessage('join_room')
-  handleJoinRoom(client: Socket, payload: { userId: string; roomId: string }) {
+  handleJoinRoom(socket: Socket, payload: { userId: string; roomId: string }) {
     const { userId, roomId } = payload;
     const roomMembers = this.roomMembersMap.get(roomId);
 
     if (!roomMembers) {
       // 없는 방이면 에러
-      client.emit('system', { content: `존재하지 않는 방입니다: ${roomId}` });
+      socket.emit('system', { content: `존재하지 않는 방입니다: ${roomId}` });
       return;
     }
 
@@ -216,7 +216,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    *     });
    */
   @SubscribeMessage('send_message')
-  handleSendMessage(client: Socket, payload: SendMessagePayload) {
+  handleSendMessage(socket: Socket, payload: SendMessagePayload) {
     const { roomId, senderId, content } = payload;
     const roomMembers = this.roomMembersMap.get(roomId);
 
@@ -238,11 +238,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    *  - (예) socket.emit('leave_room', { userId:'userB', roomId:'abc123' })
    */
   @SubscribeMessage('leave_room')
-  handleLeaveRoom(client: Socket, payload: { userId: string; roomId: string }) {
+  handleLeaveRoom(socket: Socket, payload: { userId: string; roomId: string }) {
     const { userId, roomId } = payload;
     const roomMembers = this.roomMembersMap.get(roomId);
     if (!roomMembers) {
-      client.emit('system', { content: `존재하지 않는 방입니다: ${roomId}` });
+      socket.emit('system', { content: `존재하지 않는 방입니다: ${roomId}` });
       return;
     }
 
