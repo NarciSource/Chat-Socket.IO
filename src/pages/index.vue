@@ -3,7 +3,6 @@
     <Room />
     <Chat
       v-if="!!selected_room?.id"
-      :key="selected_room.id"
       :connecting="connecting"
       :room="selected_room"
       :my_nick="my_nick"

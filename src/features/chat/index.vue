@@ -29,10 +29,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
+
 import { Room } from "@/entities/chat/model";
 import useChatStore from "./store/useChatStore";
 import { Connect, ChatContent, Title, Submit, Search, Actions } from "./ui";
-import { ref } from "vue";
 
 const store = useChatStore();
 const { connecting, room, my_nick } = defineProps({
@@ -42,10 +43,16 @@ const { connecting, room, my_nick } = defineProps({
 });
 const open_actions = ref(false);
 
-// store에 props로 업데이트
-store.connecting = connecting;
-store.room = room!;
-store.my_nick = my_nick!;
+// store에 props를 업데이트
+watch(
+  () => ({ connecting, room, my_nick }),
+  (props) => {
+    store.connecting = props.connecting;
+    store.room = props.room;
+    store.my_nick = props.my_nick!;
+  },
+  { immediate: true, deep: true },
+);
 </script>
 
 <style scoped>
