@@ -1,6 +1,7 @@
 import { io, Socket } from "socket.io-client";
 
 import { accessToken } from "@/shared/tokens";
+import { SOCKET_EVENT, SOCKET_SERVER_URL } from "@/shared/socket_event_names";
 import Message from "../model/Message";
 import { SendDTO } from "../api/dto";
 import {
@@ -10,13 +11,6 @@ import {
   to_create_room_payload,
   to_leave_room_payload,
 } from "./mapper";
-
-// 환경 변수
-const SOCKET_SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
-const SOCKET_ON_SYSTEM = import.meta.env.VITE_SOCKET_ON_SYSTEM;
-const SOCKET_ON_MESSAGE = import.meta.env.VITE_SOCKET_ON_MESSAGE;
-const SOCKET_EMIT_REGISTER = import.meta.env.VITE_SOCKET_EMIT_REGISTER;
-const SOCKET_EMIT_MESSAGE = import.meta.env.VITE_SOCKET_EMIT_MESSAGE;
 
 let socket: Socket;
 // 소켓 초기화
@@ -30,7 +24,7 @@ export function connect() {
 
   // 서버에 클라이언트 등록
   const register = (id: string) => {
-    socket.emit(SOCKET_EMIT_REGISTER, { userId: id });
+    socket.emit(SOCKET_EVENT.EMIT_REGISTER, { userId: id });
   };
 
   const success = (callback: () => void) => {
@@ -49,9 +43,9 @@ type Mapper = (data: any) => any;
 
 // 매핑헬퍼서비스 사전
 const mappers_dictionary = new Map<string, Mapper>([
-  ["room_created", room_created_payload_to_status],
-  [SOCKET_ON_MESSAGE, response_dto_to_message],
-  [SOCKET_ON_SYSTEM, response_dto_to_message],
+  [SOCKET_EVENT.ON_ROOM_CREATED, room_created_payload_to_status],
+  [SOCKET_EVENT.ON_MESSAGE, response_dto_to_message],
+  [SOCKET_EVENT.ON_SYSTEM, response_dto_to_message],
 ]);
 
 // 동적 이벤트 리스너 등록
@@ -79,5 +73,5 @@ export const leave_room = (id: string, opponent_id: string) => {
 export const send_message = (room_id: string, message: Message) => {
   const dto: SendDTO = message_to_send_dto(room_id, message);
 
-  socket.emit(SOCKET_EMIT_MESSAGE, dto);
+  socket.emit(SOCKET_EVENT.EMIT_MESSAGE, dto);
 };
