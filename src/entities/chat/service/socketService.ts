@@ -2,7 +2,7 @@ import { io, Socket } from "socket.io-client";
 
 import { accessToken } from "@/shared/tokens";
 import { SOCKET_EVENT, SOCKET_SERVER_URL } from "@/shared/socket_constants";
-import { mappers_dictionary } from "./mapper";
+import { mappers_dictionary } from "./mapper/dictionary";
 
 let socket: Socket;
 // 소켓 초기화
