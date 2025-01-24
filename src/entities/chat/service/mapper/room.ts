@@ -1,5 +1,10 @@
 import { Room } from "../../model";
-import { CreateRoomPayload, LeaveRoomPayload, RoomCreatedPayload } from "../../api/dto";
+import {
+  CreateRoomPayload,
+  LeaveRoomPayload,
+  InviteRoomPayload,
+  RoomCreatedPayload,
+} from "../../api/dto";
 
 export const to_create_room_payload = ({
   host_id,
@@ -18,6 +23,16 @@ export const to_leave_room_payload = ({
   user_id: string;
   room_id: string;
 }): LeaveRoomPayload => {
+  return { userId: user_id, roomId: room_id };
+};
+
+export const to_join_room_payload = ({
+  user_id,
+  room_id,
+}: {
+  user_id: string;
+  room_id: string;
+}): InviteRoomPayload => {
   return { userId: user_id, roomId: room_id };
 };
 

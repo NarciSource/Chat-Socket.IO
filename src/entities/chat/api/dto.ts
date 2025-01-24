@@ -19,6 +19,11 @@ export type LeaveRoomPayload = {
   roomId: string;
 };
 
+export type InviteRoomPayload = {
+  userId: string;
+  roomId: string;
+};
+
 export type RoomCreatedPayload = {
   roomId: string;
   participants: string[];
