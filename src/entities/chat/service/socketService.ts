@@ -2,8 +2,7 @@ import { io, Socket } from "socket.io-client";
 
 import { accessToken } from "@/shared/tokens";
 import Message from "../model/Message";
-import Status from "../model/Status";
-import { ResponseDTO, SendDTO } from "../api/dto";
+import { SendDTO } from "../api/dto";
 import {
   response_dto_to_message,
   message_to_send_dto,
@@ -45,38 +44,26 @@ export function disconnect() {
   socket?.disconnect();
 }
 
-// 메시지 관리용 콜백 타입 정의
-type MessageHandler = (message: Message) => void;
+type Callback = (data: any) => void;
+type Mapper = (data: any) => any;
 
-// 이벤트 리스너 등록
-export const setup_socket_listeners = (
-  on_connect: () => void,
-  on_disconnect: () => void,
-  on_message: MessageHandler,
-  on_system_message: MessageHandler,
-) => {
-  socket.on("connect", on_connect);
-  socket.on("connect_error", on_disconnect);
-  socket.on("disconnect", on_disconnect);
+// 매핑헬퍼서비스 사전
+const mappers_dictionary = new Map<string, Mapper>([
+  ["room_created", room_created_payload_to_status],
+  [SOCKET_ON_MESSAGE, response_dto_to_message],
+  [SOCKET_ON_SYSTEM, response_dto_to_message],
+]);
 
-  socket.on(SOCKET_ON_MESSAGE, (response: ResponseDTO) => {
-    const message = response_dto_to_message(response);
-    on_message(message);
+// 동적 이벤트 리스너 등록
+export const subscribe = (event: string, callback: Callback) =>
+  socket.on(event, (data: any) => {
+    const mapper = mappers_dictionary.get(event);
+    if (mapper) {
+      callback(mapper(data));
+    } else {
+      callback(data);
+    }
   });
-
-  socket.on(SOCKET_ON_SYSTEM, (response: ResponseDTO) => {
-    const message = response_dto_to_message(response, true);
-    on_system_message(message);
-  });
-};
-
-// 채팅방 생성 리스너
-export const make_room_listener = (callback: (status: Status) => void) => {
-  socket.on("room_created", (data: any) => {
-    const status = room_created_payload_to_status(data);
-    callback(status);
-  });
-};
 
 // 다대다 채팅방 생성
 export const make_room = (id: string, selected_users: string[]) => {
