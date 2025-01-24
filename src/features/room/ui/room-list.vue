@@ -8,7 +8,7 @@
       @click="() => enter(room)"
     >
       <q-item-section>
-        <q-item-label>{{ room }}</q-item-label>
+        <q-item-label>{{ room.participants }}</q-item-label>
       </q-item-section>
     </q-item>
   </q-list>
@@ -17,11 +17,12 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
+import { Room } from "@/entities/chat/model";
 import useRoomStore from "../store/useRoomStore";
 
 const { rooms, selected_room } = storeToRefs(useRoomStore());
 
-const enter = (room: string) => {
+const enter = (room: Room) => {
   selected_room.value = room;
 };
 </script>

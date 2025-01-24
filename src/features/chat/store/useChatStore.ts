@@ -1,11 +1,12 @@
 import { computed, reactive, ref } from "vue";
 import { defineStore } from "pinia";
 
-import { Message } from "@/entities/chat/model";
+import { Message, Room } from "@/entities/chat/model";
 
 export default defineStore("chat", () => {
   const connecting = ref(false); // 소켓 연결 여부
-  const room_id = ref<string>("");
+  const room = ref<Room>();
+  const room_id = computed(() => room.value!.id);
   const my_nick = ref<string>("");
   const query = ref(""); // 검색어
   const searching = ref(false); // 검색 중 여부
@@ -32,5 +33,5 @@ export default defineStore("chat", () => {
     }
   };
 
-  return { connecting, room_id, my_nick, messages, query, searching, insert_message };
+  return { connecting, room, room_id, my_nick, messages, query, searching, insert_message };
 });

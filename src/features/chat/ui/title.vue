@@ -1,6 +1,6 @@
 <template>
   <div class="q-mx-auto text-h6" :style="{ visibility: searching ? 'hidden' : 'visible' }">
-    {{ room_id }} 채팅 창
+    {{ room!.participants }}
   </div>
 </template>
 
@@ -9,5 +9,5 @@ import { storeToRefs } from "pinia";
 
 import useChatStore from "../store/useChatStore";
 
-const { searching, room_id } = storeToRefs(useChatStore());
+const { searching, room } = storeToRefs(useChatStore());
 </script>

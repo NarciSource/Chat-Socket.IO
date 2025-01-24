@@ -23,19 +23,20 @@
 </template>
 
 <script setup lang="ts">
+import { Room } from "@/entities/chat/model";
 import useChatStore from "./store/useChatStore";
 import { Connect, ChatContent, Title, Submit, Search, Save } from "./ui";
 
 const store = useChatStore();
-const { connecting, room_id, my_nick } = defineProps({
+const { connecting, room, my_nick } = defineProps({
   connecting: Boolean,
-  room_id: String,
+  room: Room,
   my_nick: String,
 });
 
 // store에 props로 업데이트
 store.connecting = connecting;
-store.room_id = room_id!;
+store.room = room!;
 store.my_nick = my_nick!;
 </script>
 

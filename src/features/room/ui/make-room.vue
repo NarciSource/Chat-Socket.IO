@@ -15,7 +15,7 @@
 import { storeToRefs } from "pinia";
 import { ref, watchEffect } from "vue";
 
-import { Status } from "@/entities/chat/model";
+import { Room } from "@/entities/chat/model";
 import { make_room, room_created } from "../service/event_helper";
 import useRoomStore from "../store/useRoomStore";
 import UserList from "./user-list.vue";
@@ -37,7 +37,7 @@ const make = () => {
 watchEffect(() => {
   if (!!connecting.value) {
     // 방 생성 후 이벤트 리스너 등록
-    room_created((status: Status) => rooms.value.push(status.room_id)); // 방 정보 업데이트
+    room_created((room: Room) => rooms.value.push(room)); // 방 정보 업데이트
   }
 });
 </script>

@@ -1,4 +1,4 @@
-import { Status } from "../../model";
+import { Room } from "../../model";
 import { CreateRoomPayload, LeaveRoomPayload, RoomCreatedPayload } from "../../api/dto";
 
 export const to_create_room_payload = ({
@@ -24,6 +24,6 @@ export const to_leave_room_payload = ({
 export const room_created_payload_to_status = ({
   roomId,
   participants,
-}: RoomCreatedPayload): Status => {
-  return new Status(roomId, participants);
+}: RoomCreatedPayload): Room => {
+  return new Room(roomId, participants);
 };

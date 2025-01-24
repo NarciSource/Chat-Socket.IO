@@ -2,10 +2,10 @@
   <q-layout view="lhh LpR lff" container>
     <Room />
     <Chat
-      v-if="!!room_id"
-      :key="room_id"
+      v-if="!!selected_room?.id"
+      :key="selected_room.id"
       :connecting="connecting"
-      :room_id="room_id"
+      :room="selected_room"
       :my_nick="my_nick"
     />
   </q-layout>
@@ -19,7 +19,7 @@ import Chat from "@/features/chat";
 import useRoomStore from "@/features/room/store/useRoomStore";
 
 // feature간 데이터 공유
-const { connecting, selected_room: room_id, my_nick } = storeToRefs(useRoomStore());
+const { connecting, selected_room, my_nick } = storeToRefs(useRoomStore());
 </script>
 
 <style>
