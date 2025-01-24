@@ -22,8 +22,8 @@ export const message_to_send_dto = ({
   message: Message;
 }): SendDTO => {
   return {
+    roomId: room_id,
     senderId: message.name,
-    recipientId: room_id,
     content: message.text.join("\n"),
   } as SendDTO;
 };

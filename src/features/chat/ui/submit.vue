@@ -4,12 +4,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { storeToRefs } from "pinia";
+import { ref } from "vue";
 
-import { SOCKET_EVENT } from "@/shared/socket_event_names";
 import Message from "@/entities/chat/model/Message";
-import { emit_event } from "@/entities/chat/service/socketService";
+import { send_message } from "../service/event_helper";
 import { useChatStore } from "../store/chat";
 
 // 반응형 변수
@@ -22,7 +21,7 @@ const send = () => {
   const message = new Message(my_nick.value, [message_input.value]);
 
   // 메시지 전송
-  emit_event(SOCKET_EVENT.EMIT_MESSAGE, { room_id: room_id.value, message });
+  send_message(room_id.value, message);
 
   // 입력폼 초기화
   message_input.value = "";

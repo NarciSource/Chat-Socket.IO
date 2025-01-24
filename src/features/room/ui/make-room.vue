@@ -12,12 +12,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
+import { ref, watch } from "vue";
 
-import { SOCKET_EVENT } from "@/shared/socket_event_names";
 import Status from "@/entities/chat/model/Status";
-import { subscribe_on, make_room } from "@/entities/chat/service/socketService";
+import { make_room, room_created } from "../service/event_helper";
 import { useRoomStore } from "../store/room";
 import UserList from "./user-list.vue";
 
@@ -39,10 +38,7 @@ watch(
   () => connecting.value,
   (connecting) => {
     if (connecting) {
-      subscribe_on(
-        SOCKET_EVENT.ON_ROOM_CREATED,
-        (status: Status) => (room_id.value = status.room_id),
-      ); // 방 정보 업데이트
+      room_created((status: Status) => (room_id.value = status.room_id)); // 방 정보 업데이트
     }
   },
 );

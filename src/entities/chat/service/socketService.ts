@@ -44,11 +44,3 @@ export const emit_event = (event: string, data: any) => {
   const mapper = mappers_dictionary.get(event);
   socket.emit(event, mapper?.(data) ?? data);
 };
-
-// 다대다 채팅방 생성
-export const make_room = (host_id: string, selected_users: string[]) =>
-  emit_event(SOCKET_EVENT.EMIT_CREATE_ROOM, { host_id, selected_users });
-
-// 일대일 채팅방 퇴장
-export const leave_room = (user_id: string, room_id: string) =>
-  emit_event(SOCKET_EVENT.EMIT_LEAVE_ROOM, { user_id, room_id });
