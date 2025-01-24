@@ -1,15 +1,15 @@
-import { SOCKET_EVENT } from "@/shared/socket_event_names";
 import Message from "../model/Message";
 import Status from "../model/Status";
 import {
   CreateRoomPayload,
   LeaveRoomPayload,
-  ResponseDTO,
+  ResponsePayload,
   RoomCreatedPayload,
-  SendDTO,
+  SendPayload,
 } from "../api/dto";
+import { SOCKET_EVENT } from "@/shared/socket_constants";
 
-export const response_dto_to_message = (dto: ResponseDTO, is_system?: boolean): Message => {
+export const response_dto_to_message = (dto: ResponsePayload, is_system?: boolean): Message => {
   const { content, senderId } = dto;
   return new Message(senderId, [content], is_system);
 };
@@ -20,12 +20,12 @@ export const message_to_send_dto = ({
 }: {
   room_id: string;
   message: Message;
-}): SendDTO => {
+}): SendPayload => {
   return {
     roomId: room_id,
     senderId: message.name,
     content: message.text.join("\n"),
-  } as SendDTO;
+  } as SendPayload;
 };
 
 export const to_create_room_payload = ({

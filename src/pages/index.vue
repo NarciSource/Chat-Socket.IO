@@ -16,7 +16,7 @@ import { storeToRefs } from "pinia";
 
 import Room from "@/features/room";
 import Chat from "@/features/chat";
-import { useRoomStore } from "@/features/room/store/room";
+import useRoomStore from "@/features/room/store/useRoomStore";
 
 // feature간 데이터 공유
 const { connecting, room_id, my_nick } = storeToRefs(useRoomStore());

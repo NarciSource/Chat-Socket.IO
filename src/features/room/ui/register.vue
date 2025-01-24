@@ -18,7 +18,7 @@
 import { storeToRefs } from "pinia";
 
 import { connect } from "@/entities/chat/service/socketService";
-import { useRoomStore } from "../store/room";
+import useRoomStore from "../store/useRoomStore";
 
 const { my_nick, connecting } = storeToRefs(useRoomStore());
 

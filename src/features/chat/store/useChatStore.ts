@@ -1,9 +1,9 @@
 import { computed, reactive, ref } from "vue";
 import { defineStore } from "pinia";
 
-import Message from "@/entities/chat/model/Message";
+import { Message } from "@/entities/chat/model";
 
-export const useChatStore = defineStore("chat", () => {
+export default defineStore("chat", () => {
   const connecting = ref(false); // 소켓 연결 여부
   const room_id = ref<string>("");
   const my_nick = ref<string>("");
@@ -20,7 +20,6 @@ export const useChatStore = defineStore("chat", () => {
 
   // 메시지 삽입 함수
   const insert_message = (message: Message) => {
-    console.log("insert_message", message);
     // 마지막 메시지
     const last_index = messages.value.length - 1;
     const last_message = messages.value[last_index];

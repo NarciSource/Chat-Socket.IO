@@ -15,7 +15,7 @@ import {
   message_received,
   system_message_received,
 } from "../service/event_helper";
-import { useChatStore } from "../store/chat";
+import useChatStore from "../store/useChatStore";
 
 const { insert_message } = useChatStore();
 const { connecting } = storeToRefs(useChatStore());

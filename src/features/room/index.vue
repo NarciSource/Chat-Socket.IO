@@ -1,11 +1,11 @@
 <template>
   <drawer-layout>
-    <submit-user />
+    <register />
 
     <make-room />
   </drawer-layout>
 </template>
 
 <script setup lang="ts">
-import { DrawerLayout, MakeRoom, SubmitUser } from "./ui";
+import { DrawerLayout, MakeRoom, Register } from "./ui";
 </script>

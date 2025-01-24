@@ -1,9 +1,9 @@
-export type ResponseDTO = {
+export type ResponsePayload = {
   senderId: string;
   content: string;
 };
 
-export type SendDTO = {
+export type SendPayload = {
   roomId: string; // 메시지를 전송할 방
   senderId: string; // 보낸 사람
   content: string; // 메시지 내용

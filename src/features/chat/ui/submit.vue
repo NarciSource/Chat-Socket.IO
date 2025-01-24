@@ -7,9 +7,9 @@
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
-import Message from "@/entities/chat/model/Message";
+import { Message } from "@/entities/chat/model";
 import { send_message } from "../service/event_helper";
-import { useChatStore } from "../store/chat";
+import useChatStore from "../store/useChatStore";
 
 // 반응형 변수
 const message_input = ref("");

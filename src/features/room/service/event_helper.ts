@@ -1,5 +1,5 @@
+import { SOCKET_EVENT } from "@/shared/socket_constants";
 import { emit_event, subscribe_on } from "@/entities/chat/service/socketService";
-import { SOCKET_EVENT } from "@/shared/socket_event_names";
 
 type Callback = (data: any) => void;
 

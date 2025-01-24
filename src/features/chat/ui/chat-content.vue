@@ -14,7 +14,7 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 
-import { useChatStore } from "../store/chat";
+import useChatStore from "../store/useChatStore";
 
 const { my_nick, messages, query } = storeToRefs(useChatStore());
 

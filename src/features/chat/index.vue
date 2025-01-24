@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { useChatStore } from "./store/chat";
+import useChatStore from "./store/useChatStore";
 import { Connect, ChatContent, Title, Submit, Search, Save } from "./ui";
 
 const store = useChatStore();

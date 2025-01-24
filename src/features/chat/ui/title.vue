@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import { useChatStore } from "../store/chat";
+import useChatStore from "../store/useChatStore";
 
 const { searching, room_id } = storeToRefs(useChatStore());
 </script>

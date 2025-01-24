@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import { saveAs } from "file-saver";
 
-import { useChatStore } from "../store/chat";
+import useChatStore from "../store/useChatStore";
 
 const store = useChatStore();
 

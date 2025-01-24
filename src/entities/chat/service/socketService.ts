@@ -1,7 +1,7 @@
 import { io, Socket } from "socket.io-client";
 
 import { accessToken } from "@/shared/tokens";
-import { SOCKET_EVENT, SOCKET_SERVER_URL } from "@/shared/socket_event_names";
+import { SOCKET_EVENT, SOCKET_SERVER_URL } from "@/shared/socket_constants";
 import { mappers_dictionary } from "./mapper";
 
 let socket: Socket;
@@ -26,14 +26,13 @@ export function connect() {
   return { register, success };
 }
 
+// 소켓 연결 해제
 export function disconnect() {
   socket?.disconnect();
 }
 
-type Callback = (data: any) => void;
-
 // 동적 이벤트 리스너 등록
-export const subscribe_on = (event: string, callback: Callback) =>
+export const subscribe_on = (event: string, callback: (data: any) => void) =>
   socket.on(event, (data: any) => {
     const mapper = mappers_dictionary.get(event);
     callback(mapper?.(data) ?? data);

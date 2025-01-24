@@ -13,11 +13,11 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { ref, watch } from "vue";
+import { ref, watchEffect } from "vue";
 
-import Status from "@/entities/chat/model/Status";
+import { Status } from "@/entities/chat/model";
 import { make_room, room_created } from "../service/event_helper";
-import { useRoomStore } from "../store/room";
+import useRoomStore from "../store/useRoomStore";
 import UserList from "./user-list.vue";
 
 const { connecting, my_nick, room_id } = storeToRefs(useRoomStore());
@@ -34,12 +34,10 @@ const make = () => {
   make_room(my_nick.value, selected_users.value);
 };
 
-watch(
-  () => connecting.value,
-  (connecting) => {
-    if (connecting) {
-      room_created((status: Status) => (room_id.value = status.room_id)); // 방 정보 업데이트
-    }
-  },
-);
+watchEffect(() => {
+  if (!!connecting.value) {
+    // 방 생성 후 이벤트 리스너 등록
+    room_created((status: Status) => (room_id.value = status.room_id)); // 방 정보 업데이트
+  }
+});
 </script>
