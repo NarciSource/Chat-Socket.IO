@@ -1,25 +1,25 @@
 <template>
   <div class="q-pa-md row justify-center">
-    <q-card dark bordered class="card">
+    <q-card dark bordered class="shadow bg-grey-9">
       <q-card-section class="row items-center">
         <search />
         <Title />
         <q-btn flat icon="more_vert" class="q-pa-none" @click="open_actions = !open_actions" />
       </q-card-section>
 
-      <q-card-section class="q-pa-none" horizontal>
-        <q-card-section class="fit">
-          <connect>
+      <connect>
+        <q-card-section class="q-pa-none" horizontal>
+          <q-card-section class="fit">
             <q-scroll-area>
               <chat-content />
             </q-scroll-area>
-          </connect>
-        </q-card-section>
+          </q-card-section>
 
-        <q-card-actions v-show="open_actions" vertical>
-          <actions />
-        </q-card-actions>
-      </q-card-section>
+          <q-card-actions v-show="open_actions" vertical>
+            <actions />
+          </q-card-actions>
+        </q-card-section>
+      </connect>
 
       <q-card-section class="row items-end justify-end no-margin q-gutter-x-md bg-white">
         <submit />
@@ -49,8 +49,7 @@ store.my_nick = my_nick!;
 </script>
 
 <style scoped>
-.card {
-  background-color: #464647;
+.shadow {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 .q-card__section {
