@@ -1,6 +1,6 @@
 <template>
   <div class="q-mx-auto text-h6" :style="{ visibility: searching ? 'hidden' : 'visible' }">
-    {{ room!.participants }}
+    {{ room!.name }}
   </div>
 </template>
 

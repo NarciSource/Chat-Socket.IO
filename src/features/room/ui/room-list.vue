@@ -8,7 +8,9 @@
       @click="() => enter(room)"
     >
       <q-item-section>
-        <q-item-label>{{ room.participants }}</q-item-label>
+        <q-item-label>
+          <q-input v-model="room.name" title="방 제목 수정" borderless dense />
+        </q-item-label>
       </q-item-section>
 
       <q-item-section side v-show="room.is_new">
