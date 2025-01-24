@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 
 import { SOCKET_EVENT } from "@/shared/socket_event_names";
@@ -31,9 +31,19 @@ const make = () => {
     return;
   }
 
-  subscribe_on(SOCKET_EVENT.ON_ROOM_CREATED, (status: Status) => (room_id.value = status.room_id)); // 방 정보 업데이트
-
   // 다대다 채팅으로 방 생성하고 초대
   make_room(my_nick.value, selected_users.value);
 };
+
+watch(
+  () => connecting.value,
+  (connecting) => {
+    if (connecting) {
+      subscribe_on(
+        SOCKET_EVENT.ON_ROOM_CREATED,
+        (status: Status) => (room_id.value = status.room_id),
+      ); // 방 정보 업데이트
+    }
+  },
+);
 </script>
