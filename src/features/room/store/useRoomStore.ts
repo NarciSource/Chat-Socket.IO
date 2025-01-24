@@ -3,8 +3,9 @@ import { defineStore } from "pinia";
 
 export default defineStore("room", () => {
   const connecting = ref(false);
-  const room_id = ref<string>();
+  const rooms = ref<string[]>([]);
+  const selected_room = ref<string>();
   const my_nick = ref("");
 
-  return { room_id, my_nick, connecting };
+  return { selected_room, rooms, my_nick, connecting };
 });

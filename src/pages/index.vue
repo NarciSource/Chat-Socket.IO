@@ -19,7 +19,7 @@ import Chat from "@/features/chat";
 import useRoomStore from "@/features/room/store/useRoomStore";
 
 // feature간 데이터 공유
-const { connecting, room_id, my_nick } = storeToRefs(useRoomStore());
+const { connecting, selected_room: room_id, my_nick } = storeToRefs(useRoomStore());
 </script>
 
 <style>

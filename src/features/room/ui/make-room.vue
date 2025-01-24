@@ -20,7 +20,7 @@ import { make_room, room_created } from "../service/event_helper";
 import useRoomStore from "../store/useRoomStore";
 import UserList from "./user-list.vue";
 
-const { connecting, my_nick, room_id } = storeToRefs(useRoomStore());
+const { connecting, my_nick, rooms } = storeToRefs(useRoomStore());
 const selected_users = ref<string[]>([]);
 
 // 방 생성
@@ -37,7 +37,7 @@ const make = () => {
 watchEffect(() => {
   if (!!connecting.value) {
     // 방 생성 후 이벤트 리스너 등록
-    room_created((status: Status) => (room_id.value = status.room_id)); // 방 정보 업데이트
+    room_created((status: Status) => rooms.value.push(status.room_id)); // 방 정보 업데이트
   }
 });
 </script>
