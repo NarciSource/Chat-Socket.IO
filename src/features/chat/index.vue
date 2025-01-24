@@ -4,16 +4,22 @@
       <q-card-section class="row items-center">
         <search />
         <Title />
-        <save />
+        <q-btn flat icon="more_vert" class="q-pa-none" @click="open_actions = !open_actions" />
       </q-card-section>
 
-      <connect>
-        <q-scroll-area>
-          <q-card-section class="q-px-md">
-            <chat-content />
-          </q-card-section>
-        </q-scroll-area>
-      </connect>
+      <q-card-section class="q-pa-none" horizontal>
+        <q-card-section class="fit">
+          <connect>
+            <q-scroll-area>
+              <chat-content />
+            </q-scroll-area>
+          </connect>
+        </q-card-section>
+
+        <q-card-actions v-show="open_actions" vertical>
+          <actions />
+        </q-card-actions>
+      </q-card-section>
 
       <q-card-section class="row items-end justify-end no-margin q-gutter-x-md bg-white">
         <submit />
@@ -25,7 +31,8 @@
 <script setup lang="ts">
 import { Room } from "@/entities/chat/model";
 import useChatStore from "./store/useChatStore";
-import { Connect, ChatContent, Title, Submit, Search, Save } from "./ui";
+import { Connect, ChatContent, Title, Submit, Search, Actions } from "./ui";
+import { ref } from "vue";
 
 const store = useChatStore();
 const { connecting, room, my_nick } = defineProps({
@@ -33,6 +40,7 @@ const { connecting, room, my_nick } = defineProps({
   room: Room,
   my_nick: String,
 });
+const open_actions = ref(false);
 
 // store에 props로 업데이트
 store.connecting = connecting;

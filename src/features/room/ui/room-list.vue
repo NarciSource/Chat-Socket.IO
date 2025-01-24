@@ -10,6 +10,10 @@
       <q-item-section>
         <q-item-label>{{ room.participants }}</q-item-label>
       </q-item-section>
+
+      <q-item-section side v-show="room.is_new">
+        <q-badge rounded color="primary" label="New" />
+      </q-item-section>
     </q-item>
   </q-list>
 </template>
@@ -24,5 +28,6 @@ const { rooms, selected_room } = storeToRefs(useRoomStore());
 
 const enter = (room: Room) => {
   selected_room.value = room;
+  room.is_new = false;
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <q-btn flat class="absolute-right q-mb-xs" icon="save" title="파일로 저장" @click="save" />
+  <q-btn flat color="blue" icon="save" title="파일로 저장" @click="save" />
 </template>
 
 <script setup lang="ts">
