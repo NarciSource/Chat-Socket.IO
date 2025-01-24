@@ -2,15 +2,7 @@ import { io, Socket } from "socket.io-client";
 
 import { accessToken } from "@/shared/tokens";
 import { SOCKET_EVENT, SOCKET_SERVER_URL } from "@/shared/socket_event_names";
-import Message from "../model/Message";
-import { SendDTO } from "../api/dto";
-import {
-  response_dto_to_message,
-  message_to_send_dto,
-  room_created_payload_to_status,
-  to_create_room_payload,
-  to_leave_room_payload,
-} from "./mapper";
+import { mappers_dictionary } from "./mapper";
 
 let socket: Socket;
 // 소켓 초기화
@@ -39,17 +31,6 @@ export function disconnect() {
 }
 
 type Callback = (data: any) => void;
-type Mapper = (data: any) => any;
-
-// 매핑헬퍼서비스 사전
-const mappers_dictionary = new Map<string, Mapper>([
-  [SOCKET_EVENT.ON_ROOM_CREATED, room_created_payload_to_status],
-  [SOCKET_EVENT.ON_MESSAGE, response_dto_to_message],
-  [SOCKET_EVENT.ON_SYSTEM, response_dto_to_message],
-  [SOCKET_EVENT.EMIT_MESSAGE, message_to_send_dto],
-  [SOCKET_EVENT.EMIT_CREATE_ROOM, to_create_room_payload],
-  [SOCKET_EVENT.EMIT_LEAVE_ROOM, to_leave_room_payload],
-]);
 
 // 동적 이벤트 리스너 등록
 export const subscribe_on = (event: string, callback: Callback) =>
@@ -58,6 +39,7 @@ export const subscribe_on = (event: string, callback: Callback) =>
     callback(mapper?.(data) ?? data);
   });
 
+// 동적 이벤트 이미터 등록
 export const emit_event = (event: string, data: any) => {
   const mapper = mappers_dictionary.get(event);
   socket.emit(event, mapper?.(data) ?? data);
