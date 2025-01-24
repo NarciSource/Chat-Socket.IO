@@ -1,11 +1,12 @@
 import { Message } from "../../model";
 import { ResponsePayload, SendPayload } from "../../api/dto";
 
-export const response_dto_to_message = (
-  { content, senderId }: ResponsePayload,
-  is_system?: boolean,
-): Message => {
-  return new Message(senderId, [content], is_system);
+export const response_dto_to_message = ({ content, senderId }: ResponsePayload): Message => {
+  return new Message(senderId, [content]);
+};
+
+export const response_dto_to_system_message = ({ content, senderId }: ResponsePayload): Message => {
+  return new Message(senderId, [content], true);
 };
 
 export const message_to_send_dto = ({
