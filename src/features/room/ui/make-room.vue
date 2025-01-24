@@ -37,7 +37,7 @@ const make = () => {
 watchEffect(() => {
   if (!!connecting.value) {
     // 방 생성 후 이벤트 리스너 등록
-    room_created((room: Room) => rooms.value.push(room)); // 방 정보 업데이트
+    room_created((room: Room) => rooms.value.add(room)); // 방 정보 업데이트
   }
 });
 </script>

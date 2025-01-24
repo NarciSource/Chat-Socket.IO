@@ -14,6 +14,10 @@
       <q-item-section side v-show="room.is_new">
         <q-badge rounded color="primary" label="New" />
       </q-item-section>
+
+      <q-item-section side>
+        <leave-room :room="room" />
+      </q-item-section>
     </q-item>
   </q-list>
 </template>
@@ -23,6 +27,7 @@ import { storeToRefs } from "pinia";
 
 import { Room } from "@/entities/chat/model";
 import useRoomStore from "../store/useRoomStore";
+import LeaveRoom from "./leave-room.vue";
 
 const { rooms, selected_room } = storeToRefs(useRoomStore());
 
