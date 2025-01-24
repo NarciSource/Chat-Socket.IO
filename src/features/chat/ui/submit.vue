@@ -7,8 +7,9 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 
+import { SOCKET_EVENT } from "@/shared/socket_event_names";
 import Message from "@/entities/chat/model/Message";
-import { send_message } from "@/entities/chat/service/socketService";
+import { emit_event } from "@/entities/chat/service/socketService";
 import { useChatStore } from "../store/chat";
 
 // 반응형 변수
@@ -21,7 +22,7 @@ const send = () => {
   const message = new Message(my_nick.value, [message_input.value]);
 
   // 메시지 전송
-  send_message(room_id.value, message);
+  emit_event(SOCKET_EVENT.EMIT_MESSAGE, { room_id: room_id.value, message });
 
   // 입력폼 초기화
   message_input.value = "";

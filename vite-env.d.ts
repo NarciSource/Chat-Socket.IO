@@ -10,6 +10,8 @@ interface ImportMetaEnv {
   readonly VITE_SOCKET_ON_ROOM_CREATED: string;
   readonly VITE_SOCKET_EMIT_REGISTER: string;
   readonly VITE_SOCKET_EMIT_MESSAGE: string;
+  readonly VITE_SOCKET_EMIT_CREATE_ROOM: string;
+  readonly VITE_SOCKET_EMIT_LEAVE_ROOM: string;
   readonly VITE_AUTH_PARCEL_URL: string;
 }
 

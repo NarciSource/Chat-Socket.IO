@@ -13,7 +13,13 @@ export const response_dto_to_message = (dto: ResponseDTO, is_system?: boolean): 
   return new Message(senderId, [content], is_system);
 };
 
-export const message_to_send_dto = (room_id: string, message: Message): SendDTO => {
+export const message_to_send_dto = ({
+  room_id,
+  message,
+}: {
+  room_id: string;
+  message: Message;
+}): SendDTO => {
   return {
     senderId: message.name,
     recipientId: room_id,
@@ -21,10 +27,13 @@ export const message_to_send_dto = (room_id: string, message: Message): SendDTO 
   } as SendDTO;
 };
 
-export const to_create_room_payload = (
-  host_id: string,
-  selected_users: string[],
-): CreateRoomPayload => {
+export const to_create_room_payload = ({
+  host_id,
+  selected_users,
+}: {
+  host_id: string;
+  selected_users: string[];
+}): CreateRoomPayload => {
   return { hostId: host_id, participants: selected_users };
 };
 
@@ -35,6 +44,12 @@ export const room_created_payload_to_status = ({
   return new Status(roomId, participants);
 };
 
-export const to_leave_room_payload = (user_id: string, room_id: string): LeaveRoomPayload => {
+export const to_leave_room_payload = ({
+  user_id,
+  room_id,
+}: {
+  user_id: string;
+  room_id: string;
+}): LeaveRoomPayload => {
   return { userId: user_id, roomId: room_id };
 };

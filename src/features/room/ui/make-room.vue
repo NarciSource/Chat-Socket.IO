@@ -17,7 +17,7 @@ import { storeToRefs } from "pinia";
 
 import { SOCKET_EVENT } from "@/shared/socket_event_names";
 import Status from "@/entities/chat/model/Status";
-import { subscribe, make_room } from "@/entities/chat/service/socketService";
+import { subscribe_on, make_room } from "@/entities/chat/service/socketService";
 import { useRoomStore } from "../store/room";
 import UserList from "./user-list.vue";
 
@@ -31,7 +31,7 @@ const make = () => {
     return;
   }
 
-  subscribe(SOCKET_EVENT.ON_ROOM_CREATED, (status: Status) => (room_id.value = status.room_id)); // 방 정보 업데이트
+  subscribe_on(SOCKET_EVENT.ON_ROOM_CREATED, (status: Status) => (room_id.value = status.room_id)); // 방 정보 업데이트
 
   // 다대다 채팅으로 방 생성하고 초대
   make_room(my_nick.value, selected_users.value);
