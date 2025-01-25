@@ -5,10 +5,10 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { ref, watchEffect } from "vue";
+import { storeToRefs } from "pinia";
 
-import { Room } from "@/entities/chat/model";
+import { Room, User } from "@/entities/chat/model";
 import UserListPopup from "@/features/users/index.vue";
 import { make_room, room_created } from "../service/event_helper";
 import useRoomStore from "../store/useRoomStore";
@@ -16,9 +16,12 @@ import useRoomStore from "../store/useRoomStore";
 const { connecting, my_nick, rooms } = storeToRefs(useRoomStore());
 const show = ref(false);
 
-const make = (selected_users: string[]) => {
+const make = (selected_users: User[]) => {
   // 다대다 채팅으로 방 생성하고 초대
-  make_room(my_nick.value, selected_users);
+  make_room(
+    my_nick.value,
+    selected_users.map((user) => user.name),
+  );
   // 팝업 닫기
   show.value = false;
 };
