@@ -3,6 +3,12 @@
     <q-popup-proxy>
       <q-list>
         <q-item v-for="participant in room!.participants">
+          <q-item-section avatar>
+            <q-avatar>
+              <img :src="participant.avatar_url" />
+            </q-avatar>
+          </q-item-section>
+
           <q-item-section>
             <q-item-label>{{ participant.name }}</q-item-label>
           </q-item-section>

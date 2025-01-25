@@ -1,7 +1,7 @@
 <template>
   <q-item
     tag="label"
-    v-for="([user, status], index) in checks_map"
+    v-for="[user, status] in checks_map"
     :active="status.check"
     active-class="bg-teal-2"
   >
@@ -11,7 +11,7 @@
 
     <q-item-section avatar>
       <q-avatar>
-        <img :src="`https://cdn.quasar.dev/img/avatar${index + 1}.jpg`" />
+        <img :src="user.avatar_url" />
       </q-avatar>
     </q-item-section>
 

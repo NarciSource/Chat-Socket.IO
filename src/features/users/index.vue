@@ -13,7 +13,7 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 
-import { User } from "@/entities/chat/model";
+import { User, sample_users } from "@/entities/chat/model";
 import useUsersStore from "./store/useUsersStore";
 import userList from "./ui/user-list.vue";
 
@@ -25,5 +25,5 @@ const show = ref(false);
 
 // 임시 사용자 목록 초기화
 const { users } = storeToRefs(useUsersStore());
-users.value = ["user1", "user2", "user3", "user4", "user5", "user6"].map((user) => new User(user));
+users.value = sample_users;
 </script>
