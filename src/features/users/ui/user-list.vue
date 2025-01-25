@@ -1,7 +1,7 @@
 <template>
-  <q-item tag="label" v-for="(user, id) in users" :active="checks[user]" active-class="bg-teal-2">
+  <q-item tag="label" v-for="(user, id) in users" :active="checks[id]" active-class="bg-teal-2">
     <q-item-section side v-show="false">
-      <q-checkbox v-model="checks[user]" />
+      <q-checkbox v-model="checks[id]" />
     </q-item-section>
 
     <q-item-section avatar>
@@ -22,8 +22,12 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 
-const users = ref(["user1", "user2", "user3"]);
+import useUsersStore from "../store/useUsersStore";
+
+const { users } = storeToRefs(useUsersStore());
+
 const checks = ref(Object.fromEntries(users.value.map((user) => [user, false])));
 const selected_users = defineModel<string[]>({ required: true });
 
