@@ -7,11 +7,11 @@ import { saveAs } from "file-saver";
 
 import useChatStore from "../store/useChatStore";
 
-const store = useChatStore();
+const { messages, room } = useChatStore();
 
 const save = () => {
-  const file_name = `PickMe-Chat-${new Date().toISOString()}.json`;
-  const blob = new Blob([JSON.stringify(store.messages)], { type: "application/json" });
+  const file_name = `PickMe-Chat-${room?.name}-${new Date().toISOString()}.json`;
+  const blob = new Blob([JSON.stringify(messages)], { type: "application/json" });
 
   saveAs(blob, file_name);
 };

@@ -6,7 +6,6 @@ import { Message, Room } from "@/entities/chat/model";
 export default defineStore("chat", () => {
   const connecting = ref(false); // 소켓 연결 여부
   const room = ref<Room>(); // 현재 방 정보
-  const room_id = computed(() => room.value!.id);
   const my_nick = ref<string>(""); // 사용자 닉네임
   const query = ref(""); // 검색어
   const searching = ref(false); // 검색 중 여부
@@ -33,5 +32,5 @@ export default defineStore("chat", () => {
     }
   };
 
-  return { connecting, room, room_id, my_nick, messages, query, searching, insert_message };
+  return { connecting, room, my_nick, messages, query, searching, insert_message };
 });

@@ -13,7 +13,7 @@ import useChatStore from "../store/useChatStore";
 
 // 반응형 변수
 const message_input = ref("");
-const { my_nick, room_id } = storeToRefs(useChatStore());
+const { my_nick, room } = storeToRefs(useChatStore());
 
 // 메시지 전송 함수
 const send = () => {
@@ -21,7 +21,7 @@ const send = () => {
   const message = new Message(my_nick.value, [message_input.value]);
 
   // 메시지 전송
-  send_message(room_id.value, message);
+  send_message(room.value!.id, message);
 
   // 입력폼 초기화
   message_input.value = "";

@@ -12,12 +12,12 @@ import UserListPopup from "@/features/users/index.vue";
 import useChatStore from "../store/useChatStore";
 import { invite_user } from "../service/event_helper";
 
-const { room_id } = useChatStore();
+const { room } = useChatStore();
 const show = ref(false);
 
 const invite = (selected_users: User[]) => {
   const last = selected_users.pop()?.name;
-  invite_user(room_id, last!);
+  invite_user(room!.id, last!);
   // 팝업 닫기
   show.value = false;
 };
