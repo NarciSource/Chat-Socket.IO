@@ -1,5 +1,8 @@
 <template>
-  <div class="q-mx-auto text-h6" :style="{ visibility: searching ? 'hidden' : 'visible' }">
+  <div
+    class="q-mx-auto q-px-xl text-h6 ellipsis"
+    :style="{ visibility: searching ? 'hidden' : 'visible' }"
+  >
     {{ room!.name }}
   </div>
 </template>

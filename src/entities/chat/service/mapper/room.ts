@@ -1,4 +1,4 @@
-import { Room } from "../../model";
+import { Room, User } from "../../model";
 import {
   CreateRoomPayload,
   LeaveRoomPayload,
@@ -40,5 +40,8 @@ export const room_created_payload_to_status = ({
   roomId,
   participants,
 }: RoomCreatedPayload): Room => {
-  return new Room(roomId, participants);
+  return new Room(
+    roomId,
+    participants.map((name) => new User(name)),
+  );
 };
