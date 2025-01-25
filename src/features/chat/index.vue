@@ -1,39 +1,18 @@
 <template>
-  <div class="q-pa-md row justify-center">
-    <q-card dark bordered class="shadow bg-grey-9">
-      <q-card-section class="row items-center">
-        <search />
-        <Title />
-        <q-btn flat icon="more_vert" class="q-pa-none" @click="open_actions = !open_actions" />
-      </q-card-section>
-
-      <connect>
-        <q-card-section class="q-pa-none" horizontal>
-          <q-card-section class="fit">
-            <q-scroll-area>
-              <chat-content />
-            </q-scroll-area>
-          </q-card-section>
-
-          <q-card-actions v-show="open_actions" vertical>
-            <actions />
-          </q-card-actions>
-        </q-card-section>
-      </connect>
-
-      <q-card-section class="row items-end justify-end no-margin q-gutter-x-md bg-white">
-        <submit />
-      </q-card-section>
-    </q-card>
-  </div>
+  <layout>
+    <template #header><search /><Title /></template>
+    <template #content><content /></template>
+    <template #side><actions /></template>
+    <template #footer><submit /></template>
+  </layout>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { watch } from "vue";
 
 import { Room } from "@/entities/chat/model";
 import useChatStore from "./store/useChatStore";
-import { Connect, ChatContent, Title, Submit, Search, Actions } from "./ui";
+import { Actions, Content, Layout, Search, Submit, Title } from "./ui";
 
 const store = useChatStore();
 const { connecting, room, my_nick } = defineProps({
@@ -41,7 +20,6 @@ const { connecting, room, my_nick } = defineProps({
   room: Room,
   my_nick: String,
 });
-const open_actions = ref(false);
 
 // store에 props를 업데이트
 watch(
@@ -54,15 +32,3 @@ watch(
   { immediate: true, deep: true },
 );
 </script>
-
-<style scoped>
-.shadow {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-.q-card__section {
-  max-width: 300px;
-}
-.q-scrollarea {
-  height: 500px;
-}
-</style>
