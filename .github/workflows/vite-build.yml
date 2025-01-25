@@ -43,11 +43,13 @@ jobs:
           VITE_SOCKET_ON_SYSTEM: ${{ vars.VITE_SOCKET_ON_SYSTEM }}
           VITE_SOCKET_ON_MESSAGE: ${{ vars.VITE_SOCKET_ON_MESSAGE }}
           VITE_SOCKET_ON_ROOM_CREATED: ${{ vars.VITE_SOCKET_ON_ROOM_CREATED }}
+          VITE_SOCKET_ON_TYPING: ${{ vars.VITE_SOCKET_ON_TYPING }}
           VITE_SOCKET_EMIT_REGISTER: ${{ vars.VITE_SOCKET_EMIT_REGISTER }}
           VITE_SOCKET_EMIT_MESSAGE: ${{ vars.VITE_SOCKET_EMIT_MESSAGE }}
           VITE_SOCKET_EMIT_CREATE_ROOM: ${{ vars.VITE_SOCKET_EMIT_CREATE_ROOM }}
           VITE_SOCKET_EMIT_LEAVE_ROOM: ${{ vars.VITE_SOCKET_EMIT_LEAVE_ROOM }}
           VITE_SOCKET_EMIT_INVITE_ROOM: ${{ vars.VITE_SOCKET_EMIT_INVITE_ROOM }}
+          VITE_SOCKET_EMIT_TYPING: ${{ vars.VITE_SOCKET_EMIT_TYPING }}
         run: |
           npm run build # Vite 프로젝트 빌드
           npm run build:single-spa # single-spa 앱 빌드
