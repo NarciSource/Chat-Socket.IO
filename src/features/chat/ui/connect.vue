@@ -14,10 +14,11 @@ import {
   disconnected,
   message_received,
   system_message_received,
+  handle_typing_message,
 } from "../service/event_helper";
 import useChatStore from "../store/useChatStore";
 
-const { insert_message } = useChatStore();
+const { insert_message, alarm_typing } = useChatStore();
 const { connecting } = storeToRefs(useChatStore());
 
 watchEffect(() => {
@@ -28,6 +29,7 @@ watchEffect(() => {
     disconnected(() => (connecting.value = false)); // 연결 종료
     message_received(insert_message); // 일반 메시지 수신
     system_message_received(insert_message); // 시스템 메시지 수신
+    handle_typing_message(alarm_typing); // 타이핑 알림
   }
 });
 </script>

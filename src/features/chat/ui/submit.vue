@@ -5,10 +5,10 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 import { Message } from "@/entities/chat/model";
-import { send_message } from "../service/event_helper";
+import { send_message, typing_message } from "../service/event_helper";
 import useChatStore from "../store/useChatStore";
 
 // 반응형 변수
@@ -26,4 +26,9 @@ const send = () => {
   // 입력폼 초기화
   message_input.value = "";
 };
+
+// 타이핑 이벤트
+watch(message_input, () => {
+  typing_message(room.value!.id, my_nick.value);
+});
 </script>

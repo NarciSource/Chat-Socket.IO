@@ -8,6 +8,9 @@
     :sent="message.name === my_nick"
     :bg-color="message.name === my_nick ? 'yellow' : 'white'"
   />
+  <q-chat-message v-show="!!typing_user" :name="typing_user?.name" bg-color="white">
+    <q-spinner-dots size="1rem" />
+  </q-chat-message>
 </template>
 
 <script setup lang="ts">
@@ -16,7 +19,7 @@ import { storeToRefs } from "pinia";
 
 import useChatStore from "../store/useChatStore";
 
-const { my_nick, messages, query } = storeToRefs(useChatStore());
+const { my_nick, messages, query, typing_user } = storeToRefs(useChatStore());
 
 // 검색 결과 필터링
 const filtered_messages = computed(() => {

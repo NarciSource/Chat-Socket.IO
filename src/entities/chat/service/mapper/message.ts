@@ -22,3 +22,10 @@ export const message_to_send_dto = ({
     content: message.text.join("\n"),
   } as SendPayload;
 };
+
+export const to_typing_payload = ({ room_id, user_id }: { room_id: string; user_id: string }) => ({
+  roomId: room_id,
+  userId: user_id,
+});
+
+export const response_typing_payload = (userId: string) => userId;

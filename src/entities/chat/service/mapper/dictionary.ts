@@ -8,17 +8,23 @@ import {
   response_dto_to_message,
   response_dto_to_system_message,
   message_to_send_dto,
+  to_typing_payload,
+  response_typing_payload,
 } from "./message";
 
 type Mapper = (data: any) => any;
 
 // 매핑헬퍼서비스 사전
-export const mappers_dictionary = new Map<string, Mapper>([
+export const on_mappers_dictionary = new Map<string, Mapper>([
   [SOCKET_EVENT.ON_ROOM_CREATED, room_created_payload_to_status],
   [SOCKET_EVENT.ON_MESSAGE, response_dto_to_message],
   [SOCKET_EVENT.ON_SYSTEM, response_dto_to_system_message],
+  [SOCKET_EVENT.ON_TYPING, response_typing_payload],
+]);
+export const emit_mappers_dictionary = new Map<string, Mapper>([
   [SOCKET_EVENT.EMIT_MESSAGE, message_to_send_dto],
   [SOCKET_EVENT.EMIT_CREATE_ROOM, to_create_room_payload],
   [SOCKET_EVENT.EMIT_LEAVE_ROOM, to_leave_room_payload],
   [SOCKET_EVENT.EMIT_INVITE_ROOM, to_leave_room_payload],
+  [SOCKET_EVENT.EMIT_TYPING, to_typing_payload],
 ]);

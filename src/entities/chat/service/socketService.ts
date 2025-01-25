@@ -2,7 +2,7 @@ import { io, Socket } from "socket.io-client";
 
 import { accessToken } from "@/shared/tokens";
 import { SOCKET_EVENT, SOCKET_SERVER_URL } from "@/shared/socket_constants";
-import { mappers_dictionary } from "./mapper/dictionary";
+import { emit_mappers_dictionary, on_mappers_dictionary } from "./mapper/dictionary";
 
 let socket: Socket;
 // 소켓 초기화
@@ -34,12 +34,12 @@ export function disconnect() {
 // 동적 이벤트 리스너 등록
 export const subscribe_on = (event: string, callback: (data: any) => void) =>
   socket.on(event, (data: any) => {
-    const mapper = mappers_dictionary.get(event);
+    const mapper = on_mappers_dictionary.get(event);
     callback(mapper?.(data) ?? data);
   });
 
 // 동적 이벤트 이미터 등록
 export const emit_event = (event: string, data: any) => {
-  const mapper = mappers_dictionary.get(event);
+  const mapper = emit_mappers_dictionary.get(event);
   socket.emit(event, mapper?.(data) ?? data);
 };

@@ -28,3 +28,8 @@ export type RoomCreatedPayload = {
   roomId: string;
   participants: string[];
 };
+
+export type TypingPayload = {
+  userId: string;
+  roomId: string;
+};

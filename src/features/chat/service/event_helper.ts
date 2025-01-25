@@ -21,3 +21,9 @@ export const message_received = (callback: Callback) =>
 
 export const system_message_received = (callback: Callback) =>
   subscribe_on(SOCKET_EVENT.ON_SYSTEM, callback);
+
+export const typing_message = (room_id: string, user_id: string) =>
+  emit_event(SOCKET_EVENT.EMIT_TYPING, { room_id, user_id });
+
+export const handle_typing_message = (callback: Callback) =>
+  subscribe_on(SOCKET_EVENT.ON_TYPING, callback);
