@@ -1,11 +1,11 @@
 <template>
-  <q-btn class="q-ma-md full-width" label="방 만들기" color="teal" text-color="white">
-    <q-popup-proxy>
+  <q-btn class="q-pa-md full-width" label="방 만들기" color="teal" text-color="white">
+    <q-popup-proxy v-model="show">
       <user-list v-model="selected_users" />
 
       <div class="q-ma-md row justify-end q-gutter-sm">
         <q-btn label="생성" color="teal" @click="make" />
-        <q-btn label="취소" />
+        <q-btn label="취소" @click="show = false" />
       </div>
     </q-popup-proxy>
   </q-btn>
@@ -22,21 +22,18 @@ import UserList from "./user-list.vue";
 
 const { connecting, my_nick, rooms } = storeToRefs(useRoomStore());
 const selected_users = ref<string[]>([]);
+const show = ref(false);
 
-// 방 생성
 const make = () => {
-  if (!connecting.value) {
-    alert("연결을 먼저 해주세요");
-    return;
-  }
-
   // 다대다 채팅으로 방 생성하고 초대
   make_room(my_nick.value, selected_users.value);
+  // 팝업 닫기
+  show.value = false;
 };
 
 watchEffect(() => {
   if (!!connecting.value) {
-    // 방 생성 후 이벤트 리스너 등록
+    // 방 생성 후의 이벤트 리스너 등록
     room_created((room: Room) => rooms.value.add(room)); // 방 정보 업데이트
   }
 });
