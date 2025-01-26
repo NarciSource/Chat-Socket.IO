@@ -1,7 +1,7 @@
 <template>
   <q-list>
     <q-item
-      v-for="room in rooms"
+      v-for="[, room] in rooms"
       :active="room === selected_room"
       active-class="bg-teal-2"
       clickable

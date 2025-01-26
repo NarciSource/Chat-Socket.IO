@@ -17,7 +17,7 @@ const leave = () => {
   leave_room(current_user.value!, room);
 
   // 방 목록에서 제거
-  rooms.value.delete(room);
+  rooms.value.delete(room.id);
 
   // 선택된 방이면 초기화
   if (selected_room.value === room) {

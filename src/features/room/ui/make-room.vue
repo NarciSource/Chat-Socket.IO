@@ -13,7 +13,7 @@ import UserListPopup from "@/features/users/index.vue";
 import { make_room, room_created } from "../service/event_helper";
 import useRoomStore from "../store/useRoomStore";
 
-const { connecting, current_user, rooms } = storeToRefs(useRoomStore());
+const { connecting, current_user, rooms, selected_room } = storeToRefs(useRoomStore());
 const show = ref(false);
 
 const make = (selected_users: User[]) => {
@@ -26,7 +26,11 @@ const make = (selected_users: User[]) => {
 watchEffect(() => {
   if (!!connecting.value) {
     // 방 생성 후의 이벤트 리스너 등록
-    room_created((room: Room) => rooms.value.add(room)); // 방 정보 업데이트
+    room_created((room: Room) => {
+      rooms.value.set(room.id, room); // 방 정보 업데이트
+
+      selected_room.value = room; // 선택 방 업데이트
+    });
   }
 });
 </script>

@@ -19,7 +19,9 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
+
 import useChatStore from "../store/useChatStore";
 
-const { room } = useChatStore();
+const { room } = storeToRefs(useChatStore());
 </script>
