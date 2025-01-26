@@ -1,9 +1,9 @@
 <template>
-  <q-layout view="lhh LpR lFf" container class="bg-grey-9 shadow-2 rounded-borders">
-    <q-header class="row q-ma-md items-center bg-grey-9">
+  <q-layout view="lHh LpR lFf" container class="bg-grey-9 shadow-2 rounded-borders">
+    <q-header class="row q-pa-md items-center bg-grey-9"> 
       <slot name="header" />
       <q-btn
-        class="absolute-right q-pa-xs"
+        class="absolute-right q-ma-md q-pa-xs"
         title="더보기"
         flat
         icon="more_vert"
@@ -22,29 +22,23 @@
     >
       <slot name="side" />
 
-      <div class="absolute" style="top: 55px; right: -17px">
+      <div class="absolute" style="top: 70px; right: -17px">
         <q-btn
           dense
           round
           unelevated
           color="accent"
-          icon="chevron_left"
+          :icon="mini_toggle_room ? 'chevron_right' : 'chevron_left'"
           @click="mini_toggle_room = !mini_toggle_room"
         />
       </div>
     </q-drawer>
 
-    <q-drawer
-      side="right"
-      v-model="toggle_toolbar"
-      class="bg-grey-9 q-pt-xl"
-      :width="75"
-      :breakpoint="500"
-    >
+    <q-drawer side="right" v-model="toggle_toolbar" class="bg-grey-9" :width="75" :breakpoint="500">
       <slot name="toolbar" />
     </q-drawer>
 
-    <q-page-container class="full-height">
+    <q-page-container class="full-height q-pa-md">
       <slot name="content" />
     </q-page-container>
 
@@ -75,5 +69,6 @@ const toggle_toolbar = ref(false);
 }
 ::v-deep(.scroll) {
   height: 100%;
+  overflow-x: hidden;
 }
 </style>

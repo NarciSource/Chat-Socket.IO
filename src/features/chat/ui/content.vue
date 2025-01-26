@@ -38,4 +38,7 @@ const filtered_messages = computed(() => {
 ::v-deep(.q-message-label) {
   word-break: break-word;
 }
+::v-deep(.q-message-name) {
+  color: white;
+}
 </style>

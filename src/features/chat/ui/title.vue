@@ -3,7 +3,7 @@
     class="q-mx-auto q-px-xl text-h6 ellipsis"
     :style="{ visibility: searching ? 'hidden' : 'visible' }"
   >
-    {{ room?.name }}
+    {{ room?.name || "&nbsp;" }}
   </div>
 </template>
 
