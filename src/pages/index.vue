@@ -7,10 +7,8 @@
     <layout>
       <template #header> <Search /> <Title /> </template>
 
-      <template #side>
-        <make-room />
-        <room-list />
-      </template>
+      <template #side-header> <make-room /> </template>
+      <template #side> <room-list /> </template>
 
       <template #content>
         <Chat

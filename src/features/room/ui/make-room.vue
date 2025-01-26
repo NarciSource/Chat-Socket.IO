@@ -1,7 +1,11 @@
 <template>
-  <q-btn class="q-pa-md full-width" label="방 만들기" color="teal" text-color="white">
+  <q-item class="no-padding make-room" title="방 만들기" clickable>
+    <q-item-section avatar>
+      <q-icon class="q-pa-md" name="meeting_room" size="2rem" />
+    </q-item-section>
+    <q-item-section> 방 만들기 </q-item-section>
     <user-list-popup :onSelected="make" />
-  </q-btn>
+  </q-item>
 </template>
 
 <script setup lang="ts">
@@ -34,3 +38,10 @@ watchEffect(() => {
   }
 });
 </script>
+
+<style scoped>
+.make-room {
+  background: teal;
+  color: white;
+}
+</style>

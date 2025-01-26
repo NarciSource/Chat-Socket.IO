@@ -4,6 +4,7 @@
       v-for="[, room] in rooms"
       :active="room === selected_room"
       active-class="bg-teal-2"
+      :title="room.name"
       clickable
       @click="() => enter(room)"
     >
