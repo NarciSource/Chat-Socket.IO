@@ -1,12 +1,15 @@
 <template>
   <q-layout view="lhh LpR lff" container>
-    <Room />
-    <Chat
-      v-if="!!selected_room?.id"
-      :connecting="connecting"
-      :room="selected_room"
-      :current_user="current_user"
-    />
+    <div class="q-pa-md row justify-center">
+      <Room>
+        <Chat
+          v-if="!!selected_room?.id"
+          :connecting="connecting"
+          :room="selected_room"
+          :current_user="current_user"
+        />
+      </Room>
+    </div>
   </q-layout>
 </template>
 

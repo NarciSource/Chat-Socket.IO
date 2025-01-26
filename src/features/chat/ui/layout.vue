@@ -1,6 +1,6 @@
 <template>
-  <div class="q-pa-md row justify-center">
-    <q-card dark bordered class="shadow bg-grey-9">
+  <div>
+    <q-card dark bordered class="inline-block bg-grey-9 shadow">
       <q-card-section class="row items-center">
         <slot name="header" />
         <q-btn
