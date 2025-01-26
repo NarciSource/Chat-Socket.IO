@@ -5,7 +5,7 @@
       v-if="!!selected_room?.id"
       :connecting="connecting"
       :room="selected_room"
-      :my_nick="my_nick"
+      :current_user="current_user"
     />
   </q-layout>
 </template>
@@ -18,7 +18,7 @@ import Chat from "@/features/chat";
 import useRoomStore from "@/features/room/store/useRoomStore";
 
 // feature간 데이터 공유
-const { connecting, selected_room, my_nick } = storeToRefs(useRoomStore());
+const { connecting, selected_room, current_user } = storeToRefs(useRoomStore());
 </script>
 
 <style>

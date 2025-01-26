@@ -9,12 +9,12 @@ import { Room } from "@/entities/chat/model";
 import useRoomStore from "../store/useRoomStore";
 import { leave_room } from "../service/event_helper";
 
-const { my_nick, rooms, selected_room } = storeToRefs(useRoomStore());
+const { current_user, rooms, selected_room } = storeToRefs(useRoomStore());
 const { room } = defineProps<{ room: Room }>();
 
 const leave = () => {
   // 방 나가기
-  leave_room(my_nick.value, room.id);
+  leave_room(current_user.value!, room);
 
   // 방 목록에서 제거
   rooms.value.delete(room);

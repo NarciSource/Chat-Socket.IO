@@ -7,33 +7,33 @@ import {
 } from "../../api/dto";
 
 export const to_create_room_payload = ({
-  host_id,
+  host,
   selected_users,
 }: {
-  host_id: string;
-  selected_users: string[];
+  host: User;
+  selected_users: User[];
 }): CreateRoomPayload => {
-  return { hostId: host_id, participants: selected_users };
+  return { hostId: host.id, participants: selected_users.map((user) => user.id) };
 };
 
 export const to_leave_room_payload = ({
-  user_id,
-  room_id,
+  user,
+  room,
 }: {
-  user_id: string;
-  room_id: string;
+  user: User;
+  room: Room;
 }): LeaveRoomPayload => {
-  return { userId: user_id, roomId: room_id };
+  return { userId: user.id, roomId: room.id };
 };
 
 export const to_join_room_payload = ({
-  user_id,
-  room_id,
+  user,
+  room,
 }: {
-  user_id: string;
-  room_id: string;
+  user: User;
+  room: Room;
 }): InviteRoomPayload => {
-  return { userId: user_id, roomId: room_id };
+  return { userId: user.id, roomId: room.id };
 };
 
 export const room_created_payload_to_status = ({

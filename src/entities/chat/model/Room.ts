@@ -5,7 +5,7 @@ export default class Room {
     public id: string,
     public participants: User[],
     public is_new: boolean = true,
-    public host?: string,
+    public host?: User,
     public name?: string,
   ) {
     this.name = this.participants.map((p) => p.name).join(", ");

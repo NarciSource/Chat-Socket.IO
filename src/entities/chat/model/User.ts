@@ -1,5 +1,9 @@
 export default class User {
+  public id: string;
+
   constructor(public name: string, public avatar_url?: string) {
+    this.id = name;
+
     // 샘플 user면 avatar url
     this.avatar_url = sample_avatar(name);
   }

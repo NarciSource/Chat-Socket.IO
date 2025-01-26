@@ -1,14 +1,14 @@
 import { SOCKET_EVENT } from "@/shared/socket_constants";
-import { Message } from "@/entities/chat/model";
+import { Message, Room, User } from "@/entities/chat/model";
 import { emit_event, subscribe_on } from "@/entities/chat/service/socketService";
 
 type Callback = (data: any) => void;
 
-export const send_message = (room_id: string, message: Message) =>
-  emit_event(SOCKET_EVENT.EMIT_MESSAGE, { room_id, message });
+export const send_message = (room: Room, message: Message) =>
+  emit_event(SOCKET_EVENT.EMIT_MESSAGE, { room, message });
 
-export const invite_user = (room_id: string, user_id: string) =>
-  emit_event(SOCKET_EVENT.EMIT_INVITE_ROOM, { room_id, user_id });
+export const invite_user = (room: Room, user: User) =>
+  emit_event(SOCKET_EVENT.EMIT_INVITE_ROOM, { room, user });
 
 export const connected = (callback: Callback) => subscribe_on("connect", callback);
 
@@ -22,8 +22,8 @@ export const message_received = (callback: Callback) =>
 export const system_message_received = (callback: Callback) =>
   subscribe_on(SOCKET_EVENT.ON_SYSTEM, callback);
 
-export const typing_message = (room_id: string, user_id: string) =>
-  emit_event(SOCKET_EVENT.EMIT_TYPING, { room_id, user_id });
+export const typing_message = (room: Room, user: User) =>
+  emit_event(SOCKET_EVENT.EMIT_TYPING, { room, user });
 
 export const handle_typing_message = (callback: Callback) =>
   subscribe_on(SOCKET_EVENT.ON_TYPING, callback);

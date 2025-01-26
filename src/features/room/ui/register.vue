@@ -15,19 +15,25 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 
+import { User } from "@/entities/chat/model";
 import { connect } from "@/entities/chat/service/socketService";
 import useRoomStore from "../store/useRoomStore";
 
-const { my_nick, connecting } = storeToRefs(useRoomStore());
+const my_nick = ref("");
+const { current_user, connecting } = storeToRefs(useRoomStore());
 
 const setup = () => {
   // 소켓 연결
   const { register, success } = connect();
 
+  // 사용자 정보 생성
+  current_user.value = new User(my_nick.value);
+
   // 서버에 사용자 등록
-  register(my_nick.value);
+  register(current_user.value.name);
 
   // 연결 성공시 콜백
   success(() => (connecting.value = true));

@@ -13,15 +13,12 @@ import UserListPopup from "@/features/users/index.vue";
 import { make_room, room_created } from "../service/event_helper";
 import useRoomStore from "../store/useRoomStore";
 
-const { connecting, my_nick, rooms } = storeToRefs(useRoomStore());
+const { connecting, current_user, rooms } = storeToRefs(useRoomStore());
 const show = ref(false);
 
 const make = (selected_users: User[]) => {
   // 다대다 채팅으로 방 생성하고 초대
-  make_room(
-    my_nick.value,
-    selected_users.map((user) => user.name),
-  );
+  make_room(current_user.value!, selected_users);
   // 팝업 닫기
   show.value = false;
 };
