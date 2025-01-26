@@ -1,7 +1,13 @@
 <template>
   <slot />
 
-  <q-inner-loading :showing="!connecting" label="채팅 연결 대기 중..." />
+  <q-inner-loading
+    :showing="!connecting"
+    class="fit"
+    color="teal-9"
+    label="채팅 연결 대기 중..."
+    label-class="text-overline text-weight-bold text-teal-9"
+  />
 </template>
 
 <script setup lang="ts">

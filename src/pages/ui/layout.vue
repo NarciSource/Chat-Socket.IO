@@ -24,7 +24,7 @@
     >
       <slot name="side-header" />
 
-      <q-scroll-area style="height: calc(100% - 96px); margin-bottom: 32px">
+      <q-scroll-area class="side-content">
         <slot name="side" />
       </q-scroll-area>
 
@@ -42,8 +42,10 @@
       <slot name="toolbar" />
     </q-drawer>
 
-    <q-page-container class="full-height q-pa-md">
-      <slot name="content" />
+    <q-page-container class="full-height">
+      <q-page class="q-pa-md">
+        <slot name="content" />
+      </q-page>
     </q-page-container>
 
     <q-footer>
@@ -64,15 +66,8 @@ const side_fixed = ref(true);
 </script>
 
 <style scoped>
-.q-layout-container {
-  display: flex;
-  width: 520px !important;
-  height: 700px !important;
-}
-::v-deep(.q-layout) {
-  height: 100%;
-}
-::v-deep(.overflow-hidden-x) {
-  overflow-x: hidden !important;
+.side-content {
+  height: calc(100% - 96px);
+  margin-bottom: 32px;
 }
 </style>

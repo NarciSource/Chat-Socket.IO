@@ -1,7 +1,7 @@
 <template>
-  <Connect>
+  <connect>
     <content />
-  </Connect>
+  </connect>
 </template>
 
 <script setup lang="ts">

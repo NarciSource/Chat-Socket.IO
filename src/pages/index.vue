@@ -5,7 +5,7 @@
 
   <div class="q-pa-md row justify-center">
     <layout>
-      <template #header> <Search /> <Title /> </template>
+      <template #header> <search /> <Title /> </template>
 
       <template #side-header> <make-room /> </template>
       <template #side> <room-list /> </template>
@@ -19,9 +19,9 @@
         />
       </template>
 
-      <template #toolbar> <Actions /> </template>
+      <template #toolbar> <actions /> </template>
 
-      <template #footer> <Submit /> </template>
+      <template #footer> <submit /> </template>
     </layout>
   </div>
 </template>
@@ -39,8 +39,9 @@ import Layout from "./ui/layout.vue";
 const { connecting, selected_room, current_user } = storeToRefs(useRoomStore());
 </script>
 
-<style>
+<style scoped>
 .q-layout-container {
-  height: calc(100vh - 64px) !important;
+  width: 520px !important;
+  height: 700px !important;
 }
 </style>
