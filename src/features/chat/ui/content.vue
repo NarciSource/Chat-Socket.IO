@@ -6,6 +6,7 @@
     :avatar="!message.is_system ? message.owner.avatar_url : undefined"
     :label="message.is_system ? message.text[0] : ''"
     :text="!message.is_system ? message.text : []"
+    :stamp="message.created_at.toLocaleTimeString()"
     :sent="message.name === current_user?.name"
     :bg-color="message.name === current_user?.name ? 'yellow' : 'white'"
   />

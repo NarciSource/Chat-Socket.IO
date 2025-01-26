@@ -1,7 +1,12 @@
 import User from "./User";
 
 export default class Message {
-  constructor(public owner: User, public text: string[], public is_system: boolean = false) {}
+  constructor(
+    public owner: User,
+    public text: string[],
+    public is_system: boolean = false,
+    public created_at: Date = new Date(),
+  ) {}
 
   get name() {
     return this.owner.name;
