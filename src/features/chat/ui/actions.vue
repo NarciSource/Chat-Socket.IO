@@ -1,7 +1,9 @@
 <template>
-  <invite />
-  <save />
-  <participants />
+  <q-list>
+    <q-item> <invite /></q-item>
+    <q-item> <save /></q-item>
+    <q-item> <participants /></q-item>
+  </q-list>
 </template>
 
 <script setup lang="ts">

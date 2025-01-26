@@ -1,10 +1,7 @@
 <template>
-  <layout>
-    <template #header><search /><Title /></template>
-    <template #content><content /></template>
-    <template #side><actions /></template>
-    <template #footer><submit /></template>
-  </layout>
+  <Connect>
+    <content />
+  </Connect>
 </template>
 
 <script setup lang="ts">
@@ -12,7 +9,7 @@ import { watch } from "vue";
 
 import { Room, User } from "@/entities/chat/model";
 import useChatStore from "./store/useChatStore";
-import { Actions, Content, Layout, Search, Submit, Title } from "./ui";
+import { Connect, Content } from "./ui";
 
 const store = useChatStore();
 const { connecting, room, current_user } = defineProps({

@@ -1,5 +1,5 @@
 <template>
-  <q-input class="w-200" v-model="message_input" label="메시지 입력" @keyup.enter="send" />
+  <q-input v-model="message_input" label="메시지 입력" @keyup.enter="send" />
   <q-btn class="q-mt-md float-right" color="yellow" text-color="black" label="전송" @click="send" />
 </template>
 
