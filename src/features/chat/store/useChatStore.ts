@@ -33,6 +33,7 @@ export default defineStore("chat", () => {
     }
   };
 
+  let iv: NodeJS.Timeout;
   const alarm_typing = (user_name: string) => {
     // 타이핑 중인 사용자 정보를 찾아서 저장
     typing_user.value =
@@ -40,7 +41,8 @@ export default defineStore("chat", () => {
         .filter((user) => user.name !== current_user.value?.name)
         .find((user) => user.name === user_name) || null;
     // 2초 후 타이핑 중인 사용자 정보 삭제
-    setTimeout(() => (typing_user.value = null), 2000);
+    clearTimeout(iv);
+    iv = setTimeout(() => (typing_user.value = null), 2000);
   };
 
   return {
