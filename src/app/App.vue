@@ -1,7 +1,7 @@
 <template>
-  <InitPage />
+  <chat-page />
 </template>
 
 <script setup>
-import InitPage from "@/pages";
+import ChatPage from "@/pages/chat";
 </script>
