@@ -11,6 +11,8 @@
       />
     </q-header>
 
+    <slot name="connect" />
+
     <q-drawer
       v-model="toggle_room"
       class="bg-grey-3 overflow-hidden-x"
