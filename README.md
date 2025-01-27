@@ -24,7 +24,7 @@
 
 ## 🎥 데모
 
-https://github.com/user-attachments/assets/cd1cf3a0-3305-44e6-be9d-ad082f94eebb
+https://github.com/user-attachments/assets/3c52e532-ff3f-4508-baf6-7d4a50afc6ee
 
 ## 🧩 컴포넌트 구성
 
@@ -32,17 +32,30 @@ https://github.com/user-attachments/assets/cd1cf3a0-3305-44e6-be9d-ad082f94eebb
 
 ## 🚀 실행 방법
 
-### 의존성 설치
+### Backend
 
-`npm install`
+[Chat-Service 바로가기](https://github.com/Daily1Hour/PickMe-Chat-Service)
 
-### 개발 서버 실행
+```sh
+$ npm install
+$ npm run start
+```
 
-`npm run dev`
+### Frontend
 
-### Single-SPA 애플리케이션 빌드
+개발 서버 실행
 
-`npm run build:single-spa`
+```sh
+$ npm install
+$ npm run dev
+```
+
+Single-SPA 주입 애플리케이션 빌드
+
+```sh
+$ npm install
+$ npm run build:single-spa
+```
 
 ## 📂 폴더 구조
 
@@ -58,7 +71,7 @@ PickMe-Chat-Application
 ├─ index.html
 ├─ src
 │  ├─ app
-│  │  ├─ App.vue
+│  │  ├─ App.vue # 애플리케이션 컴포넌트 진입점
 │  │  ├─ application.ts # single-spa 애플리케이션 진입점
 │  │  └─ main.ts # 프로바이더 스택
 │  ├─ entities # 비즈니스 엔터티 레이어
