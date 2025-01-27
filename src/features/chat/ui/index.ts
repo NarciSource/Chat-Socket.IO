@@ -1,3 +1,4 @@
+export { default as Layout } from "./layout.vue";
 export { default as Connect } from "./connect.vue";
 export { default as Search } from "./search.vue";
 export { default as Title } from "./title.vue";

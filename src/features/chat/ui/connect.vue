@@ -2,7 +2,7 @@
   <slot />
 
   <q-inner-loading
-    :showing="!connecting"
+    :showing="!store.connecting"
     class="fit"
     color="teal-9"
     label="채팅 연결 대기 중..."
@@ -11,10 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
 import { watchEffect } from "vue";
 
-import { Room, User } from "@/entities/chat/model";
 import {
   connected,
   connect_failed,
@@ -25,24 +23,9 @@ import {
 } from "../service/event_helper";
 import useChatStore from "../store/useChatStore";
 
-const { connecting, room, current_user } = defineProps({
-  connecting: Boolean,
-  room: Room,
-  current_user: User,
-});
 const { insert_message, alarm_typing } = useChatStore();
-const store = useChatStore();
 
-// store에 props를 업데이트
-watch(
-  () => ({ connecting, room, current_user }),
-  (props) => {
-    store.connecting = props.connecting;
-    store.room = props.room;
-    store.current_user = props.current_user!;
-  },
-  { immediate: true, deep: true },
-);
+const store = useChatStore();
 
 watchEffect(() => {
   if (!!store.connecting) {
