@@ -54,29 +54,63 @@ PickMe-Chat-Application
 │  │  ├─ application.ts # single-spa 애플리케이션 진입점
 │  │  └─ main.ts # 프로바이더 스택
 │  ├─ entities # 비즈니스 엔터티 레이어
-│  │  └─ Message.ts
+│  │  └─ chat
+│  │     ├─ api
+│  │     │  └─ dto.ts
+│  │     ├─ model # 엔터티 모델
+│  │     │  ├─ index.ts
+│  │     │  ├─ Message.ts
+│  │     │  ├─ Room.ts
+│  │     │  └─ User.ts
+│  │     └─ service
+│  │        ├─ mapper # 페이로드 ↔ 엔터티 헬퍼 메서드
+│  │        │  ├─ dictionary.ts # 매핑헬퍼서비스 사전
+│  │        │  ├─ message.ts # 메시지 관련 헬퍼함수
+│  │        │  └─ room.ts # 방 관련 헬퍼함수
+│  │        └─ socketService.ts
 │  ├─ features # 기능 구현체 레이어
+│  │  ├─ chat
+│  │  │  ├─ index.vue
+│  │  │  ├─ api
+│  │  │  │  └─ dto.ts # 데이터전송객체
+│  │  │  ├─ service
+│  │  │  │  └─ event_helper.ts # 소켓 이벤트 ↔ 로직 이벤트
+│  │  │  ├─ store # 중앙상태저장소
+│  │  │  │  └─ useChatStore.ts
+│  │  │  └─ ui
+│  │  │     ├─ index.ts
+│  │  │     ├─ layout.vue # 레이어 레이아웃
+│  │  │     ├─ connect.vue # 소켓 연결
+│  │  │     ├─ title.vue # 채팅 제목
+│  │  │     ├─ chat-content.vue # 채팅 컨텐츠
+│  │  │     ├─ search.vue # 채팅 메시지 검색
+│  │  │     ├─ submit.vue # 채팅 메시지 제출
+│  │  │     ├─ actions.vue # 액션 동작 모음
+│  │  │     ├─ invite.vue # 추가 사용자 초대
+│  │  │     ├─ participants.vue # 참여자 확인
+│  │  │     └─ save.vue # 채팅 파일로 저장
+│  │  ├─ room
+│  │  │  ├─ index.ts
+│  │  │  ├─ index.vue
+│  │  │  ├─ service
+│  │  │  │  └─ event_helper.ts
+│  │  │  ├─ store
+│  │  │  │  └─ useRoomStore.ts
+│  │  │  └─ ui
+│  │  │     ├─ index.ts
+│  │  │     ├─ layout.vue # 레이아웃
+│  │  │     ├─ register.vue # 서버 접속
+│  │  │     ├─ make-room.vue # 방 만들기
+│  │  │     ├─ leave-room.vue # 방 나가기
+│  │  │     └─ room-list.vue # 방 목록
+│  ├─ pages # 페이지 레이어
 │  │  └─ chat
 │  │     ├─ index.vue
-│  │     ├─ api
-│  │     │  └─ dto.ts # 데이터전송객체
-│  │     ├─ service
-│  │     │  ├─ mapper.ts # dto ↔ 엔터티 헬퍼 메서드
-│  │     │  └─ socketService.ts # Socket.IO 서비스
-│  │     ├─ store # 중앙상태저장소
-│  │     │  └─ chat.ts
 │  │     └─ ui
-│  │        ├─ index.ts
-│  │        ├─ connect.vue # 소켓 연결
-│  │        ├─ title.vue # 채팅 제목
-│  │        ├─ chat-content.vue # 채팅 컨텐츠
-│  │        ├─ search.vue # 채팅 메시지 검색
-│  │        ├─ submit.vue # 채팅 메시지 제출
-│  │        └─ save.vue # 채팅 파일로 저장
-│  ├─ pages # 페이지 레이어
-│  │  └─ index.vue
+│  │        └─ layout.vue
 │  └─ shared # 공유 레이어
-│     └─ tokens.ts
+│     ├─ socket_constants.ts # 환경변수 불러오기
+│     └─ tokens.ts # 토큰 3종
 ├─ .prettierrc # 포맷터
 ├─ steiger.config.ts # FSD 린트
 ├─ vite-env.d.ts # 환경변수 타입 정의

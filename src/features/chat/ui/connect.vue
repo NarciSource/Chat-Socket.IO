@@ -1,6 +1,8 @@
 <template>
+  <!-- 채팅 화면 -->
   <slot />
 
+  <!-- 채팅 화면 접근 차단 -->
   <q-inner-loading
     :showing="!store.connecting"
     class="fit"
@@ -24,7 +26,6 @@ import {
 import useChatStore from "../store/useChatStore";
 
 const { insert_message, alarm_typing } = useChatStore();
-
 const store = useChatStore();
 
 watchEffect(() => {

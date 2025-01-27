@@ -4,6 +4,7 @@
     :style="{ visibility: searching ? 'hidden' : 'visible' }"
   >
     {{ room?.name || "&nbsp;" }}
+    <!-- &nbsp; 방제목 없을 때 공간 차지 -->
   </div>
 </template>
 

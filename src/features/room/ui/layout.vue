@@ -5,7 +5,7 @@
     show-if-above
     :mini="!toggle_room || mini_toggle_room"
     :width="200"
-    :breakpoint="500"
+    :breakpoint="WINDOW_WIDTH - 1"
     bordered
     @mouseenter="!side_fixed && (mini_toggle_room = false)"
     @mouseleave="!side_fixed && (mini_toggle_room = true)"
@@ -30,14 +30,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const toggle_room = ref(true);
-const mini_toggle_room = ref(false);
-const side_fixed = ref(true);
+const WINDOW_WIDTH = import.meta.env.VITE_WINDOW_WIDTH;
+
+const toggle_room = ref(true); // 방 목록을 보여줄지 여부
+const mini_toggle_room = ref(true); // 방 목록을 최소화할지 여부
+const side_fixed = ref(true); // 방 목록 고정 여부
 </script>
 
 <style scoped>
 .side-content {
-  height: calc(100% - 96px);
-  margin-bottom: 32px;
+  height: calc(100% - 96px); /* 상단 버튼과 pin 버튼 처리 */
+  margin-bottom: 32px; /* 하단 pin 높이 */
 }
 </style>

@@ -1,8 +1,9 @@
 <template>
+  <!-- 컨테이너 설정으로 레이아웃 컨텐츠 제한 -->
   <q-layout
     view="lHh LpR lFf"
     container
-    class="q-layout-background shadow-2 rounded-borders background-with-text"
+    class="background-with-text shadow-2 rounded-borders"
     :style="style"
   >
     <slot name="room" />
@@ -17,12 +18,17 @@ const { width, height } = defineProps<{ width: number; height: number }>();
 const style = {
   width: `${width}px`,
   height: `${height}px`,
+  // 배경화면 이미지 설정
   backgroundImage: `url('https://picsum.photos/${width}/${height}')`,
-  backgroundSize: "cover",
 };
 </script>
 
 <style scoped>
+.background-with-text {
+  background-color: #eee;
+  background-size: cover;
+}
+/* 배경에 글자 추가 */
 .background-with-text::before {
   content: "Chat\AService";
   white-space: pre; /* 줄 바꿈 처리 */

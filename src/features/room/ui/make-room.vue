@@ -32,7 +32,6 @@ watchEffect(() => {
     // 방 생성 후의 이벤트 리스너 등록
     room_created((room: Room) => {
       rooms.value.set(room.id, room); // 방 정보 업데이트
-
       selected_room.value = room; // 선택 방 업데이트
     });
   }

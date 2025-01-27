@@ -1,4 +1,5 @@
 <template>
+  <!-- 일반 메시지 -->
   <q-chat-message
     v-for="(message, index) in filtered_messages"
     :key="index"
@@ -10,6 +11,7 @@
     :sent="message.name === current_user?.name"
     :bg-color="message.name === current_user?.name ? 'yellow' : 'white'"
   />
+  <!-- 타이핑 알림 -->
   <q-chat-message
     v-show="!!typing_user"
     :name="typing_user?.name"
