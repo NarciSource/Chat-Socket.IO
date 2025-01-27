@@ -40,6 +40,8 @@ jobs:
       - name: Build Vite project
         env: # 환경 변수 설정
           VITE_SOCKET_SERVER_URL: ${{ vars.VITE_SOCKET_SERVER_URL }}
+          VITE_LAYOUT_WIDTH: ${{ vars.VITE_LAYOUT_WIDTH }}
+          VITE_LAYOUT_HEIGHT: ${{ vars.VITE_LAYOUT_HEIGHT }}
           VITE_SOCKET_ON_SYSTEM: ${{ vars.VITE_SOCKET_ON_SYSTEM }}
           VITE_SOCKET_ON_MESSAGE: ${{ vars.VITE_SOCKET_ON_MESSAGE }}
           VITE_SOCKET_ON_ROOM_CREATED: ${{ vars.VITE_SOCKET_ON_ROOM_CREATED }}

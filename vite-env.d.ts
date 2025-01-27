@@ -4,6 +4,8 @@ interface ImportMetaEnv {
   readonly VITE_PUBLIC_URL: string;
   readonly VITE_SERVER_PORT: number;
   readonly VITE_MF_TYPE: "application" | "parcel";
+  readonly VITE_LAYOUT_WIDTH: number;
+  readonly VITE_LAYOUT_HEIGHT: number;
   readonly VITE_SOCKET_SERVER_URL: string;
   readonly VITE_SOCKET_ON_SYSTEM: string;
   readonly VITE_SOCKET_ON_MESSAGE: string;

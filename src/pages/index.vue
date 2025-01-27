@@ -4,7 +4,7 @@
   </div>
 
   <div class="q-pa-md row justify-center">
-    <layout>
+    <layout :width="LAYOUT_WIDTH" :height="LAYOUT_HEIGHT">
       <template #room>
         <room />
       </template>
@@ -28,13 +28,9 @@ import Room, { Register, useRoomStore } from "@/features/room";
 import Chat from "@/features/chat";
 import Layout from "./ui/layout.vue";
 
+const LAYOUT_WIDTH = import.meta.env.VITE_LAYOUT_WIDTH || 500;
+const LAYOUT_HEIGHT = import.meta.env.VITE_LAYOUT_HEIGHT || 700;
+
 // feature간 데이터 공유
 const { connecting, selected_room, current_user } = storeToRefs(useRoomStore());
 </script>
-
-<style scoped>
-.q-layout-container {
-  width: 520px !important;
-  height: 700px !important;
-}
-</style>
