@@ -1,7 +1,7 @@
 <template>
-  <q-layout class="service-layout">
+  <q-layout class="no-height">
     <q-page-container>
-      <q-page padding>
+      <q-page padding class="no-height">
         <fab-layout v-model="show_chat">
           <chat-widget v-show="show_chat" />
         </fab-layout>
@@ -20,7 +20,7 @@ const show_chat = ref(false);
 </script>
 
 <style scoped>
-.service-layout {
+.no-height {
   height: 0;
   min-height: 0 !important;
 }
