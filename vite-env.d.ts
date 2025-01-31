@@ -18,6 +18,7 @@ interface ImportMetaEnv {
   readonly VITE_SOCKET_EMIT_INVITE_ROOM: string;
   readonly VITE_SOCKET_EMIT_TYPING: string;
   readonly VITE_AUTH_PARCEL_URL: string;
+  readonly VITE_MANUAL_USER_SET: string;
 }
 
 interface ImportMeta {

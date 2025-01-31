@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-import { accessToken } from "@/shared/tokens";
+import { accessToken } from "@/shared/lib/tokens";
 import { SOCKET_EVENT, SOCKET_SERVER_URL } from "@/shared/socket_constants";
 import { emit_mappers_dictionary, on_mappers_dictionary } from "./mapper/dictionary";
 

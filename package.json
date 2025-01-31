@@ -28,6 +28,7 @@
     "@quasar/extras": "^1.16.15",
     "@quasar/vite-plugin": "^1.9.0",
     "file-saver": "^2.0.5",
+    "jwt-decode": "^4.0.0",
     "pinia": "^2.3.0",
     "quasar": "^2.17.6",
     "single-spa": "^6.0.3",
