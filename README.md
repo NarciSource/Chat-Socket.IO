@@ -92,8 +92,6 @@ PickMe-Chat-Application
 │  ├─ features # 기능 구현체 레이어
 │  │  ├─ chat
 │  │  │  ├─ index.vue
-│  │  │  ├─ api
-│  │  │  │  └─ dto.ts # 데이터전송객체
 │  │  │  ├─ service
 │  │  │  │  └─ event_helper.ts # 소켓 이벤트 ↔ 로직 이벤트
 │  │  │  ├─ store # 중앙상태저장소
@@ -103,7 +101,7 @@ PickMe-Chat-Application
 │  │  │     ├─ layout.vue # 레이어 레이아웃
 │  │  │     ├─ connect.vue # 소켓 연결
 │  │  │     ├─ title.vue # 채팅 제목
-│  │  │     ├─ chat-content.vue # 채팅 컨텐츠
+│  │  │     ├─ content.vue # 채팅 컨텐츠
 │  │  │     ├─ search.vue # 채팅 메시지 검색
 │  │  │     ├─ submit.vue # 채팅 메시지 제출
 │  │  │     ├─ actions.vue # 액션 동작 모음
@@ -124,14 +122,29 @@ PickMe-Chat-Application
 │  │  │     ├─ make-room.vue # 방 만들기
 │  │  │     ├─ leave-room.vue # 방 나가기
 │  │  │     └─ room-list.vue # 방 목록
+│  │  └─ users
+│  │     ├─ index.vue
+│  │     ├─ store
+│  │     │  └─ useUsersStore.ts
+│  │     └─ ui
+│  │        └─ user-list.vue # 접속 사용자 목록
+│  ├─ widgets # 위젯 레이어
+│  │  └─ chat
+│  │     ├─ index.vue
+│  │     └─ ui
+│  │        ├─ index.ts
+│  │        └─ layout.vue
 │  ├─ pages # 페이지 레이어
 │  │  └─ chat
 │  │     ├─ index.vue
 │  │     └─ ui
-│  │        └─ layout.vue
+│  │        ├─ layout.vue
+│  │        └─ fab-layout.vue # 플로팅버튼 레이아웃
 │  └─ shared # 공유 레이어
-│     ├─ socket_constants.ts # 환경변수 불러오기
-│     └─ tokens.ts # 토큰 3종
+│     ├─ lib
+│     │  ├─ tokens.ts # 토큰 3종
+│     │  └─ getUser.ts # 접속 유저 정보 불러오기
+│     └─ socket_constants.ts # 환경변수 불러오기
 ├─ .prettierrc # 포맷터
 ├─ steiger.config.ts # FSD 린트
 ├─ vite-env.d.ts # 환경변수 타입 정의
