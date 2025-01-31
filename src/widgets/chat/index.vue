@@ -1,5 +1,7 @@
 <template>
   <div class="q-pa-md row justify-center">
+    <register />
+
     <layout :width="LAYOUT_WIDTH" :height="LAYOUT_HEIGHT">
       <template #room>
         <room />
@@ -20,7 +22,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 
-import Room, { useRoomStore } from "@/features/room";
+import Room, { Register, useRoomStore } from "@/features/room";
 import Chat from "@/features/chat";
 import { Layout } from "./ui";
 
