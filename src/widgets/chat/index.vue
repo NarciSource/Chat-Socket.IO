@@ -22,7 +22,7 @@
   
   import Room, { useRoomStore } from "@/features/room";
   import Chat from "@/features/chat";
-  import Layout from "./layout.vue";
+  import Layout from "./ui/layout.vue";
   
   // 레이아웃 크기
   const LAYOUT_WIDTH = import.meta.env.VITE_LAYOUT_WIDTH || 500;

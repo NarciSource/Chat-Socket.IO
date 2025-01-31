@@ -15,7 +15,7 @@
             v-touch-pan.prevent.mouse="move_fab"
             @click="show_chat = !show_chat"
           >
-            <chat-window v-show="show_chat" />
+            <chat-widget v-show="show_chat" />
           </q-fab>
         </q-page-sticky>
       </q-page>
@@ -27,7 +27,7 @@
 import { ref } from "vue";
 
 import { Register } from "@/features/room";
-import { ChatWindow } from "./ui";
+import ChatWidget from "@/widgets/chat/index.vue";
 
 const show_chat = ref(false);
 const fab_position = ref([18, 18]);
