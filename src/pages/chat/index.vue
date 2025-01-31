@@ -2,22 +2,9 @@
   <q-layout class="service-layout">
     <q-page-container>
       <q-page padding>
-        <q-page-sticky position="bottom-right" :offset="fab_position">
-          <div class="row">
-            <register />
-          </div>
-
-          <q-fab
-            fab
-            icon="chatbubbles-outline"
-            direction="up"
-            color="teal"
-            v-touch-pan.prevent.mouse="move_fab"
-            @click="show_chat = !show_chat"
-          >
-            <chat-widget v-show="show_chat" />
-          </q-fab>
-        </q-page-sticky>
+        <fab-layout v-model="show_chat">
+          <chat-widget v-show="show_chat" />
+        </fab-layout>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -26,17 +13,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import { Register } from "@/features/room";
 import ChatWidget from "@/widgets/chat/index.vue";
+import { FabLayout } from "./ui";
 
 const show_chat = ref(false);
-const fab_position = ref([18, 18]);
-const move_fab = ({ delta }: { delta?: { x?: number; y?: number } }) => {
-  fab_position.value = [
-    fab_position.value[0] - (delta?.x ?? 0),
-    fab_position.value[1] - (delta?.y ?? 0),
-  ];
-};
 </script>
 
 <style scoped>
