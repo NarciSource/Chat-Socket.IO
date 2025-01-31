@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md row justify-center">
+  <div class="q-pa-md row justify-center" @click.stop>
     <register />
 
     <layout :width="LAYOUT_WIDTH" :height="LAYOUT_HEIGHT">
