@@ -1,18 +1,14 @@
 <template>
   <q-page-sticky position="bottom-right" :offset="fab_position">
-    <div class="row">
-      <register />
-    </div>
-
     <q-fab
       fab
       icon="chatbubbles-outline"
       direction="up"
       color="teal"
       v-touch-pan.prevent.mouse="move_fab"
-      @click="action = !action"
+      @click="(action = !action), (render = true)"
     >
-      <slot />
+      <slot v-if="render" />
     </q-fab>
   </q-page-sticky>
 </template>
@@ -20,9 +16,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import { Register } from "@/features/room";
-
 const action = defineModel<boolean>({ required: true });
+const render = ref(false);
 
 // FAB버튼 드래그 기능
 const fab_position = ref([18, 18]);

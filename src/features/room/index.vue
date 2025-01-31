@@ -1,4 +1,6 @@
 <template>
+  <register />
+
   <layout>
     <template #side-header>
       <make-room />
@@ -10,5 +12,5 @@
 </template>
 
 <script setup lang="ts">
-import { Layout, MakeRoom, RoomList } from "./ui";
+import { Register, Layout, MakeRoom, RoomList } from "./ui";
 </script>
