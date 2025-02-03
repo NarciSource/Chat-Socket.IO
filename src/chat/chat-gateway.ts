@@ -12,7 +12,7 @@ import { Server, Socket } from 'socket.io';
  * - 원하는 만큼 참여자를 넣어 1:1 또는 1:N 모두 처리 가능
  */
 interface CreateRoomPayload {
-  hostId: string;          // 방을 생성한 사람 (옵션)
+  hostId: string;         // 방을 생성한 사람 (옵션)
   participants: string[]; // 이 방에 들어갈 유저들의 userId 목록
 }
 
@@ -184,9 +184,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 해당 방에 user를 추가
     roomMembers.add(userId);
     // userRoomsMap에도 추가
-    const participants = this.userRoomsMap.get(userId) || new Set();
-    participants.add(roomId);
-    this.userRoomsMap.set(userId, participants);
+    const rooms = this.userRoomsMap.get(userId) || new Set();
+    rooms.add(roomId);
+    this.userRoomsMap.set(userId, rooms);
 
     // 실제 소켓 join
     const socketId = this.userSocketMap.get(userId);
@@ -203,7 +203,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.server.to(userId).emit('room_created', {
       roomId,
-      participants,
+      participants: rooms,
     })
   }
 
@@ -271,5 +271,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       content: `${userId}님이 방을 떠났습니다.`,
     });
     console.log(`유저 ${userId}가 방 ${roomId}에서 나갔습니다.`);
+  }
+
+  @SubscribeMessage('sending_message')
+  handleSendingMessage(socket: Socket, payload: { userId: string; typing: boolean; }) {
+
   }
 }
