@@ -183,6 +183,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     // 해당 방에 user를 추가
     participants.add(userId);
+    const participantArray = Array.from(participants);
     // userRoomsMap에도 추가
     const rooms = this.userRoomsMap.get(userId) || new Set();
     rooms.add(roomId);
@@ -204,7 +205,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 생성된 roomId를 모든 room 참가자에게 알림
     this.server.to(roomId).emit('room_created', {
       roomId,
-      participants,
+      participants: participantArray,
     })
   }
 
