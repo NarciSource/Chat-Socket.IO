@@ -133,6 +133,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('create_room')
   handleCreateRoom(socket: Socket, payload: CreateRoomPayload) {
     const { hostId, participants } = payload;
+    participants.push(hostId);
 
     // 새 roomId 생성
     const roomId = this.generateRandomRoomId();
