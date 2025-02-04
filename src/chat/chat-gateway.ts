@@ -160,7 +160,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`방 생성: roomId=${roomId}, 참가자=${participantArray.join(', ')}`);
 
     // 생성된 roomId를 모든 room 참가자에게 알림
-    socket.to(roomId).emit('room_created', {
+    this.server.to(roomId).emit('room_created', {
       roomId,
       participants: participantArray,
     });
