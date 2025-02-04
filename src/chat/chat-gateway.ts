@@ -276,8 +276,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`유저 ${userId}가 방 ${roomId}에서 나갔습니다.`);
   }
 
-  @SubscribeMessage('sending_message')
-  handleSendingMessage(socket: Socket, payload: { userId: string; typing: boolean; }) {
+  @SubscribeMessage('typing')
+  handleSendingMessage(socket: Socket, payload: { userId: string; roomId: string; }) {
+    const { userId, roomId } = payload;
 
+    this.server.to(roomId).emit('typing', userId);
   }
 }
