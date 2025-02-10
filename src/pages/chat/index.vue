@@ -1,7 +1,7 @@
 <template>
   <q-layout class="no-height">
     <q-page-container>
-      <q-page padding class="no-height">
+      <q-page class="no-height">
         <fab-layout v-model="show_chat">
           <chat-widget v-show="show_chat" />
         </fab-layout>
