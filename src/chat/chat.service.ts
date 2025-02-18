@@ -7,49 +7,37 @@ import { ChatRepository } from "./chat.repository";
  */
 @Injectable()
 export class ChatService {
-    // 1) userId -> socketId
-    private userSocketMap: Map<string, string> = new Map();
-
-    // 2) userId -> Set<roomId>
-    private userRoomsMap: Map<string, Set<string>> = new Map();
-
-    // 3) roomId -> Set<userId>
-    private roomMembersMap: Map<string, Set<string>> = new Map();
+    constructor(private readonly chatRepository: ChatRepository) {}
 
     // 등록 로직
     registerUser(userId: string, socketId: string): boolean {
-        if (this.userSocketMap.has(userId)) {
+        if (this.chatRepository.hasUserSocket(userId)) {
             return false; // 중복
         }
-        this.userSocketMap.set(userId, socketId);
-        this.userRoomsMap.set(userId, new Set());
+        this.chatRepository.setUserSocket(userId, socketId);
+        this.chatRepository.initUserRooms(userId);
         return true;
     }
 
     // 유저 해제 로직
     disconnectUserBySocketId(socketId: string) {
-        // socketId로 userId 찾기
-        let targetUserId: string | undefined = undefined;
-        for (const [userId, sId] of this.userSocketMap.entries()) {
-            if (sId === socketId) {
-                targetUserId = userId;
-                break;
-            }
-        }
-        if (!targetUserId) return;
+        const userId = this.chatRepository.findUserIdBySocketId(socketId);
+        if (!userId) return;
 
-        // 앱에서 제거
-        this.userSocketMap.delete(targetUserId);
-        const rooms = this.userRoomsMap.get(targetUserId) || new Set();
-        this.userRoomsMap.delete(targetUserId);
+        // socket map 제거
+        this.chatRepository.removeUserSocket(userId);
+
+        // rooms
+        const rooms = this.chatRepository.getUserRooms(userId);
+        this.chatRepository.removeUserRooms(userId);
 
         // roomMembersMap에서 해당 유저 제거
         rooms.forEach((roomId) => {
-            const members = this.roomMembersMap.get(roomId);
+            const members = this.chatRepository.getRoomMembers(roomId);
             if (members) {
-                members.delete(targetUserId);
+                members.delete(userId);
                 if (members.size === 0) {
-                    this.roomMembersMap.delete(roomId);
+                    this.chatRepository.removeRoom(roomId)
                     console.log(`방 ${roomId}가 비어 삭제됨`);
                 }
             }
@@ -81,41 +69,37 @@ export class ChatService {
 
     // 방 join
     joinRoom(userId: string, roomId: string): { success: boolean; participants?: string[] } {
-        const members = this.roomMembersMap.get(roomId);
+        const members = this.chatRepository.getRoomMembers(roomId);
         if (!members) {
             return { success: false };
         }
         members.add(userId);
 
         // userRoomsMap도 업데이트
-        const rooms = this.userRoomsMap.get(userId) || new Set();
-        rooms.add(roomId);
-        this.userRoomsMap.set(userId, rooms);
+        this.chatRepository.addRoomToUser(userId, roomId);
 
         return { success: true, participants: Array.from(members) };
     }
 
     // 방 떠나기
     leaveRoom(userId: string, roomId: string) {
-        const members = this.roomMembersMap.get(roomId);
+        const members = this.chatRepository.getRoomMembers(roomId);
         if (!members) {
             return false;
         }
         members.delete(userId);
         if (members.size === 0) {
-            this.roomMembersMap.delete(roomId);
+            this.chatRepository.removeRoom(roomId);
             console.log(`모두 떠나서 방 ${roomId} 삭제`);
         }
 
-        const userSet = this.userRoomsMap.get(userId);
-        if (userSet) {
-            userSet.delete(roomId);
-        }
+        const rooms = this.chatRepository.getUserRooms(userId);
+        rooms.delete(roomId);
         return true;
     }
 
     // userId로 소켓 찾기
     getSocketId(userId: string): string | undefined {
-        return this.userSocketMap.get(userId);
+        return this.chatRepository.getUserSocketByUserId(userId);
     }
 }

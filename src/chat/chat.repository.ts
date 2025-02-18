@@ -26,7 +26,7 @@ export class ChatRepository {
     setUserSocket(userId: string, socketId: string) {
         this.userSocketMap.set(userId, socketId);
     }
-    getUserSocket(userId: string): string | undefined {
+    getUserSocketByUserId(userId: string): string | undefined {
         return this.userSocketMap.get(userId);
     }
     hasUserSocket(userId: string): boolean {
