@@ -6,6 +6,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ChatService } from './chat.service';
 
 /**
  * 방 정보를 생성할 때 사용할 'participantIds' 형식
@@ -34,23 +35,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  /**
-   * 1) userId -> socketId
-   *    사용자 하나당 현재 연결된 소켓(1개)을 추적
-   */
-  private userSocketMap: Map<string, string> = new Map();
-
-  /**
-   * 2) userId -> Set<roomId>
-   *    유저가 어떤 방들에 들어가 있는지
-   */
-  private userRoomsMap: Map<string, Set<string>> = new Map();
-
-  /**
-   * 3) roomId -> Set<userId>
-   *    어떤 방에 어떤 유저들이 참여 중인지
-   */
-  private roomMembersMap: Map<string, Set<string>> = new Map();
+  // ChatService 주입
+  constructor(private readonly chatService: ChatService) {}
 
   // 소켓 연결 시
   handleConnection(socket: Socket) {
@@ -60,33 +46,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // 소켓 연결 해제 시
   handleDisconnect(socket: Socket) {
     console.log('클라이언트 연결 해제:', socket.id);
-
-    // userSocketMap에서 socket.id를 사용 중인 userId 찾기
-    for (const [userId, socketId] of this.userSocketMap.entries()) {
-      if (socketId === socket.id) {
-        this.userSocketMap.delete(userId);
-
-        // userRoomsMap에서 해당 유저가 참여 중이던 roomId들을 구해
-        const rooms = this.userRoomsMap.get(userId) || new Set();
-        // roomMembersMap에서 이 유저를 제거
-        rooms.forEach((roomId) => {
-          const members = this.roomMembersMap.get(roomId);
-          if (members) {
-            members.delete(userId);
-
-            // 방에 남은 사람이 0명이라면, roomMembersMap에서 방을 삭제해도 됨 (정책에 따라)
-            if (members.size === 0) {
-              this.roomMembersMap.delete(roomId);
-              console.log(`방 ${roomId}가 비어 삭제됨`);
-            }
-          }
-        });
-        // userRoomsMap에서도 유저 제거
-        this.userRoomsMap.delete(userId);
-
-        break;
-      }
-    }
+    // Service 호출
+    this.chatService.disconnectUserBySocketId(socket.id);
   }
 
   /**
@@ -97,27 +58,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('register')
   handleRegister(socket: Socket, payload: { userId: string }) {
     const { userId } = payload;
-
+    const ok = this.chatService.registerUser(userId, socket.id);
     // 중복 접속 제어 (정책에 따라)
-    if (this.userSocketMap.has(userId)) {
+    if (!ok) {
       console.log(`이미 userId=${userId}로 연결된 소켓이 존재합니다.`);
       socket.emit('system', { content: `userId=${userId}가 이미 존재합니다.` });
       socket.disconnect(true);
       return;
     }
 
-    this.userSocketMap.set(userId, socket.id);
-    this.userRoomsMap.set(userId, new Set()); // 초기화
     console.log(`유저 등록: userId=${userId}, socketId=${socket.id}`);
-  }
-
-  /**
-   * 랜덤한 roomId 생성 - 예시(간단 버전)
-   * - 실제로는 UUID, nanoid 등 라이브러리 사용 권장
-   */
-  private generateRandomRoomId(): string {
-    // 6자리 알파벳/숫자 조합 (간단 예시)
-    return Math.random().toString(36).substring(2, 8);
   }
 
   /**
@@ -133,36 +83,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('create_room')
   handleCreateRoom(socket: Socket, payload: CreateRoomPayload) {
     const { hostId, participants } = payload;
-    const participantArray = [...participants, hostId];
-
-    // 새 roomId 생성
-    const roomId = this.generateRandomRoomId();
-    // 참여자 목록을 Set으로 만들어 roomMembersMap에 등록
-    this.roomMembersMap.set(roomId, new Set(participants));
+    const { roomId, allParticipants } = this.chatService.createRoom(hostId, participants);
 
     // 각 참여자별로 userRoomsMap에 roomId 추가 & 실제 소켓 join
-    participantArray.forEach((userId) => {
-      const userSet = this.userRoomsMap.get(userId);
-      if (userSet) {
-        userSet.add(roomId);
-      } else {
-        this.userRoomsMap.set(userId, new Set([roomId]));
-      }
-
-      // 소켓이 현재 연결되어 있으면 roomId에 join
-      const socketId = this.userSocketMap.get(userId);
-      if (socketId) {
-        const userSocket = this.server.sockets.sockets.get(socketId);
+    allParticipants.forEach((userId) => {
+      const sockId = this.chatService.getSocketId(userId);
+      if (sockId) {
+        const userSocket = this.server.sockets.sockets.get(sockId);
         userSocket?.join(roomId);
       }
     });
 
-    console.log(`방 생성: roomId=${roomId}, 참가자=${participantArray.join(', ')}`);
-
     // 생성된 roomId를 모든 room 참가자에게 알림
     this.server.to(roomId).emit('room_created', {
       roomId,
-      participants: participantArray,
+      participants: allParticipants,
     });
   }
 
@@ -174,24 +109,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('join_room')
   handleJoinRoom(socket: Socket, payload: { userId: string; roomId: string }) {
     const { userId, roomId } = payload;
-    const participants = this.roomMembersMap.get(roomId);
-
-    if (!participants) {
-      // 없는 방이면 에러
-      socket.emit('system', { content: `존재하지 않는 방입니다: ${roomId}` });
+    const result = this.chatService.joinRoom(userId, roomId);
+    if (!result.success) {
+      socket.emit('system', { content: `존재하지 않는 방: ${roomId}` });
       return;
     }
 
-    // 해당 방에 user를 추가
-    participants.add(userId);
-    const participantArray = Array.from(participants);
-    // userRoomsMap에도 추가
-    const rooms = this.userRoomsMap.get(userId) || new Set();
-    rooms.add(roomId);
-    this.userRoomsMap.set(userId, rooms);
-
     // 실제 소켓 join
-    const socketId = this.userSocketMap.get(userId);
+    const socketId = this.chatService.getSocketId(userId);
     if (socketId) {
       const userSocket = this.server.sockets.sockets.get(socketId);
       userSocket?.join(roomId);
@@ -206,7 +131,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 생성된 roomId를 모든 room 참가자에게 알림
     this.server.to(roomId).emit('room_created', {
       roomId,
-      participants: participantArray,
+      participants: result.participants,
     })
   }
 
@@ -221,13 +146,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('send_message')
   handleSendMessage(socket: Socket, payload: SendMessagePayload) {
     const { roomId, senderId, content } = payload;
-    const roomMembers = this.roomMembersMap.get(roomId);
 
-    if (!roomMembers) {
-      // 없는 방
-      console.log(`send_message 실패: room ${roomId} 존재 안 함`);
-      return;
-    }
     // 방에 속해있는 모든 소켓에게 메시지 전송
     this.server.to(roomId).emit('receive_message', {
       senderId,
@@ -243,27 +162,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('leave_room')
   handleLeaveRoom(socket: Socket, payload: { userId: string; roomId: string }) {
     const { userId, roomId } = payload;
-    const roomMembers = this.roomMembersMap.get(roomId);
-    if (!roomMembers) {
-      socket.emit('system', { content: `존재하지 않는 방입니다: ${roomId}` });
-      return;
-    }
-
-    // 방 멤버 목록에서 제거
-    roomMembers.delete(userId);
-    if (roomMembers.size === 0) {
-      this.roomMembersMap.delete(roomId);
-      console.log(`모두 떠나서 방 ${roomId} 삭제`);
-    }
-
-    // userRoomsMap에서도 제거
-    const userSet = this.userRoomsMap.get(userId);
-    if (userSet) {
-      userSet.delete(roomId);
-    }
+    this.chatService.leaveRoom(userId, roomId);
 
     // 실제 소켓 leave
-    const socketId = this.userSocketMap.get(userId);
+    const socketId = this.chatService.getSocketId(userId);
     if (socketId) {
       const userSocket = this.server.sockets.sockets.get(socketId);
       userSocket?.leave(roomId);
