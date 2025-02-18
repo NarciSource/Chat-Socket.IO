@@ -56,12 +56,10 @@ export class ChatService {
     } {
         const roomId = this.generateRandomRoomId();
         const all = [...participants, hostId];
-        this.roomMembersMap.set(roomId, new Set(participants));
+        this.chatRepository.createRoom(roomId, participants);
 
         all.forEach((userId) => {
-            const userSet = this.userRoomsMap.get(userId) || new Set();
-            userSet.add(roomId);
-            this.userRoomsMap.set(userId, userSet);
+            this.chatRepository.addRoomToUser(userId, roomId);
         });
 
         return { roomId, allParticipants: all };
