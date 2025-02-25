@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { ChatRepository } from './chat.repository';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  constructor(private readonly chatRepository: ChatRepository) {}
+  getAllConnections() {
+    return this.chatRepository.getAllUserSockets();
   }
 }
