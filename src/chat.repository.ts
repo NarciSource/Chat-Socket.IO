@@ -43,11 +43,8 @@ export class ChatRepository {
         }
         return undefined;
     }
-    getAllUserSockets(): Array<{ userId: string; socketId: string }> {
-        return Array.from(this.userSocketMap.entries()).map(([userId, socketId]) => ({
-            userId,
-            socketId,
-        }));
+    getAllUserSockets(): string[] {
+        return Array.from(this.userSocketMap.keys());
     }
 
     // (2) userRoomsMap 관련
