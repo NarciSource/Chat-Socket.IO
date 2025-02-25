@@ -1,7 +1,7 @@
 <template>
   <q-list>
     <q-item class="q-pa-md text-subtitle2 text-weight-bold bg-teal-1">
-      참여자 {{ number_of_users }} 명
+      참여자 {{ number_of_users }}명
     </q-item>
 
     <q-item
@@ -10,23 +10,7 @@
       :active="status.check"
       active-class="bg-teal-2"
     >
-      <q-item-section side v-show="false">
-        <q-checkbox v-model="status.check" />
-      </q-item-section>
-
-      <q-item-section avatar>
-        <q-avatar>
-          <img :src="user.avatar_url" />
-        </q-avatar>
-      </q-item-section>
-
-      <q-item-section>
-        <q-item-label>{{ user.name }}</q-item-label>
-      </q-item-section>
-
-      <q-item-section side>
-        <q-badge rounded color="green" />
-      </q-item-section>
+      <user-item :user="user" v-model="status.check" />
     </q-item>
   </q-list>
 </template>
@@ -37,6 +21,7 @@ import { storeToRefs } from "pinia";
 
 import { User } from "@/entities/chat/model";
 import useUsersStore from "../store/useUsersStore";
+import UserItem from "./user-item.vue";
 
 const selected_users = defineModel<User[]>({ required: true });
 const { users } = storeToRefs(useUsersStore());
