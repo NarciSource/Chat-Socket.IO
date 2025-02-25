@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ChatRepository } from "../chat.repository";
+import { ChatRepository } from "./chat.repository";
 
 /*
  * 방 생성/입장/퇴장 등 비즈니스 로직 담당
