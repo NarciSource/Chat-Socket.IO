@@ -14,7 +14,7 @@ import { ref } from "vue";
 import { storeToRefs } from "pinia";
 
 import { User } from "@/entities/chat/model";
-import { getUsers } from "@/entities/chat/service/restService";
+import { get_users } from "@/entities/chat/service/restService";
 import useUsersStore from "./store/useUsersStore";
 import userList from "./ui/user-list.vue";
 
@@ -34,6 +34,6 @@ const { users } = storeToRefs(useUsersStore());
 
 // 접속중인 사용자 목록 초기화
 (async () => {
-  users.value = await getUsers();
+  users.value = await get_users();
 })();
 </script>

@@ -1,10 +1,13 @@
 import axios from "axios";
 
 import { User } from "../model";
+import { UserDTO } from "../api/dto";
+import { dto_to_user } from "./mapper/user";
 
 const SERVER_URL = import.meta.env.VITE_SOCKET_SERVER_URL;
 
-export async function getUsers(): Promise<User[]> {
-  const { data } = await axios.get(SERVER_URL + "/chat/users");
-  return data.map((user: string) => new User(user));
+export async function get_users(): Promise<User[]> {
+  const { data: dto } = await axios.get<UserDTO>(SERVER_URL + "/chat/users");
+
+  return dto_to_user(dto);
 }

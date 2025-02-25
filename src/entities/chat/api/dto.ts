@@ -33,3 +33,5 @@ export type TypingPayload = {
   userId: string;
   roomId: string;
 };
+
+export type UserDTO = string[];
