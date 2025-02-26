@@ -23,7 +23,11 @@
       icon="push_pin"
       :color="side_fixed ? 'primary' : 'grey-5'"
       @click="side_fixed = !side_fixed"
-    />
+    >
+      <q-tooltip anchor="top right" v-if="show_tooltip" @hide="show_tooltip = false">
+        방 목록을 확장하고 줄일 수 있습니다.
+      </q-tooltip>
+    </q-btn>
   </q-drawer>
 </template>
 
@@ -35,6 +39,7 @@ const WINDOW_WIDTH = import.meta.env.VITE_WINDOW_WIDTH;
 const toggle_room = ref(true); // 방 목록을 보여줄지 여부
 const mini_toggle_room = ref(true); // 방 목록을 최소화할지 여부
 const side_fixed = ref(true); // 방 목록 고정 여부
+const show_tooltip = ref(true); // 툴팁 표시 여부
 </script>
 
 <style scoped>

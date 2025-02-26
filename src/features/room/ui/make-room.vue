@@ -3,13 +3,13 @@
     <q-item-section avatar>
       <q-icon class="q-pa-md" name="meeting_room" size="2rem" />
     </q-item-section>
-    <q-item-section> 방 만들기 </q-item-section>
+    <q-item-section>방 만들기</q-item-section>
     <user-list-popup :onSelected="make" />
   </q-item>
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 
 import { Room, User } from "@/entities/chat/model";
@@ -18,13 +18,10 @@ import { make_room, room_created } from "../service/event_helper";
 import useRoomStore from "../store/useRoomStore";
 
 const { connecting, current_user, rooms, selected_room } = storeToRefs(useRoomStore());
-const show = ref(false);
 
+// 다대다 채팅으로 방 생성하고 초대
 const make = (selected_users: User[]) => {
-  // 다대다 채팅으로 방 생성하고 초대
   make_room(current_user.value!, selected_users);
-  // 팝업 닫기
-  show.value = false;
 };
 
 watchEffect(() => {
