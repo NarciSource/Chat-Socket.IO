@@ -44,10 +44,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   // 소켓 연결 해제 시
-  handleDisconnect(socket: Socket) {
+  async handleDisconnect(socket: Socket) {
     console.log('클라이언트 연결 해제:', socket.id);
     // Service 호출
-    this.chatService.disconnectUserBySocketId(socket.id);
+    await this.chatService.disconnectUserBySocketId(socket.id);
   }
 
   /**
@@ -56,9 +56,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    * - 이미 같은 userId로 등록된 소켓이 있다면 거부할 수도 있음
    */
   @SubscribeMessage('register')
-  handleRegister(socket: Socket, payload: { userId: string }) {
+  async handleRegister(socket: Socket, payload: { userId: string }) {
     const { userId } = payload;
-    const ok = this.chatService.registerUser(userId, socket.id);
+    const ok = await this.chatService.registerUser(userId, socket.id);
     // 중복 접속 제어 (정책에 따라)
     if (!ok) {
       console.log(`이미 userId=${userId}로 연결된 소켓이 존재합니다.`);
@@ -81,18 +81,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    *  -> roomId를 클라이언트에 반환 (필요시)
    */
   @SubscribeMessage('create_room')
-  handleCreateRoom(socket: Socket, payload: CreateRoomPayload) {
+  async handleCreateRoom(socket: Socket, payload: CreateRoomPayload) {
     const { hostId, participants } = payload;
-    const { roomId, allParticipants } = this.chatService.createRoom(hostId, participants);
+    const { roomId, allParticipants } = await this.chatService.createRoom(hostId, participants);
 
-    // 각 참여자별로 userRoomsMap에 roomId 추가 & 실제 소켓 join
-    allParticipants.forEach((userId) => {
-      const sockId = this.chatService.getSocketId(userId);
+    for (const userId of allParticipants) {
+      const sockId = await this.chatService.getSocketId(userId);
       if (sockId) {
         const userSocket = this.server.sockets.sockets.get(sockId);
         userSocket?.join(roomId);
       }
-    });
+    }
 
     // 생성된 roomId를 모든 room 참가자에게 알림
     this.server.to(roomId).emit('room_created', {
@@ -107,16 +106,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    *  - (예) socket.emit('join_room', { userId:'userA', roomId:'abc123' })
    */
   @SubscribeMessage('join_room')
-  handleJoinRoom(socket: Socket, payload: { userId: string; roomId: string }) {
+  async handleJoinRoom(socket: Socket, payload: { userId: string; roomId: string }) {
     const { userId, roomId } = payload;
-    const result = this.chatService.joinRoom(userId, roomId);
+    const result = await this.chatService.joinRoom(userId, roomId);
     if (!result.success) {
       socket.emit('system', { content: `존재하지 않는 방: ${roomId}` });
       return;
     }
 
     // 실제 소켓 join
-    const socketId = this.chatService.getSocketId(userId);
+    const socketId = await this.chatService.getSocketId(userId);
     if (socketId) {
       const userSocket = this.server.sockets.sockets.get(socketId);
       userSocket?.join(roomId);
@@ -160,12 +159,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    *  - (예) socket.emit('leave_room', { userId:'userB', roomId:'abc123' })
    */
   @SubscribeMessage('leave_room')
-  handleLeaveRoom(socket: Socket, payload: { userId: string; roomId: string }) {
+  async handleLeaveRoom(socket: Socket, payload: { userId: string; roomId: string }) {
     const { userId, roomId } = payload;
-    this.chatService.leaveRoom(userId, roomId);
+    await this.chatService.leaveRoom(userId, roomId);
 
     // 실제 소켓 leave
-    const socketId = this.chatService.getSocketId(userId);
+    const socketId = await this.chatService.getSocketId(userId);
     if (socketId) {
       const userSocket = this.server.sockets.sockets.get(socketId);
       userSocket?.leave(roomId);

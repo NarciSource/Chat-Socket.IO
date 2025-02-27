@@ -30,7 +30,7 @@ export class ChatService {
 
         // rooms
         const rooms = await this.chatRepository.getUserRooms(userId);
-        await this.chatRepository.removeUserRooms(userId);
+        await this.chatRepository.removeAllUserRooms(userId);
 
         // roomMembersMap에서 해당 유저 제거
         for (const roomId of rooms) {
@@ -54,54 +54,58 @@ export class ChatService {
     }
 
     // 방 생성
-    createRoom(hostId: string, participants: string[]): {
-        roomId: string;
-        allParticipants: string[];
-    } {
+    async createRoom(
+        hostId: string, participants: string[]
+    ): Promise<{ roomId: string; allParticipants: string[]; }> {
         const roomId = this.generateRandomRoomId();
         const all = [...participants, hostId];
-        this.chatRepository.createRoom(roomId, participants);
+        await this.chatRepository.createRoom(roomId, participants);
 
-        all.forEach((userId) => {
-            this.chatRepository.addRoomToUser(userId, roomId);
-        });
+        for (const userId of all) {
+            await this.chatRepository.addRoomToUser(userId, roomId);
+        }
 
         return { roomId, allParticipants: all };
     };
 
     // 방 join
-    joinRoom(userId: string, roomId: string): { success: boolean; participants?: string[] } {
-        const members = this.chatRepository.getRoomMembers(roomId);
+    async joinRoom(userId: string, roomId: string): Promise<{ success: boolean; participants?: string[] }> {
+        const members = await this.chatRepository.getRoomMembers(roomId);
         if (!members) {
             return { success: false };
         }
         members.add(userId);
 
         // userRoomsMap도 업데이트
-        this.chatRepository.addRoomToUser(userId, roomId);
+        await this.chatRepository.addRoomToUser(userId, roomId);
+        await this.chatRepository.addRoomToUser(userId, roomId);
 
         return { success: true, participants: Array.from(members) };
     }
 
     // 방 떠나기
-    leaveRoom(userId: string, roomId: string) {
-        const members = this.chatRepository.getRoomMembers(roomId);
+    async leaveRoom(userId: string, roomId: string): Promise<boolean> {
+        const members = await this.chatRepository.getRoomMembers(roomId);
         if (!members) {
             return false;
         }
         members.delete(userId);
+        // DB 동기화
+        await this.chatRepository.removeUserFromRoomInRedis(roomId, userId);
+
         if (members.size === 0) {
             this.chatRepository.removeRoom(roomId);
             console.log(`모두 떠나서 방 ${roomId} 삭제`);
         }
 
-        const rooms = this.chatRepository.getUserRooms(userId);
+        const rooms = await this.chatRepository.getUserRooms(userId);
         rooms.delete(roomId);
+        await this.chatRepository.removeUserRooms(userId, roomId);
         return true;
     }
 
     // userId로 소켓 찾기
-    getSocketId(userId: string): string | undefined {
+    async getSocketId(userId: string): Promise<string | undefined> {
         return this.chatRepository.getUserSocketByUserId(userId);
     }
 }

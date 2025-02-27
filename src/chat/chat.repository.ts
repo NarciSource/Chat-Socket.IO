@@ -49,7 +49,10 @@ export class ChatRepository {
         const rooms = await this.redis.sMembers(`userRoomsMap:${userId}`);
         return new Set(rooms);
     }
-    async removeUserRooms(userId: string): Promise<void> {
+    async removeUserRooms(userId: string, roomId: string): Promise<void> {
+        await this.redis.sRem(`userRoomsMap:${userId}`, roomId);
+    }
+    async removeAllUserRooms(userId: string): Promise<void> {
         await this.redis.del(`userRoomsMap:${userId}`);
     }
 
