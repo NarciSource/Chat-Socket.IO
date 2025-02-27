@@ -10,38 +10,42 @@ export class ChatService {
     constructor(private readonly chatRepository: ChatRepository) {}
 
     // 등록 로직
-    registerUser(userId: string, socketId: string): boolean {
-        if (this.chatRepository.hasUserSocket(userId)) {
+    async registerUser(userId: string, socketId: string): Promise<boolean> {
+        const has = await this.chatRepository.hasUserSocket(userId);
+        if (has) {
             return false; // 중복
         }
-        this.chatRepository.setUserSocket(userId, socketId);
-        this.chatRepository.initUserRooms(userId);
+        await this.chatRepository.setUserSocket(userId, socketId);
+        await this.chatRepository.initUserRooms(userId);
         return true;
     }
 
     // 유저 해제 로직
-    disconnectUserBySocketId(socketId: string) {
-        const userId = this.chatRepository.findUserIdBySocketId(socketId);
+    async disconnectUserBySocketId(socketId: string): Promise<void> {
+        const userId = await this.chatRepository.findUserIdBySocketId(socketId);
         if (!userId) return;
 
         // socket map 제거
-        this.chatRepository.removeUserSocket(userId);
+        await this.chatRepository.removeUserSocket(userId);
 
         // rooms
-        const rooms = this.chatRepository.getUserRooms(userId);
-        this.chatRepository.removeUserRooms(userId);
+        const rooms = await this.chatRepository.getUserRooms(userId);
+        await this.chatRepository.removeUserRooms(userId);
 
         // roomMembersMap에서 해당 유저 제거
-        rooms.forEach((roomId) => {
-            const members = this.chatRepository.getRoomMembers(roomId);
-            if (members) {
-                members.delete(userId);
-                if (members.size === 0) {
-                    this.chatRepository.removeRoom(roomId)
-                    console.log(`방 ${roomId}가 비어 삭제됨`);
-                }
+        for (const roomId of rooms) {
+            // Redis에서 roomMembers 갱신
+            const members = await this.chatRepository.getRoomMembers(roomId);
+            members.delete(userId);
+
+            if (members.size === 0) {
+                await this.chatRepository.removeRoom(roomId);
+                console.log(`방 ${roomId}가 비어 삭제됨`);
+            } else {
+                // 실제 Redis에 반영
+                await this.chatRepository.removeUserFromRoomInRedis(roomId, userId);
             }
-        });
+        }
     }
 
     // 랜덤 roomId

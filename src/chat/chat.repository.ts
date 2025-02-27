@@ -1,85 +1,80 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
+import { RedisClientType } from 'redis';
 
 @Injectable()
 export class ChatRepository {
-    /*
-     * 1) userId -> socketId
-     *    사용자 하나당 현재 연결된 소켓(1개)을 추적
-     */
-    private userSocketMap: Map<string, string> = new Map();
-
-    /*
-     * 2) userId -> set<roomId>
-     *    유저가 어떤 방들에 들어가 있는지
-     */
-    private userRoomsMap: Map<string, Set<string>> = new Map();
-
-    /*
-     * 3) roomId -> Set<userId>
-     *    어떤 방에 어떤 유저들이 참여 중인지
-     */
-    private roomMembersMap: Map<string, Set<string>> = new Map();
-
-
+    constructor(
+        @Inject('REDIS_CLIENT')
+        private readonly redis: RedisClientType,
+    ) {}
 
     // (1) userSocketMap 관련
-    setUserSocket(userId: string, socketId: string) {
-        this.userSocketMap.set(userId, socketId);
+    async setUserSocket(userId: string, socketId: string) {
+        await this.redis.hSet('userSocketMap', userId, socketId);
     }
-    getUserSocketByUserId(userId: string): string | undefined {
-        return this.userSocketMap.get(userId);
+    async getUserSocketByUserId(userId: string): Promise<string | undefined> {
+        const socketId = await this.redis.hGet('userSocketMap', userId);
+        return socketId || undefined;
     }
-    hasUserSocket(userId: string): boolean {
-        return this.userSocketMap.has(userId);
+    async hasUserSocket(userId: string): Promise<boolean> {
+        // redis.hExists()가 없으므로, hGet으로 체크
+        const socketId = await this.redis.hGet('userSocketMap', userId);
+        return !!socketId;
     }
-    removeUserSocket(userId: string) {
-        this.userSocketMap.delete(userId);
+    async removeUserSocket(userId: string): Promise<void> {
+        await this.redis.hDel('userSocketMap', userId);
     }
-    findUserIdBySocketId(socketId: string): string | undefined {
-        for (const [uId, sId] of this.userSocketMap.entries()) {
+    async findUserIdBySocketId(socketId: string): Promise<string | undefined> {
+        // Hash 전체 스캔 (데이터 많으면 비효율적)
+        const entries = await this.redis.hGetAll('userSocketMap');
+        for (const [uId, sId] of Object.entries(entries)) {
             if (sId == socketId) {
                 return uId;
             }
         }
         return undefined;
     }
-    getAllUserSockets(): string[] {
-        return Array.from(this.userSocketMap.keys());
+    async getAllUserSockets(): Promise<string[]> {
+        // userId 목록 반환
+        const keys = await this.redis.hKeys('userSocketMap');
+        return keys;
     }
 
     // (2) userRoomsMap 관련
-    initUserRooms(userId: string) {
-        this.userRoomsMap.set(userId, new Set());
+    async initUserRooms(userId: string): Promise<void> {
+        // 필요 시, 기존 set을 비우고 싶다면 srem or del 등 활용
+        // await this.redis.del(`userRoomsMap:${userId}`);
     }
-    getUserRooms(userId: string): Set<string> {
-        return this.userRoomsMap.get(userId) || new Set();
+    async getUserRooms(userId: string): Promise<Set<string>> {
+        const rooms = await this.redis.sMembers(`userRoomsMap:${userId}`);
+        return new Set(rooms);
     }
-    removeUserRooms(userId: string) {
-        this.userRoomsMap.delete(userId);
+    async removeUserRooms(userId: string): Promise<void> {
+        await this.redis.del(`userRoomsMap:${userId}`);
     }
 
     // (3) roomMembersMap 관련
-    createRoom(roomId: string, userIds: string[]) {
-        this.roomMembersMap.set(roomId, new Set(userIds));
+    async createRoom(roomId: string, userIds: string[]) {
+        if (userIds.length > 0) {
+            await this.redis.sAdd(`roomMembersMap:${roomId}`, userIds);
+        }
     }
-    getRoomMembers(roomId: string): Set<string> {
-        return this.roomMembersMap.get(roomId) || new Set();
+    async getRoomMembers(roomId: string): Promise<Set<string>> {
+        const members = await this.redis.sMembers(`roomMembersMap:${roomId}`);
+        return new Set(members);
     }
-    removeRoom(roomId: string) {
-        this.roomMembersMap.delete(roomId);
+    async removeRoom(roomId: string) {
+        await this.redis.del(`roomMembersMap:${roomId}`);
     }
 
     // (4) 기타 조작
-    addRoomToUser(userId: string, roomId: string) {
-        const rooms = this.userRoomsMap.get(userId);
-        if (rooms) {
-            rooms.add(roomId);
-        }
+    async addRoomToUser(userId: string, roomId: string): Promise<void> {
+        await this.redis.del(`userRoomsMap:${userId}`);
     }
-    addUserToRoom(roomId: string, userId: string) {
-        const members = this.roomMembersMap.get(roomId);
-        if (members) {
-            members.add(userId);
-        }
+    async addUserToRoom(roomId: string, userId: string) {
+        await this.redis.sAdd(`roomMembersMap:${roomId}`, userId);
+    }
+    async removeUserFromRoomInRedis(roomId: string, userId: string): Promise<void> {
+        await this.redis.sRem(`roomMembersMap:${roomId}`, userId);
     }
 }
