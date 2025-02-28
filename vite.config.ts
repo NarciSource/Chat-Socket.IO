@@ -3,7 +3,6 @@ import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { quasar, transformAssetUrls } from "@quasar/vite-plugin";
-import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import vitePluginSingleSpa, { SingleSpaPluginOptions } from "vite-plugin-single-spa";
 
 // https://vite.dev/config/
@@ -22,7 +21,6 @@ export default defineConfig(({ mode }) => {
     }),
     quasar(), // Quasar 플러그인 적용
     tsconfigPaths({ loose: true }), // tsconfig.json의 paths 설정을 적용
-    cssInjectedByJsPlugin(), // css 파일을 js 파일에 삽입
   ];
 
   if (mode === "single-spa") {

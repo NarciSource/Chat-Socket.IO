@@ -42,4 +42,4 @@ jobs:
 
       - name: Upload file to S3
         run: |
-          aws s3 cp ${{ vars.TARGET_FILE }} ${{ vars.S3_BUCKET }}
+          aws s3 sync ${{ vars.TARGET_FILE }} ${{ vars.S3_BUCKET }} --delete
