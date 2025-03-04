@@ -5,11 +5,12 @@
 ## 🚩 목차
 
 - [🛠️ 기술 스택](#️-기술-스택)
-- [🎥 데모](#-데모)
 - [💁 소개](#-소개)
 - [💡 주요 기능](#-주요-기능)
+- [🎥 데모](#-데모)
 - [📊 다이어그램](#-다이어그램)
   - [🧩 컴포넌트 구성](#-컴포넌트-구성)
+  - [📡 통신 다이어그램](#-통신-다이어그램)
   - [🔄 CI/CD 파이프라인](#-cicd-파이프라인)
 - [📂 폴더 구조](#-폴더-구조)
 - [🚀 실행 방법](#-실행-방법)
@@ -26,14 +27,11 @@
 [![Steiger](https://img.shields.io/badge/FSD_Steiger-211b1d.svg?logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiPgo8cGF0aCBkPSJNMCAwIEMyOC4zOCAwIDU2Ljc2IDAgODYgMCBDODYgMy42MyA4NiA3LjI2IDg2IDExIEM1Ny42MiAxMSAyOS4yNCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0VCRUFFQSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsMTAyKSIvPgo8cGF0aCBkPSJNMCAwIEMyOC4zOCAwIDU2Ljc2IDAgODYgMCBDODYgMy42MyA4NiA3LjI2IDg2IDExIEM1Ny42MiAxMSAyOS4yNCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0VCRUFFQSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsODcpIi8+CjxwYXRoIGQ9Ik0wIDAgQzI4LjM4IDAgNTYuNzYgMCA4NiAwIEM4NiAzLjYzIDg2IDcuMjYgODYgMTEgQzU3LjYyIDExIDI5LjI0IDExIDAgMTEgQzAgNy4zNyAwIDMuNzQgMCAwIFogIiBmaWxsPSIjRUJFQUVBIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1Nyw1NykiLz4KPHBhdGggZD0iTTAgMCBDMjguMzggMCA1Ni43NiAwIDg2IDAgQzg2IDMuNjMgODYgNy4yNiA4NiAxMSBDNTcuNjIgMTEgMjkuMjQgMTEgMCAxMSBDMCA3LjM3IDAgMy43NCAwIDAgWiAiIGZpbGw9IiNFQkVBRUEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDU3LDQyKSIvPgo8cGF0aCBkPSJNMCAwIEMxMy41MyAwIDI3LjA2IDAgNDEgMCBDNDEgMy42MyA0MSA3LjI2IDQxIDExIEMyNy40NyAxMSAxMy45NCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0U5RThFOCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsMTQ3KSIvPgo8cGF0aCBkPSJNMCAwIEMxMy41MyAwIDI3LjA2IDAgNDEgMCBDNDEgMy42MyA0MSA3LjI2IDQxIDExIEMyNy40NyAxMSAxMy45NCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0U5RThFOCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsMTMyKSIvPgo8cGF0aCBkPSJNMCAwIEMxMy41MyAwIDI3LjA2IDAgNDEgMCBDNDEgMy42MyA0MSA3LjI2IDQxIDExIEMyNy40NyAxMSAxMy45NCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0U5RThFOCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsMTE3KSIvPgo8cGF0aCBkPSJNMCAwIEMxMy41MyAwIDI3LjA2IDAgNDEgMCBDNDEgMy42MyA0MSA3LjI2IDQxIDExIEMyNy40NyAxMSAxMy45NCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0U5RThFOCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsNzIpIi8+Cjwvc3ZnPgo=&style=flat-square&logoColor=black)](https://github.com/feature-sliced/steiger)
 [![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)](https://eslint.org/)
 
-## 🎥 데모
-
-https://github.com/user-attachments/assets/3c52e532-ff3f-4508-baf6-7d4a50afc6ee
-
 ## 💁 소개
 
 채팅 애플리케이션는 현직 멘토와 사이트 사용자가 실시간으로 채팅을 통해 서로 소통하며 도움을 주고받을 수 있는 애플리케이션입니다.  
-사용자들은 궁금한 점이나 문제를 멘토와 직접 대화하면서 해결할 수 있습니다. 또한, 다대다 채팅 및 다양한 채팅 기능을 통해 사용자에게 더 나은 경험을 제공합니다.
+사용자들은 궁금한 점이나 문제를 멘토와 직접 대화하면서 해결할 수 있습니다.  
+또한, 다대다 채팅 및 다양한 채팅 기능을 통해 사용자에게 더 나은 경험을 제공합니다.
 
 ## 💡 주요 기능
 
@@ -50,11 +48,49 @@ https://github.com/user-attachments/assets/3c52e532-ff3f-4508-baf6-7d4a50afc6ee
 | 폴더 구조 최적화                  | **Feature-Sliced Design(FSD)** 방식의 폴더 구조 설계를 적용하여, 명시적인 비즈니스 로직과 도메인 스코프 덕분에 필요한 로직을 쉽게 찾을 수 있습니다. |
 | 마이크로 프론트엔드 아키텍처 적용 | **Single-SPA** 기반의 마이크로 프론트엔드 빌드를 지원합니다.                                                                                        |
 
+## 🎥 데모
+
+https://github.com/user-attachments/assets/3c52e532-ff3f-4508-baf6-7d4a50afc6ee
+
 ## 📊 다이어그램
 
 ### 🧩 컴포넌트 구성
 
 ![component](https://github.com/user-attachments/assets/9336229c-d6a1-44af-ab6f-22b299c7c192)
+
+### 📡 통신 다이어그램
+
+```mermaid
+classDiagram
+    direction RL
+
+    class Client {
+        +connecting // 소캣 연결 여부
+        +room // 현재 방 정보
+        +current_user // 사용자
+        +query // 검색어
+        +searching // 검색 중 여부
+        +typing_user // 타이핑 중인 사용자
+        +messages // 메시지 목록
+        +system() // 시스템 메시지 수신
+        +room_created() // 방 생성 메시지 확인
+        +receive_message() // 채팅 메시지 수신 확인
+        +typing() // 타이핑 상태 확인
+    }
+
+    class Server {
+        +userRoomsMap // 각 방의 참여 유저 목록
+        +roomMembersMap // 유저가 참여 중인 방 목록
+        +register() // 사용자 등록 이벤트 수신
+        +create_room() // 방 생성 이벤트 수신
+        +leave_room() // 방 퇴장 이벤트 수신
+        +join_room() // 방 참여 이벤트 수신
+        +send_message() // 메시지 송신 이벤트 수신
+        +typing() // 타이핑 상태 이벤트 수신
+    }
+
+    Client --|> Server : websocket
+```
 
 ### 🔄 CI/CD 파이프라인
 
