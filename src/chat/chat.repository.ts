@@ -34,7 +34,7 @@ export class ChatRepository {
         }
         return undefined;
     }
-    async getAllUserSockets(): Promise<string[]> {
+    async getUserKeys(): Promise<string[]> {
         // userId 목록 반환
         const keys = await this.redis.hKeys('userSocketMap');
         return keys;
@@ -71,7 +71,7 @@ export class ChatRepository {
     }
 
     // (4) 기타 조작
-    async addRoomToUser(userId: string, roomId: string): Promise<void> {
+    async addRoomToUser(userId: string, _roomId: string): Promise<void> {
         await this.redis.del(`userRoomsMap:${userId}`);
     }
     async addUserToRoom(roomId: string, userId: string) {

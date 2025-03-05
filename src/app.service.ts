@@ -4,7 +4,7 @@ import { ChatRepository } from './chat/chat.repository';
 @Injectable()
 export class AppService {
   constructor(private readonly chatRepository: ChatRepository) {}
-  gettUsers() {
-    return this.chatRepository.getAllUserSockets();
+  getUsers() {
+    return this.chatRepository.getUserKeys();
   }
 }
