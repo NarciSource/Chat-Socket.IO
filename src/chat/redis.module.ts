@@ -1,4 +1,5 @@
 import { Global, Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { createClient } from 'redis';
 
 @Global()
@@ -6,15 +7,16 @@ import { createClient } from 'redis';
     providers: [
         {
             provide: 'REDIS_CLIENT',
-            useFactory: async () => {
+            useFactory: async (configService: ConfigService) => {
+                const host = configService.get<string>('REDIS_HOST', 'localhost');
+                const port = configService.get<number>('REDIS_PORT', 6379);
+
                 const client = createClient({
-                    url: 'redis://localhost:6379',
+                    url: 'redis://${host}:${port}',
                 });
-                // async connect
                 await client.connect();
                 console.log('[RedisModule] Connected to Redis')
                 return client;
-            
             },
         },
     ],
