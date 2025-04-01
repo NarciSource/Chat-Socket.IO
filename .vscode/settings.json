@@ -4,6 +4,7 @@
         ".env": ".env.*",
         ".gitignore": ".gitattributes",
         "setup.ps1": "setup.*, .gitconfig, .gitmessage",
+        "*.ts": "$(capture).spec.ts, $(capture).test.ts",
         "tsconfig.json": "tsconfig.*.json, env.d.ts",
         "vite.config.*": "vite.*.config.ts, jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*, *.d.ts",
         "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, steiger.config.ts, steiger.config.*"
