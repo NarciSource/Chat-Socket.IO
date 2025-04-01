@@ -141,13 +141,18 @@ PickMe-Chat-Application
 │  │        ├─ mapper # 페이로드 ↔ 엔터티 헬퍼 메서드
 │  │        │  ├─ dictionary.ts # 매핑헬퍼서비스 사전
 │  │        │  ├─ message.ts # 메시지 관련 헬퍼함수
-│  │        │  └─ room.ts # 방 관련 헬퍼함수
-│  │        └─ socketService.ts
+│  │        │  ├─ room.ts # 방 관련 헬퍼함수
+│  │        │  └─ user.ts # 유저 관련 헬퍼함수
+│  │        ├─ restService.ts # REST 서비스
+│  │        │  └─ restService.test.ts
+│  │        └─ socketService.ts # 소켓 서비스
+│  │           └─ socketService.test.ts
 │  ├─ features # 기능 구현체 레이어
 │  │  ├─ chat
 │  │  │  ├─ index.vue
 │  │  │  ├─ service
 │  │  │  │  └─ event_helper.ts # 소켓 이벤트 ↔ 로직 이벤트
+│  │  │  │     └─ event_helper.test.ts
 │  │  │  ├─ store # 중앙상태저장소
 │  │  │  │  └─ useChatStore.ts
 │  │  │  └─ ui
@@ -167,6 +172,7 @@ PickMe-Chat-Application
 │  │  │  ├─ index.vue
 │  │  │  ├─ service
 │  │  │  │  └─ event_helper.ts
+│  │  │  │     └─ event_helper.test.ts
 │  │  │  ├─ store
 │  │  │  │  └─ useRoomStore.ts
 │  │  │  └─ ui
@@ -181,6 +187,8 @@ PickMe-Chat-Application
 │  │     ├─ store
 │  │     │  └─ useUsersStore.ts
 │  │     └─ ui
+│  │        ├─ index.ts
+│  │        ├─ user-item.vue # 접속 사용자
 │  │        └─ user-list.vue # 접속 사용자 목록
 │  ├─ widgets # 위젯 레이어
 │  │  └─ chat
@@ -199,12 +207,14 @@ PickMe-Chat-Application
 │     │  ├─ tokens.ts # 토큰 3종
 │     │  └─ getUser.ts # 접속 유저 정보 불러오기
 │     └─ socket_constants.ts # 환경변수 불러오기
-├─ .prettierrc # 포맷터
-├─ steiger.config.ts # FSD 린트
-├─ vite-env.d.ts # 환경변수 타입 정의
-├─ shims-vue.d.ts # *.vue 타입 정의
-├─ vite.config.ts # Vite 설정 파일
-└─ vite.single-spa.config.ts # Single-spa용 Vite 설정 파일
+├─ package.json # 의존성 설정
+│  ├─ .prettierrc # 포맷터 설정
+│  ├─ eslint.config.js # 린트 설정
+│  └─ steiger.config.ts # FSD 린트 설정
+└─ vite.config.ts # Vite 설정 파일
+   ├─ shims-vue.d.ts # *.vue 타입 정의
+   ├─ vite-env.d.ts # 환경변수 타입 정의
+   └─ vitest.config.ts # Vitest 설정 파일
 ```
 
 </details>
