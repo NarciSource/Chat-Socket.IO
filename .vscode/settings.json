@@ -1,6 +1,7 @@
 {
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
+    "*.module.ts": "$(capture).*.ts",
     ".env": ".env.*",
     ".gitignore": ".gitattributes",
     "setup.ps1": "setup.*, .gitconfig, .gitmessage",
