@@ -1,17 +1,19 @@
 <template>
-  <q-card v-if="MANUAL_USER_SET">
-    <q-card-section class="text-h6">수동 등록</q-card-section>
-    <q-card-section>
-      <q-input v-model="my_nick" label="내 닉네임" />
-      <q-btn
-        class="q-ma-md full-width"
-        label="연결"
-        color="teal"
-        text-color="white"
-        @click="setup"
-      />
-    </q-card-section>
-  </q-card>
+  <q-dialog v-model="dialog_visible" persistent>
+    <q-card v-if="MANUAL_USER_SET">
+      <q-card-section class="text-h6">수동 등록</q-card-section>
+      <q-card-section>
+        <q-input v-model="my_nick" label="내 닉네임" />
+        <q-btn
+          class="q-ma-md full-width"
+          label="연결"
+          color="teal"
+          text-color="white"
+          @click="setup"
+        />
+      </q-card-section>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -27,6 +29,7 @@ const MANUAL_USER_SET = import.meta.env.VITE_MANUAL_USER_SET === "true" || false
 
 const { current_user, connecting } = storeToRefs(useRoomStore());
 const my_nick = ref("");
+const dialog_visible = ref(true);
 
 const setup = () => {
   // 소켓 연결
@@ -39,7 +42,10 @@ const setup = () => {
   register(current_user.value.name);
 
   // 연결 성공시 콜백
-  success(() => (connecting.value = true));
+  success(() => {
+    connecting.value = true;
+    dialog_visible.value = false;
+  });
 };
 
 if (!MANUAL_USER_SET) {
