@@ -12,12 +12,13 @@ import { createClient } from 'redis';
         const port = configService.get<number>('REDIS_PORT', 6379);
 
         const client = createClient({
-          url: 'redis://${host}:${port}',
+          url: `redis://${host}:${port}`,
         });
         await client.connect();
         console.log('[RedisModule] Connected to Redis');
         return client;
       },
+      inject: [ConfigService],
     },
   ],
   exports: ['REDIS_CLIENT'],
