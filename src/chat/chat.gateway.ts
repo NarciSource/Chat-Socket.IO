@@ -6,6 +6,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+
 import { ChatService } from './chat.service';
 
 /**
@@ -13,7 +14,7 @@ import { ChatService } from './chat.service';
  * - 원하는 만큼 참여자를 넣어 1:1 또는 1:N 모두 처리 가능
  */
 interface CreateRoomPayload {
-  hostId: string;         // 방을 생성한 사람 (옵션)
+  hostId: string; // 방을 생성한 사람 (옵션)
   participants: string[]; // 이 방에 들어갈 유저들의 userId 목록
 }
 
@@ -21,9 +22,9 @@ interface CreateRoomPayload {
  * 메시지 전송시 사용할 payload
  */
 interface SendMessagePayload {
-  roomId: string;   // 메시지를 전송할 방
+  roomId: string; // 메시지를 전송할 방
   senderId: string; // 보낸 사람
-  content: string;  // 메시지 내용
+  content: string; // 메시지 내용
 }
 
 @WebSocketGateway({
@@ -74,7 +75,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    * 방 생성 이벤트 (1:1 ~ 1:N 모두 처리)
    *  - (예) socket.emit('create_room', {
    *        hostId: 'userA',
-   *        participantIds: ['userA','userB','userC'] 
+   *        participantIds: ['userA','userB','userC']
    *     });
    *  -> server가 랜덤 roomId를 만들어 roomMembersMap에 저장
    *  -> 해당 참여자들(userA,B,C)이 현재 소켓 연결 중이면 자동으로 room에 join
@@ -131,7 +132,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(roomId).emit('room_created', {
       roomId,
       participants: result.participants,
-    })
+    });
   }
 
   /**
@@ -159,7 +160,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    *  - (예) socket.emit('leave_room', { userId:'userB', roomId:'abc123' })
    */
   @SubscribeMessage('leave_room')
-  async handleLeaveRoom(socket: Socket, payload: { userId: string; roomId: string }) {
+  async handleLeaveRoom(_socket: Socket, payload: { userId: string; roomId: string }) {
     const { userId, roomId } = payload;
     await this.chatService.leaveRoom(userId, roomId);
 
@@ -178,7 +179,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('typing')
-  handleSendingMessage(socket: Socket, payload: { userId: string; roomId: string; }) {
+  handleSendingMessage(_socket: Socket, payload: { userId: string; roomId: string }) {
     const { userId, roomId } = payload;
 
     this.server.to(roomId).emit('typing', userId);
