@@ -51,6 +51,7 @@ jobs:
       - name: Build Vite project
         env:
           VITE_PUBLIC_URL: ${{ vars.VITE_GH_PAGE_URL }}
+          VITE_STANDALONE: true
           VITE_AUTH_PARCEL_URL: ${{ vars.VITE_GH_PAGE_AUTH_PARCEL_URL }}
           VITE_MANUAL_USER_SET: ${{ vars.VITE_GH_PAGE_MANUAL_USER_SET }}
         run: |
@@ -59,6 +60,7 @@ jobs:
       - name: Build Vite For single-spa
         env:
           VITE_PUBLIC_URL: ${{ vars.VITE_PUBLIC_URL }}
+          VITE_STANDALONE: false
           VITE_AUTH_PARCEL_URL: ${{ vars.VITE_AUTH_PARCEL_URL }}
           VITE_MANUAL_USER_SET: ${{ vars.VITE_MANUAL_USER_SET }}
         run: |

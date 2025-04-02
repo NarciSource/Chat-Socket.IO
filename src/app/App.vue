@@ -1,7 +1,10 @@
 <template>
-  <chat-page />
+  <widget-page v-if="!standalone" />
+  <standalone-page v-else />
 </template>
 
 <script setup>
-import ChatPage from "@/pages/chat";
+import { WidgetPage, StandalonePage } from "@/pages/chat";
+
+const standalone = import.meta.env.VITE_STANDALONE === "true";
 </script>

@@ -27,8 +27,8 @@ import Chat from "@/features/chat";
 import { Layout } from "./ui";
 
 // 레이아웃 크기
-const LAYOUT_WIDTH = Number(import.meta.env.VITE_LAYOUT_WIDTH) || 500;
-const LAYOUT_HEIGHT = Number(import.meta.env.VITE_LAYOUT_HEIGHT) || 700;
+const LAYOUT_WIDTH = Number(import.meta.env.VITE_LAYOUT_WIDTH);
+const LAYOUT_HEIGHT = Number(import.meta.env.VITE_LAYOUT_HEIGHT);
 
 // feature간 데이터 공유
 const { connecting, selected_room, current_user } = storeToRefs(useRoomStore());

@@ -16,8 +16,8 @@
 const { width, height } = defineProps<{ width: number; height: number }>();
 
 const style = {
-  width: `${width}px`,
-  height: `${height}px`,
+  width: width ? `${width}px` : `100vw`,
+  height: height ? `${height}px` : `100vh`,
   // 배경화면 이미지 설정
   backgroundImage: `url('https://picsum.photos/${width}/${height}')`,
 };
