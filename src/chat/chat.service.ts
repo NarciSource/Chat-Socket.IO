@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import IRepository from './repository.interface';
+import IRepository from '../repository/repository.interface';
 
 /*
  * 방 생성/입장/퇴장 등 비즈니스 로직 담당
