@@ -47,7 +47,7 @@ export class ChatService {
         console.log(`방 ${roomId}가 비어 삭제됨`);
       } else {
         // 실제 Redis에 반영
-        await this.chatRepository.removeUserFromRoomInRedis(roomId, userId);
+        await this.chatRepository.removeUserFromRoom(roomId, userId);
       }
     }
   }
@@ -99,7 +99,7 @@ export class ChatService {
     }
     members.delete(userId);
     // DB 동기화
-    await this.chatRepository.removeUserFromRoomInRedis(roomId, userId);
+    await this.chatRepository.removeUserFromRoom(roomId, userId);
 
     if (members.size === 0) {
       this.chatRepository.removeRoom(roomId);

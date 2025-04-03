@@ -54,6 +54,12 @@ export class SimpleRepository implements IRepository {
   async getUserRooms(userId: string): Promise<Set<string>> {
     return this.userRoomsMap.get(userId) || new Set();
   }
+  async addRoomToUser(userId: string, roomId: string) {
+    const rooms = this.userRoomsMap.get(userId);
+    if (rooms) {
+      rooms.add(roomId);
+    }
+  }
   async removeUserRooms(userId: string) {
     this.userRoomsMap.delete(userId);
   }
@@ -62,7 +68,7 @@ export class SimpleRepository implements IRepository {
     const rooms = this.userRoomsMap.get(userId);
     if (rooms) {
       for (const room of rooms) {
-        await this.removeUserFromRoomInRedis(room, userId);
+        await this.removeUserFromRoom(room, userId);
       }
     }
   }
@@ -71,19 +77,11 @@ export class SimpleRepository implements IRepository {
   async createRoom(roomId: string, userIds: string[]) {
     this.roomMembersMap.set(roomId, new Set(userIds));
   }
-  async getRoomMembers(roomId: string): Promise<Set<string>> {
-    return this.roomMembersMap.get(roomId) || new Set();
-  }
   async removeRoom(roomId: string) {
     this.roomMembersMap.delete(roomId);
   }
-
-  // (4) 기타 조작
-  async addRoomToUser(userId: string, roomId: string) {
-    const rooms = this.userRoomsMap.get(userId);
-    if (rooms) {
-      rooms.add(roomId);
-    }
+  async getRoomMembers(roomId: string): Promise<Set<string>> {
+    return this.roomMembersMap.get(roomId) || new Set();
   }
   async addUserToRoom(roomId: string, userId: string) {
     const members = this.roomMembersMap.get(roomId);
@@ -92,7 +90,7 @@ export class SimpleRepository implements IRepository {
     }
   }
 
-  async removeUserFromRoomInRedis(roomId: string, userId: string): Promise<void> {
+  async removeUserFromRoom(roomId: string, userId: string): Promise<void> {
     const members = this.roomMembersMap.get(roomId);
     if (members) {
       members.delete(userId);

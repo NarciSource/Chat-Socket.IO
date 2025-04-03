@@ -36,6 +36,7 @@ export class RedisRepository implements IRepository {
     }
     return undefined;
   }
+
   async getUserKeys(): Promise<string[]> {
     // userId 목록 반환
     const keys = await this.redis.hKeys('userSocketMap');
@@ -50,6 +51,9 @@ export class RedisRepository implements IRepository {
   async getUserRooms(userId: string): Promise<Set<string>> {
     const rooms = await this.redis.sMembers(`userRoomsMap:${userId}`);
     return new Set(rooms);
+  }
+  async addRoomToUser(userId: string, roomId: string): Promise<void> {
+    await this.redis.del(`userRoomsMap:${userId}`);
   }
   async removeUserRooms(userId: string, roomId: string): Promise<void> {
     await this.redis.sRem(`userRoomsMap:${userId}`, roomId);
@@ -71,15 +75,10 @@ export class RedisRepository implements IRepository {
   async removeRoom(roomId: string) {
     await this.redis.del(`roomMembersMap:${roomId}`);
   }
-
-  // (4) 기타 조작
-  async addRoomToUser(userId: string, roomId: string): Promise<void> {
-    await this.redis.del(`userRoomsMap:${userId}`);
-  }
   async addUserToRoom(roomId: string, userId: string) {
     await this.redis.sAdd(`roomMembersMap:${roomId}`, userId);
   }
-  async removeUserFromRoomInRedis(roomId: string, userId: string): Promise<void> {
+  async removeUserFromRoom(roomId: string, userId: string): Promise<void> {
     await this.redis.sRem(`roomMembersMap:${roomId}`, userId);
   }
 }
