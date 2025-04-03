@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import IChatRepository from './repository';
+import IRepository from './repository.interface';
 
 /*
  * 방 생성/입장/퇴장 등 비즈니스 로직 담당
@@ -9,8 +9,8 @@ import IChatRepository from './repository';
 @Injectable()
 export class ChatService {
   constructor(
-    @Inject('IChatRepository')
-    private readonly chatRepository: IChatRepository,
+    @Inject('IRepository')
+    private readonly chatRepository: IRepository,
   ) {}
 
   // 등록 로직

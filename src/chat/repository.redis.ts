@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 
-import IChatRepository from './repository';
+import IRepository from './repository.interface';
 
 @Injectable()
-export class ChatRepository implements IChatRepository {
+export class RedisRepository implements IRepository {
   constructor(
     @Inject('REDIS_CLIENT')
     private readonly redis: RedisClientType,
