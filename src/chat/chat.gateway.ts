@@ -28,6 +28,8 @@ interface SendMessagePayload {
 }
 
 @WebSocketGateway({
+  path: '/chat/ws',
+  namespace: '/chat',
   cors: {
     origin: '*', // 실제 배포 시에는 허용할 도메인을 명시
   },
@@ -38,6 +40,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   // ChatService 주입
   constructor(private readonly chatService: ChatService) {}
+
+  afterInit(server: Server) {
+    console.log('소켓 서버 초기화 완료');
+  }
 
   // 소켓 연결 시
   handleConnection(socket: Socket) {
@@ -89,7 +95,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     for (const userId of allParticipants) {
       const sockId = await this.chatService.getSocketId(userId);
       if (sockId) {
-        const userSocket = this.server.sockets.sockets.get(sockId);
+        const userSocket = socket.nsp.sockets.get(sockId);
         userSocket?.join(roomId);
       }
     }
@@ -118,7 +124,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 실제 소켓 join
     const socketId = await this.chatService.getSocketId(userId);
     if (socketId) {
-      const userSocket = this.server.sockets.sockets.get(socketId);
+      const userSocket = socket.nsp.sockets.get(socketId);
       userSocket?.join(roomId);
     }
 
@@ -160,14 +166,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    *  - (예) socket.emit('leave_room', { userId:'userB', roomId:'abc123' })
    */
   @SubscribeMessage('leave_room')
-  async handleLeaveRoom(_socket: Socket, payload: { userId: string; roomId: string }) {
+  async handleLeaveRoom(socket: Socket, payload: { userId: string; roomId: string }) {
     const { userId, roomId } = payload;
     await this.chatService.leaveRoom(userId, roomId);
 
     // 실제 소켓 leave
     const socketId = await this.chatService.getSocketId(userId);
     if (socketId) {
-      const userSocket = this.server.sockets.sockets.get(socketId);
+      const userSocket = socket.nsp.sockets.get(socketId);
       userSocket?.leave(roomId);
     }
 
