@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ChatGateway } from './chat.gateway';
 import { ChatService } from './chat.service';
 import { ChatRepository } from './chat.repository';
+import { SimpleChatRepository } from './simple.repository';
 
 @Module({
   providers: [
@@ -10,7 +11,7 @@ import { ChatRepository } from './chat.repository';
     ChatService,
     {
       provide: 'IChatRepository',
-      useClass: ChatRepository,
+      useClass: SimpleChatRepository,
     },
   ],
   exports: ['IChatRepository'],
