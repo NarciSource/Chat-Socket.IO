@@ -1,6 +1,7 @@
 name: Vite Build
 
 on:
+  workflow_dispatch: # 수동으로 실행 가능
   pull_request: # PR이 열릴 때마다 실행
     branches:
       - main
