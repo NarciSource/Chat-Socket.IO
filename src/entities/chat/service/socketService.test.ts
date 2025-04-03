@@ -35,6 +35,7 @@ describe("socketService", () => {
 
       expect(io).toHaveBeenCalledWith(SOCKET_SERVER_URL, {
         transports: ["websocket"],
+        path: "/chat/ws",
         auth: { accessToken: expect.any(String) },
       });
       expect(typeof register).toBe("function");

@@ -20,7 +20,7 @@ describe("restService", () => {
 
     const users = await get_users();
 
-    expect(axios.get).toHaveBeenCalledWith(SERVER_URL + "/chat/users");
+    expect(axios.get).toHaveBeenCalledWith(SERVER_URL + "/users");
     expect(dto_to_user).toHaveBeenCalledWith(mockUserDTO);
     expect(users).toEqual([mockUser]);
   });
@@ -29,6 +29,6 @@ describe("restService", () => {
     (axios.get as any).mockRejectedValue(new Error("Error"));
 
     await expect(get_users()).rejects.toThrow("Error");
-    expect(axios.get).toHaveBeenCalledWith(SERVER_URL + "/chat/users");
+    expect(axios.get).toHaveBeenCalledWith(SERVER_URL + "/users");
   });
 });
