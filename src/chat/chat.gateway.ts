@@ -6,6 +6,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+
 import { ChatService } from './chat.service';
 
 /**
@@ -13,7 +14,7 @@ import { ChatService } from './chat.service';
  * - 원하는 만큼 참여자를 넣어 1:1 또는 1:N 모두 처리 가능
  */
 interface CreateRoomPayload {
-  hostId: string;         // 방을 생성한 사람 (옵션)
+  hostId: string; // 방을 생성한 사람 (옵션)
   participants: string[]; // 이 방에 들어갈 유저들의 userId 목록
 }
 
@@ -21,12 +22,14 @@ interface CreateRoomPayload {
  * 메시지 전송시 사용할 payload
  */
 interface SendMessagePayload {
-  roomId: string;   // 메시지를 전송할 방
+  roomId: string; // 메시지를 전송할 방
   senderId: string; // 보낸 사람
-  content: string;  // 메시지 내용
+  content: string; // 메시지 내용
 }
 
 @WebSocketGateway({
+  path: '/chat/ws',
+  namespace: '/chat',
   cors: {
     origin: '*', // 실제 배포 시에는 허용할 도메인을 명시
   },
@@ -37,6 +40,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   // ChatService 주입
   constructor(private readonly chatService: ChatService) {}
+
+  afterInit(server: Server) {
+    console.log('소켓 서버 초기화 완료');
+  }
 
   // 소켓 연결 시
   handleConnection(socket: Socket) {
@@ -74,7 +81,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
    * 방 생성 이벤트 (1:1 ~ 1:N 모두 처리)
    *  - (예) socket.emit('create_room', {
    *        hostId: 'userA',
-   *        participantIds: ['userA','userB','userC'] 
+   *        participantIds: ['userA','userB','userC']
    *     });
    *  -> server가 랜덤 roomId를 만들어 roomMembersMap에 저장
    *  -> 해당 참여자들(userA,B,C)이 현재 소켓 연결 중이면 자동으로 room에 join
@@ -88,7 +95,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     for (const userId of allParticipants) {
       const sockId = await this.chatService.getSocketId(userId);
       if (sockId) {
-        const userSocket = this.server.sockets.sockets.get(sockId);
+        const userSocket = socket.nsp.sockets.get(sockId);
         userSocket?.join(roomId);
       }
     }
@@ -117,7 +124,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 실제 소켓 join
     const socketId = await this.chatService.getSocketId(userId);
     if (socketId) {
-      const userSocket = this.server.sockets.sockets.get(socketId);
+      const userSocket = socket.nsp.sockets.get(socketId);
       userSocket?.join(roomId);
     }
 
@@ -131,7 +138,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.to(roomId).emit('room_created', {
       roomId,
       participants: result.participants,
-    })
+    });
   }
 
   /**
@@ -166,7 +173,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 실제 소켓 leave
     const socketId = await this.chatService.getSocketId(userId);
     if (socketId) {
-      const userSocket = this.server.sockets.sockets.get(socketId);
+      const userSocket = socket.nsp.sockets.get(socketId);
       userSocket?.leave(roomId);
     }
 
@@ -178,7 +185,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('typing')
-  handleSendingMessage(socket: Socket, payload: { userId: string; roomId: string; }) {
+  handleSendingMessage(_socket: Socket, payload: { userId: string; roomId: string }) {
     const { userId, roomId } = payload;
 
     this.server.to(roomId).emit('typing', userId);
