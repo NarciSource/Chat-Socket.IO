@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
-import { ChatRepository } from './chat/chat.repository';
+import IChatRepository from './chat/repository';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly chatRepository: ChatRepository) {}
+  constructor(
+    @Inject('IChatRepository')
+    private readonly chatRepository: IChatRepository,
+  ) {}
+
   getUsers() {
     return this.chatRepository.getUserKeys();
   }

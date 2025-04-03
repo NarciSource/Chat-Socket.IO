@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
-import { ChatRepository } from './chat.repository';
+import IChatRepository from './repository';
 
 /*
  * 방 생성/입장/퇴장 등 비즈니스 로직 담당
@@ -8,7 +8,10 @@ import { ChatRepository } from './chat.repository';
  */
 @Injectable()
 export class ChatService {
-  constructor(private readonly chatRepository: ChatRepository) {}
+  constructor(
+    @Inject('IChatRepository')
+    private readonly chatRepository: IChatRepository,
+  ) {}
 
   // 등록 로직
   async registerUser(userId: string, socketId: string): Promise<boolean> {
