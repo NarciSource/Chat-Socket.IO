@@ -44,7 +44,7 @@ jobs:
         run: npm ci # 의존성 설치
 
       - name: Run tests
-        run: npm run test # 테스트 실행
+        run: npm run test:coverage # 테스트 실행
 
       - name: Lint code
         run: npm run lint # 린트 실행

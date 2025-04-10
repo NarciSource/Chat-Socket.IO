@@ -8,6 +8,8 @@
 - [💁 소개](#-소개)
 - [💡 주요 기능](#-주요-기능)
 - [🎥 데모](#-데모)
+- [📖 개발 문서](#-개발-문서)
+  - [📋 테스트 리포트](#-테스트-리포트)
 - [📊 다이어그램](#-다이어그램)
   - [🧩 컴포넌트 구성](#-컴포넌트-구성)
   - [📡 통신 다이어그램](#-통신-다이어그램)
@@ -51,6 +53,18 @@
 ## 🎥 데모
 
 https://github.com/user-attachments/assets/3c52e532-ff3f-4508-baf6-7d4a50afc6ee
+
+## 📖 개발 문서
+
+### 📋 테스트 리포트
+
+> 테스트 케이스 통과 여부 및 커버리지 현황 등을 시각적으로 제공합니다.  
+> 이 테스트 리포트는 매 릴리즈 업데이트 시 자동으로 최신 상태로 배포됩니다.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://daily1hour.github.io/PickMe-Chat-Application/test/Chat">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitest/vitest-original.svg" alt="Vitest" width='50px' /> 테스트 리포트 바로가기
+</a>
 
 ## 📊 다이어그램
 
