@@ -10,6 +10,7 @@
 - [🎥 데모](#-데모)
 - [📖 개발 문서](#-개발-문서)
   - [📋 테스트 리포트](#-테스트-리포트)
+  - [📘 타입 문서](#-타입-문서)
 - [📊 다이어그램](#-다이어그램)
   - [🧩 컴포넌트 구성](#-컴포넌트-구성)
   - [📡 통신 다이어그램](#-통신-다이어그램)
@@ -65,6 +66,20 @@ https://github.com/user-attachments/assets/3c52e532-ff3f-4508-baf6-7d4a50afc6ee
 <a href="https://daily1hour.github.io/PickMe-Chat-Application/test/Chat">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitest/vitest-original.svg" alt="Vitest" width='50px' /> 테스트 리포트 바로가기
 </a>
+
+<br/><br/>
+
+### 📘 타입 문서
+
+> 프로젝트에서 사용되는 타입 정의를 문서화한 자료입니다.  
+> 이 타입 문서는 매 릴리즈 업데이트 시 자동으로 최신 상태로 배포됩니다.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="https://daily1hour.github.io/PickMe-Chat-Application/docs">
+<img src="https://github.com/user-attachments/assets/6225376e-d3bf-49e2-a537-bbb8ae1caf97" alt="TypeDoc" width='50px' /> 타입 문서 바로가기
+</a>
+
+<br/><br/>
 
 ## 📊 다이어그램
 

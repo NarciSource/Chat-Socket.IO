@@ -9,6 +9,7 @@
     "build:single-spa": "vite build --mode single-spa",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
+    "docs": "typedoc",
     "preview": "vite preview",
     "preview:single-spa": "vite preview --mode single-spa",
     "lint": "npx steiger ./src",
