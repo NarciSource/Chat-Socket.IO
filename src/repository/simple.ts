@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import IRepository from './repository.interface';
+import IRepository from './interface';
 
 @Injectable()
 export class SimpleRepository implements IRepository {

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 
-import IRepository from './repository.interface';
+import IRepository from './interface';
 
 @Injectable()
 export class RedisRepository implements IRepository {
@@ -15,7 +15,7 @@ export class RedisRepository implements IRepository {
     await this.redis.hSet('userSocketMap', userId, socketId);
   }
   async getUserSocketByUserId(userId: string): Promise<string | undefined> {
-    const socketId = await this.redis.hGet('userSocketMap', userId);
+    const socketId = (await this.redis.hGet('userSocketMap', userId)) as string;
     return socketId || undefined;
   }
   async hasUserSocket(userId: string): Promise<boolean> {
