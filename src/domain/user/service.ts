@@ -17,7 +17,7 @@ export class UserService {
       return false; // 중복
     }
 
-    this.repository.setUserSocket(userId, socketId);
+    await this.repository.setUserSocket(userId, socketId);
 
     await this.repository.initUserRooms(userId);
 

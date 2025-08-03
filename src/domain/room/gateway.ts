@@ -36,7 +36,7 @@ export class RoomGateway {
       const sockId = await this.service.getSocketId(userId);
       if (sockId) {
         const userSocket = socket.nsp.sockets.get(sockId);
-        userSocket?.join(roomId);
+        void userSocket?.join(roomId);
       }
     }
 
@@ -67,7 +67,7 @@ export class RoomGateway {
     if (socketId) {
       const userSocket = socket.nsp.sockets.get(socketId);
 
-      userSocket?.join(roomId);
+      void userSocket?.join(roomId);
     }
 
     // 새로운 참가자 알림
@@ -99,7 +99,7 @@ export class RoomGateway {
     if (socketId) {
       const userSocket = socket.nsp.sockets.get(socketId);
 
-      userSocket?.leave(roomId);
+      void userSocket?.leave(roomId);
     }
 
     // 알림

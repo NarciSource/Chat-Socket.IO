@@ -4,7 +4,7 @@ import { Controller, Get, HttpCode } from '@nestjs/common';
 export class HealthCheckController {
   @Get()
   @HttpCode(200)
-  async healthCheck() {
+  healthCheck() {
     return 'OK';
   }
 }

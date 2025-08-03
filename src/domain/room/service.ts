@@ -63,7 +63,7 @@ export class RoomService {
     await this.repository.removeUserFromRoom(roomId, userId);
 
     if (members.size === 0) {
-      this.repository.removeRoom(roomId);
+      await this.repository.removeRoom(roomId);
       console.log(`모두 떠나서 방 ${roomId} 삭제`);
     }
 

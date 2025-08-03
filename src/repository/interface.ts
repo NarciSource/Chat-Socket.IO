@@ -1,5 +1,5 @@
 export default interface IRepository {
-  setUserSocket(userId: string, socketId: string): void; // userId에 해당하는 소켓 ID 등록
+  setUserSocket(userId: string, socketId: string): Promise<void>; // userId에 해당하는 소켓 ID 등록
   getUserSocketByUserId(userId: string): Promise<string | undefined>; // userId에 해당하는 소켓 ID를 가져옴
   hasUserSocket(userId: string): Promise<boolean>; // userId에 해당하는 소켓 ID가 존재하는지 확인
   removeUserSocket(userId: string): Promise<void>; // userId에 해당하는 소켓 ID 삭제
