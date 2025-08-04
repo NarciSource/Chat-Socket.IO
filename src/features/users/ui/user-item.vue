@@ -1,5 +1,5 @@
 <template>
-  <q-item-section side v-show="false">
+  <q-item-section v-show="false" side>
     <q-checkbox v-model="check" />
   </q-item-section>
 

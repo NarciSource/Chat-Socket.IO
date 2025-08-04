@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { Quasar } from "quasar";

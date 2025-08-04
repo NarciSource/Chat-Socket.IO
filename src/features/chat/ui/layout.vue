@@ -10,7 +10,7 @@
     />
   </q-header>
 
-  <q-drawer side="right" v-model="toggle_toolbar" class="bg-grey-9" :width="75" :breakpoint="500">
+  <q-drawer v-model="toggle_toolbar" side="right" class="bg-grey-9" :width="75" :breakpoint="500">
     <slot name="toolbar" />
   </q-drawer>
 

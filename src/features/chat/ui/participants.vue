@@ -2,7 +2,7 @@
   <q-btn flat color="amber" icon="face" title="참여자">
     <q-popup-proxy>
       <q-list>
-        <q-item v-for="participant in room!.participants">
+        <q-item v-for="participant in room!.participants" :key="participant.id">
           <q-item-section avatar>
             <q-avatar>
               <img :src="participant.avatar_url" />

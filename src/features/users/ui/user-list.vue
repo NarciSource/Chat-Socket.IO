@@ -3,12 +3,13 @@
     <q-item class="q-pa-md text-subtitle2 text-weight-bold">참여자 {{ users.length }}명</q-item>
 
     <q-item
-      tag="label"
       v-for="[user, status] in checks_map"
+      :key="user.id"
+      tag="label"
       :active="status.check"
       active-class="bg-teal-2"
     >
-      <user-item :user="user" v-model="status.check" />
+      <user-item v-model="status.check" :user="user" />
     </q-item>
   </q-list>
 </template>

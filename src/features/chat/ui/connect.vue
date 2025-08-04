@@ -29,7 +29,7 @@ const { insert_message, alarm_typing } = useChatStore();
 const store = useChatStore();
 
 watchEffect(() => {
-  if (!!store.connecting) {
+  if (store.connecting) {
     // 소켓 이벤트 리스너 등록
     connected(() => (store.connecting = true)); // 연결 성공
     connect_failed(() => (store.connecting = false)); // 연결 실패

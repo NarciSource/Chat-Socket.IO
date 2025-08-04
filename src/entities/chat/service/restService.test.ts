@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi } from "vitest";
 import axios from "axios";
 
 import { User } from "../model";
-import { dto_to_user } from "./mapper/user";
 import { UserDTO } from "../api/dto";
+import { dto_to_user } from "./mapper/user";
 import { get_users } from "./restService";
 
 vi.mock("axios");

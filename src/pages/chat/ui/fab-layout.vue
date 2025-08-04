@@ -1,12 +1,12 @@
 <template>
   <q-page-sticky position="bottom-right" :offset="fab_position">
     <q-fab
+      v-touch-pan.prevent.mouse="move_fab"
       fab
       icon="chatbubbles-outline"
       :direction="fab_direction"
       color="teal"
-      v-touch-pan.prevent.mouse="move_fab"
-      @click="(action = !action), (render = true)"
+      @click="((action = !action), (render = true))"
     >
       <slot v-if="render" />
     </q-fab>

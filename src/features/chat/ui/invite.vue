@@ -1,14 +1,14 @@
 <template>
   <q-btn flat color="green" icon="add" title="초대하기">
-    <user-list-popup :onSelected="invite" />
+    <user-list-popup :on-selected="invite" />
   </q-btn>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import { User } from "@/entities/chat/model";
 import UserListPopup from "@/features/users/index.vue";
+import { User } from "@/entities/chat/model";
 import useChatStore from "../store/useChatStore";
 import { invite_user } from "../service/event_helper";
 

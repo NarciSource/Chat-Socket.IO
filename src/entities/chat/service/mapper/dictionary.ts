@@ -12,6 +12,7 @@ import {
   response_typing_payload,
 } from "./message";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Mapper = (data: any) => any;
 
 // 매핑헬퍼서비스 사전

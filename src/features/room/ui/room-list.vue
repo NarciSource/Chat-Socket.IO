@@ -2,6 +2,7 @@
   <q-list>
     <q-item
       v-for="[, room] in rooms"
+      :key="room.id"
       :active="room === selected_room"
       active-class="bg-teal-2"
       :title="room.name"
@@ -14,7 +15,7 @@
         </q-item-label>
       </q-item-section>
 
-      <q-item-section side v-show="room.is_new">
+      <q-item-section v-show="room.is_new" side>
         <q-badge rounded color="primary" label="New" />
       </q-item-section>
 

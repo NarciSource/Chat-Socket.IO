@@ -4,7 +4,7 @@
       <q-icon class="q-pa-md" name="meeting_room" size="2rem" />
     </q-item-section>
     <q-item-section>방 만들기</q-item-section>
-    <user-list-popup :onSelected="make" />
+    <user-list-popup :on-selected="make" />
   </q-item>
 </template>
 
@@ -12,8 +12,8 @@
 import { watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 
-import { Room, User } from "@/entities/chat/model";
 import UserListPopup from "@/features/users/index.vue";
+import { Room, User } from "@/entities/chat/model";
 import { make_room, room_created } from "../service/event_helper";
 import useRoomStore from "../store/useRoomStore";
 
@@ -25,7 +25,7 @@ const make = (selected_users: User[]) => {
 };
 
 watchEffect(() => {
-  if (!!connecting.value) {
+  if (connecting.value) {
     // 방 생성 후의 이벤트 리스너 등록
     room_created((room: Room) => {
       rooms.value.set(room.id, room); // 방 정보 업데이트

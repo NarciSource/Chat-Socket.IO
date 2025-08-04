@@ -24,7 +24,7 @@
       :color="side_fixed ? 'primary' : 'grey-5'"
       @click="side_fixed = !side_fixed"
     >
-      <q-tooltip anchor="top right" v-if="show_tooltip" @hide="show_tooltip = false">
+      <q-tooltip v-if="show_tooltip" anchor="top right" @hide="show_tooltip = false">
         방 목록을 확장하고 줄일 수 있습니다.
       </q-tooltip>
     </q-btn>

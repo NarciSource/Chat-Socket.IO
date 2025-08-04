@@ -1,6 +1,9 @@
 <template>
   <layout>
-    <template #header> <search /> <Title /> </template>
+    <template #header>
+      <search />
+      <Title />
+    </template>
 
     <template #toolbar> <actions /> </template>
 

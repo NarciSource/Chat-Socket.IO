@@ -7,7 +7,7 @@
     @focus="searching = true"
     @blur="searching = false"
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <q-icon v-if="query === ''" name="search" title="검색" />
       <q-icon v-else name="clear" class="cursor-pointer" @click="query = ''" />
     </template>

@@ -15,7 +15,10 @@ export default class User {
    * @param avatar_url - (선택 사항) 사용자의 아바타 URL.
    *                     제공되지 않은 경우 샘플 아바타 URL이 생성됩니다.
    */
-  constructor(public name: string, public avatar_url?: string) {
+  constructor(
+    public name: string,
+    public avatar_url?: string,
+  ) {
     this.id = name;
     this.avatar_url = sample_avatar(name);
   }

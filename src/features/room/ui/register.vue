@@ -5,9 +5,9 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import getUser from "@/shared/lib/getUser";
 import { User } from "@/entities/chat/model";
 import { connect } from "@/entities/chat/service/socketService";
+import getUser from "@/shared/lib/getUser";
 import useRoomStore from "../store/useRoomStore";
 import manualRegister from "./manual-register.vue";
 

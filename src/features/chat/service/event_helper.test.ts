@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 
-import { SOCKET_EVENT } from "@/shared/socket_constants";
 import { Message, Room, User } from "@/entities/chat/model";
 import { emit_event, subscribe_on } from "@/entities/chat/service/socketService";
+import { SOCKET_EVENT } from "@/shared/socket_constants";
 import {
   send_message,
   invite_user,

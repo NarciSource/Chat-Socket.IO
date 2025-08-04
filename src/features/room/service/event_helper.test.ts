@@ -1,8 +1,8 @@
 import { describe, it, vi, expect } from "vitest";
-import { make_room, leave_room, room_created } from "./event_helper";
-import { SOCKET_EVENT } from "@/shared/socket_constants";
 import { emit_event, subscribe_on } from "@/entities/chat/service/socketService";
 import { User, Room } from "@/entities/chat/model";
+import { SOCKET_EVENT } from "@/shared/socket_constants";
+import { make_room, leave_room, room_created } from "./event_helper";
 
 vi.mock("@/entities/chat/service/socketService", () => ({
   emit_event: vi.fn(),
