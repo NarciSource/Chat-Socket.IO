@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { RedisClientType } from 'redis';
 
 import { RedisModule } from '../common/redis.module';
 import { RedisRepository } from './redis';
@@ -11,7 +12,7 @@ import { SimpleRepository } from './simple';
   providers: [
     {
       provide: 'IRepository', // 추상 레포지토리
-      useFactory: (ConfigService: ConfigService) => {
+      useFactory: (ConfigService: ConfigService, redisClient: RedisClientType) => {
         // 구현체를 선택하는 팩토리 함수
         const repositoryType = ConfigService.get<string>('REPOSITORY_TYPE', 'simple');
 
@@ -19,10 +20,10 @@ import { SimpleRepository } from './simple';
           case 'simple':
             return new SimpleRepository();
           case 'redis':
-            return new RedisRepository(ConfigService.get('REDIS_CLIENT'));
+            return new RedisRepository(redisClient);
         }
       },
-      inject: [ConfigService],
+      inject: [ConfigService, 'REDIS_CLIENT'],
     },
   ],
 
