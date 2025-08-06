@@ -12,7 +12,7 @@
 import { watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 
-import UserListPopup from "@/features/users/index.vue";
+import UserListPopup from "@/features/user-presence/index.vue";
 import { Room, User } from "@/entities/chat/model";
 import { make_room, room_created } from "../service/event_helper";
 import useRoomStore from "../store/useRoomStore";

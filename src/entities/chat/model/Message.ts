@@ -44,6 +44,6 @@ export default class Message {
    * @returns 텍스트 세그먼트가 메시지에 포함되어 있으면 `true`, 그렇지 않으면 `false`.
    */
   public include(text: string) {
-    return this.text.some((t) => t.includes(text));
+    return this.text.some((t) => t?.includes(text));
   }
 }

@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import UserListPopup from "@/features/users/index.vue";
+import UserListPopup from "@/features/user-presence/index.vue";
 import { User } from "@/entities/chat/model";
 import useChatStore from "../store/useChatStore";
 import { invite_user } from "../service/event_helper";

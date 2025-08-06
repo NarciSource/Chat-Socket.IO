@@ -8,12 +8,12 @@ import { storeToRefs } from "pinia";
 import { User } from "@/entities/chat/model";
 import { connect } from "@/entities/chat/service/socketService";
 import getUser from "@/shared/lib/getUser";
-import useRoomStore from "../store/useRoomStore";
+import useUserStore from "../store/useUserStore";
 import manualRegister from "./manual-register.vue";
 
 const MANUAL_USER_SET = import.meta.env.VITE_MANUAL_USER_SET === "true" || false;
 
-const { current_user, connecting } = storeToRefs(useRoomStore());
+const { current_user, connecting } = storeToRefs(useUserStore());
 
 const setup = (my_nick: string) => {
   // 소켓 연결
