@@ -1,8 +1,8 @@
 {
-  "name": "@pickme/chat-service",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "chat-service--backend",
+  "version": "1.2.0",
+  "description": "채팅 서비스 백엔드",
+  "author": "NarciSource",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

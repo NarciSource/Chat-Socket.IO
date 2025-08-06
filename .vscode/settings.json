@@ -3,8 +3,7 @@
   "explorer.fileNesting.patterns": {
     "*.module.ts": "$(capture).*.ts",
     ".env": ".env.*",
-    ".gitignore": ".gitattributes",
-    "setup.ps1": "setup.*, .gitconfig, .gitmessage",
+    ".gitconfig": ".gitattributes, .gitignore, .gitmessage",
     "tsconfig.json": "tsconfig.*.json",
     "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig"
   }
