@@ -30,7 +30,10 @@ export class RoomGateway {
    */
   async handleCreateRoom(socket: Socket, payload: CreateRoomPayload) {
     const { hostId, participants } = payload;
-    const { roomId, allParticipants } = await this.service.createRoom(hostId, participants);
+    const { roomId, participants: allParticipants } = await this.service.createRoom(
+      hostId,
+      participants,
+    );
 
     for (const userId of allParticipants) {
       const sockId = await this.service.getSocketId(userId);

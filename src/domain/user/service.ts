@@ -19,8 +19,6 @@ export class UserService {
 
     await this.repository.setUserSocket(userId, socketId);
 
-    await this.repository.initUserRooms(userId);
-
     return true;
   }
 
@@ -32,28 +30,6 @@ export class UserService {
 
     // socket map 제거
     await this.repository.removeUserSocket(userId);
-
-    // rooms
-    const rooms = await this.repository.getUserRooms(userId);
-
-    await this.repository.removeAllUserRooms(userId);
-
-    // roomMembersMap에서 해당 유저 제거
-    for (const roomId of rooms) {
-      // Redis에서 roomMembers 갱신
-      const members = await this.repository.getRoomMembers(roomId);
-
-      members.delete(userId);
-
-      if (members.size === 0) {
-        await this.repository.removeRoom(roomId);
-
-        console.log(`방 ${roomId}가 비어 삭제됨`);
-      } else {
-        // 실제 Redis에 반영
-        await this.repository.removeUserFromRoom(roomId, userId);
-      }
-    }
   }
 
   getUsers() {

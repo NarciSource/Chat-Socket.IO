@@ -27,15 +27,28 @@ export class SimpleRepository implements IRepository {
   async setUserSocket(userId: string, socketId: string) {
     this.userSocketMap.set(userId, socketId);
   }
+
   async getUserSocketByUserId(userId: string): Promise<string | undefined> {
     return this.userSocketMap.get(userId);
   }
+
   async hasUserSocket(userId: string): Promise<boolean> {
     return this.userSocketMap.has(userId);
   }
+
   async removeUserSocket(userId: string) {
     this.userSocketMap.delete(userId);
+
+    const rooms = this.userRoomsMap.get(userId);
+    if (!rooms) return;
+
+    for (const roomId of rooms) {
+      this.roomMembersMap.get(roomId)?.delete(userId);
+    }
+
+    this.userRoomsMap.delete(userId);
   }
+
   async findUserIdBySocketId(socketId: string): Promise<string | undefined> {
     for (const [uId, sId] of this.userSocketMap.entries()) {
       if (sId == socketId) {
@@ -44,57 +57,60 @@ export class SimpleRepository implements IRepository {
     }
     return undefined;
   }
+
   async getUserKeys(): Promise<string[]> {
     return [...this.userSocketMap.keys()];
   }
 
-  // (2) userRoomsMap 관련
-  async initUserRooms(userId: string) {
-    this.userRoomsMap.set(userId, new Set());
-  }
-  async getUserRooms(userId: string): Promise<Set<string>> {
-    return this.userRoomsMap.get(userId) || new Set();
-  }
-  async addRoomToUser(userId: string, roomId: string) {
-    const rooms = this.userRoomsMap.get(userId);
-    if (rooms) {
-      rooms.add(roomId);
+  // (2) userRoomsMap, roomMembersMap 관련
+  private ensureUser(userId: string) {
+    if (!this.userRoomsMap.has(userId)) {
+      this.userRoomsMap.set(userId, new Set());
     }
   }
-  async removeUserRooms(userId: string) {
-    this.userRoomsMap.delete(userId);
-  }
-
-  async removeAllUserRooms(userId: string): Promise<void> {
-    const rooms = this.userRoomsMap.get(userId);
-    if (rooms) {
-      for (const room of rooms) {
-        await this.removeUserFromRoom(room, userId);
-      }
+  private ensureRoom(roomId: string) {
+    if (!this.roomMembersMap.has(roomId)) {
+      this.roomMembersMap.set(roomId, new Set());
     }
   }
 
-  // (3) roomMembersMap 관련
-  async createRoom(roomId: string, userIds: string[]) {
-    this.roomMembersMap.set(roomId, new Set(userIds));
+  async getRoomsByUser(userId: string) {
+    return [...(this.userRoomsMap.get(userId) ?? [])];
   }
+
+  async getRooms() {
+    return [...this.roomMembersMap.keys()];
+  }
+
   async removeRoom(roomId: string) {
+    const members = this.roomMembersMap.get(roomId);
+    if (!members) return;
+
+    for (const userId of members) {
+      this.userRoomsMap.get(userId)?.delete(roomId);
+    }
+
     this.roomMembersMap.delete(roomId);
   }
-  async getRoomMembers(roomId: string): Promise<Set<string>> {
-    return this.roomMembersMap.get(roomId) || new Set();
-  }
-  async addUserToRoom(roomId: string, userId: string) {
-    const members = this.roomMembersMap.get(roomId);
-    if (members) {
-      members.add(userId);
-    }
+
+  async getRoomMembers(roomId: string) {
+    return [...(this.roomMembersMap.get(roomId) ?? [])];
   }
 
-  async removeUserFromRoom(roomId: string, userId: string): Promise<void> {
-    const members = this.roomMembersMap.get(roomId);
-    if (members) {
-      members.delete(userId);
+  async addRoomToUser(userId: string, roomId: string) {
+    this.ensureUser(userId);
+    this.ensureRoom(roomId);
+
+    this.userRoomsMap.get(userId)?.add(roomId);
+    this.roomMembersMap.get(roomId)?.add(userId);
+  }
+
+  async removeRoomToUser(userId: string, roomId: string) {
+    this.userRoomsMap.get(userId)?.delete(roomId);
+    this.roomMembersMap.get(roomId)?.delete(userId);
+
+    if ((this.roomMembersMap.get(roomId)?.size ?? 0) === 0) {
+      this.roomMembersMap.delete(roomId);
     }
   }
 }

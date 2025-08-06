@@ -14,18 +14,31 @@ export class RedisRepository implements IRepository {
   async setUserSocket(userId: string, socketId: string) {
     await this.redis.hSet('userSocketMap', userId, socketId);
   }
+
   async getUserSocketByUserId(userId: string): Promise<string | undefined> {
     const socketId = (await this.redis.hGet('userSocketMap', userId)) as string;
     return socketId || undefined;
   }
+
   async hasUserSocket(userId: string): Promise<boolean> {
     // redis.hExists()가 없으므로, hGet으로 체크
     const socketId = await this.redis.hGet('userSocketMap', userId);
     return !!socketId;
   }
+
   async removeUserSocket(userId: string): Promise<void> {
     await this.redis.hDel('userSocketMap', userId);
+
+    const userKey = this.userKey(userId);
+    const rooms = await this.redis.sMembers(userKey);
+
+    for (const roomId of rooms) {
+      await this.redis.sRem(this.roomKey(roomId), userId);
+    }
+
+    await this.redis.del(userKey);
   }
+
   async findUserIdBySocketId(socketId: string): Promise<string | undefined> {
     // Hash 전체 스캔 (데이터 많으면 비효율적)
     const entries = await this.redis.hGetAll('userSocketMap');
@@ -38,47 +51,90 @@ export class RedisRepository implements IRepository {
   }
 
   async getUserKeys(): Promise<string[]> {
-    // userId 목록 반환
-    const keys = await this.redis.hKeys('userSocketMap');
-    return keys;
+    return this.redis.hKeys('userSocketMap');
   }
 
-  // (2) userRoomsMap 관련
-  async initUserRooms(userId: string): Promise<void> {
-    // 필요 시, 기존 set을 비우고 싶다면 srem or del 등 활용
-    // await this.redis.del(`userRoomsMap:${userId}`);
-  }
-  async getUserRooms(userId: string): Promise<Set<string>> {
-    const rooms = await this.redis.sMembers(`userRoomsMap:${userId}`);
-    return new Set(rooms);
-  }
-  async addRoomToUser(userId: string, roomId: string): Promise<void> {
-    await this.redis.del(`userRoomsMap:${userId}`);
-  }
-  async removeUserRooms(userId: string, roomId: string): Promise<void> {
-    await this.redis.sRem(`userRoomsMap:${userId}`, roomId);
-  }
-  async removeAllUserRooms(userId: string): Promise<void> {
-    await this.redis.del(`userRoomsMap:${userId}`);
+  // key helpers
+  private userKey(userId: string) {
+    return `user:${userId}:rooms`;
   }
 
-  // (3) roomMembersMap 관련
-  async createRoom(roomId: string, userIds: string[]) {
-    if (userIds.length > 0) {
-      await this.redis.sAdd(`roomMembersMap:${roomId}`, userIds);
+  private roomKey(roomId: string) {
+    return `room:${roomId}:users`;
+  }
+
+  // (2) userRoomsMap, roomMembersMap 관련
+  async getRoomsByUser(userId: string) {
+    return this.redis.sMembers(this.userKey(userId));
+  }
+
+  async getRooms() {
+    const keys = await this.scanKeys('room:*:users');
+
+    return keys.map((k) => k.split(':')[1]);
+  }
+
+  async removeRoom(roomId: string) {
+    const roomKey = this.roomKey(roomId);
+    const members = await this.redis.sMembers(roomKey);
+    {
+      const multi = this.redis.multi();
+      for (const userId of members) {
+        multi.sRem(this.userKey(userId), roomId);
+      }
+      multi.del(roomKey);
+
+      await multi.exec();
     }
   }
-  async getRoomMembers(roomId: string): Promise<Set<string>> {
-    const members = await this.redis.sMembers(`roomMembersMap:${roomId}`);
-    return new Set(members);
+
+  async getRoomMembers(roomId: string) {
+    return await this.redis.sMembers(this.roomKey(roomId));
   }
-  async removeRoom(roomId: string) {
-    await this.redis.del(`roomMembersMap:${roomId}`);
+
+  async addRoomToUser(userId: string, roomId: string) {
+    const userKey = this.userKey(userId);
+    const roomKey = this.roomKey(roomId);
+    {
+      const multi = this.redis.multi();
+      multi.sAdd(userKey, roomId);
+      multi.sAdd(roomKey, userId);
+
+      await multi.exec();
+    }
   }
-  async addUserToRoom(roomId: string, userId: string) {
-    await this.redis.sAdd(`roomMembersMap:${roomId}`, userId);
+
+  async removeRoomToUser(userId: string, roomId: string) {
+    const userKey = this.userKey(userId);
+    const roomKey = this.roomKey(roomId);
+    {
+      const multi = this.redis.multi();
+      multi.sRem(userKey, roomId);
+      multi.sRem(roomKey, userId);
+
+      if ((await this.redis.sCard(roomKey)) === 1) {
+        multi.del(roomKey);
+      }
+
+      await multi.exec();
+    }
   }
-  async removeUserFromRoom(roomId: string, userId: string): Promise<void> {
-    await this.redis.sRem(`roomMembersMap:${roomId}`, userId);
+
+  // Redis SCAN helper
+  private async scanKeys(pattern: string): Promise<string[]> {
+    const keys: string[] = [];
+    let cursor = '0';
+
+    do {
+      const { cursor: nextCursor, keys: batch } = await this.redis.scan(cursor, {
+        MATCH: pattern,
+        COUNT: 100,
+      });
+      keys.push(...batch);
+
+      cursor = nextCursor;
+    } while (cursor !== '0');
+
+    return keys;
   }
 }

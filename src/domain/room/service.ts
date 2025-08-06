@@ -18,17 +18,15 @@ export class RoomService {
   async createRoom(
     hostId: string,
     participants: string[],
-  ): Promise<{ roomId: string; allParticipants: string[] }> {
+  ): Promise<{ roomId: string; participants: string[] }> {
     const roomId = this.generateRandomRoomId();
-    const all = [...participants, hostId];
+    const members = [...participants, hostId];
 
-    await this.repository.createRoom(roomId, participants);
-
-    for (const userId of all) {
+    for (const userId of members) {
       await this.repository.addRoomToUser(userId, roomId);
     }
 
-    return { roomId, allParticipants: all };
+    return { roomId, participants: members };
   }
 
   // 방 join
@@ -41,13 +39,10 @@ export class RoomService {
     if (!members) {
       return { success: false };
     }
-    members.add(userId);
 
-    // userRoomsMap도 업데이트
-    await this.repository.addRoomToUser(userId, roomId);
     await this.repository.addRoomToUser(userId, roomId);
 
-    return { success: true, participants: Array.from(members) };
+    return { success: true, participants: members };
   }
 
   // 방 떠나기
@@ -57,20 +52,8 @@ export class RoomService {
     if (!members) {
       return false;
     }
-    members.delete(userId);
 
-    // DB 동기화
-    await this.repository.removeUserFromRoom(roomId, userId);
-
-    if (members.size === 0) {
-      await this.repository.removeRoom(roomId);
-      console.log(`모두 떠나서 방 ${roomId} 삭제`);
-    }
-
-    const rooms = await this.repository.getUserRooms(userId);
-    rooms.delete(roomId);
-
-    await this.repository.removeUserRooms(userId, roomId);
+    await this.repository.removeRoomToUser(userId, roomId);
     return true;
   }
 
