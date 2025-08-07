@@ -16,3 +16,7 @@ export const leave_room = (user: User, room: Room) =>
 // 채팅방 생성 후
 export const room_created = (callback: Callback) =>
   subscribe_on(SOCKET_EVENT.ON_ROOM_CREATED, callback);
+
+// 채팅방 초대
+export const invite_room = (room: Room, user: User) =>
+  emit_event(SOCKET_EVENT.EMIT_INVITE_ROOM, { room, user });

@@ -8,9 +8,6 @@ type Callback = (data: any) => void;
 export const send_message = (room: Room, message: Message) =>
   emit_event(SOCKET_EVENT.EMIT_MESSAGE, { room, message });
 
-export const invite_user = (room: Room, user: User) =>
-  emit_event(SOCKET_EVENT.EMIT_INVITE_ROOM, { room, user });
-
 export const connected = (callback: Callback) => subscribe_on("connect", callback);
 
 export const connect_failed = (callback: Callback) => subscribe_on("connect_error", callback);
