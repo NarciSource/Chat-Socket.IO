@@ -1,22 +1,20 @@
 {
-  "name": "@pickme/chat",
+  "name": "chat-service--frontend",
   "private": true,
-  "description": "PickMe 프로젝트의  채팅 마이크로 프론트엔드",
-  "version": "1.6.5",
+  "description": "채팅 서비스 프론트엔드",
+  "version": "1.7.0",
   "type": "module",
   "author": "NarciSource",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:single-spa": "vite build --mode single-spa",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "docs": "typedoc",
     "preview": "vite preview",
-    "preview:single-spa": "vite preview --mode single-spa",
     "format": "prettier --write ./src",
     "lint": "npx steiger ./src && eslint ./src --fix",
-    "start": "npm run build && npm run build:single-spa && npm run preview:single-spa"
+    "start": "npm run build && npm run preview"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
@@ -30,14 +28,12 @@
     "eslint-plugin-vue": "^10.5.0",
     "prettier": "^3.6.2",
     "sass": "^1.93.2",
-    "single-spa-vue": "^3.0.1",
     "steiger": "^0.5.11",
     "typedoc": "^0.28.14",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.0",
     "vite": "^7.1.9",
     "vite-plugin-node-polyfills": "^0.24.0",
-    "vite-plugin-single-spa": "^1.1.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   },
@@ -49,14 +45,13 @@
     "jwt-decode": "^4.0.0",
     "pinia": "^3.0.3",
     "quasar": "^2.18.5",
-    "single-spa": "^6.0.3",
     "socket.io-client": "^4.8.1",
     "vite-plugin-css-injected-by-js": "^3.5.2",
     "vue": "^3.5.22"
   },
-  "homepage": "https://github.com/Daily1Hour/PickMe",
+  "homepage": "https://github.com/NarciSource/Chat-Service--Frontend",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Daily1Hour/PickMe-Chat-Application.git"
+    "url": "https://github.com/NarciSource/Chat-Service--Frontend.git"
   }
 }

@@ -58,15 +58,6 @@ jobs:
         run: |
           npm run build
 
-      - name: Build Vite For single-spa
-        env:
-          VITE_PUBLIC_URL: ${{ vars.VITE_PUBLIC_URL }}
-          VITE_STANDALONE: false
-          VITE_AUTH_PARCEL_URL: ${{ vars.VITE_AUTH_PARCEL_URL }}
-          VITE_MANUAL_USER_SET: ${{ vars.VITE_MANUAL_USER_SET }}
-        run: |
-          npm run build:single-spa
-
       - name: Upload Artifact
         uses: actions/upload-artifact@v4 # 아티팩트를 업로드하는 액션
         with:

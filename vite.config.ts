@@ -3,7 +3,6 @@ import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { quasar, transformAssetUrls } from "@quasar/vite-plugin";
-import vitePluginSingleSpa, { SingleSpaPluginOptions } from "vite-plugin-single-spa";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 // https://vite.dev/config/
@@ -24,25 +23,6 @@ export default defineConfig(({ mode }) => {
     tsconfigPaths({ loose: true }), // tsconfig.json의 paths 설정을 적용
     cssInjectedByJsPlugin(), // css 파일을 js 파일에 삽입
   ];
-
-  if (mode === "single-spa") {
-    // single-spa 옵션 설정
-    const vitePluginSingleSpaOptions: SingleSpaPluginOptions = {
-      serverPort,
-      spaEntryPoints: "src/app/main.ts",
-    };
-
-    // single-spa 빌드 진입점 설정
-    switch (process.env.VITE_MF_TYPE) {
-      case "application":
-        vitePluginSingleSpaOptions.spaEntryPoints = "src/app/application.ts";
-        break;
-      case "parcel":
-        vitePluginSingleSpaOptions.spaEntryPoints = "src/app/parcel.ts";
-        break;
-    }
-    plugins.push(vitePluginSingleSpa(vitePluginSingleSpaOptions)); // single-spa 라이브러리 적용
-  }
 
   // vite 설정
   return {
