@@ -1,99 +1,156 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Socket.io 채팅 서비스 백엔드
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 🛠️ 기술 스택
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+[![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=socketdotio&logoColor=white)](https://socket.io/)  
+[![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io)  
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/) [![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/ko) [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  
+[![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)](https://eslint.org/) [![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=prettier&logoColor=black)](https://prettier.io/)
 
-## Description
+## 💡 주요 기능
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+| 기능 | 설명 | 입력 이벤트 | 응답 이벤트 |
+| --- | --- | --- | --- |
+| 사용자 등록 | 유저ID &harr; 소켓ID 매핑 | emit("register", userId) | on("system", content) |
+| 방 생성 | 방 객체 생성 &rarr; 참가자 초대 이벤트 발생 | emit("create_room", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [hostId, participants]) | on("room_created", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [roomId, participants]) |
+| 방 참가 | 방에 사용자 추가 &rarr; 참가 완료 알림 | emit("join_room", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [userId, roomId]) | on("system", content) |
+| 방 떠나기 | 방에서 사용자 제거 &rarr; 떠남 알림 | emit("leave_room", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [userId, roomId]) | on("system", content) |
+| 메시지 교환 | 방에서 메시지 중계 | emit("send_message", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [roomId, senderId, content] ) | on("receive_message", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [senderId, roomId, content]) |
+| 타이핑 알림 | 방에서 타이핑 이벤트 중계 | emit("typing", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [roomId, userId]) | on("typing", userId) |
 
-## Project setup
+## 📐 시퀀스 다이어그램
 
-```bash
+```mermaid
+sequenceDiagram
+    participant Web1
+    participant Web2
+    participant Server
+    participant Room
+    participant DB
+
+    %% 1. 연결 단계
+    Web1 ->> Server: connect() (WebSocket handshake)
+    activate Server
+    Web2 ->> Server: connect() (WebSocket handshake)
+    Server -->> Web1: connection established (ack)
+    Server -->> Web2: connection established (ack)
+
+    %% 2. 연결 성공 시 동작
+    opt connection established
+      %% 2-1. 사용자 등록
+      Web1 ->> Server: emit("register", id)
+
+      %% 데이터베이스 저장
+      Server ->> DB: [id, socketId]
+      activate DB
+      deactivate DB
+
+      %% 2-2. 여러 방 생성 시나리오
+      loop For each room
+        Web1 ->> Server: emit("create_room", [hostId, participants])
+
+        %% 데이터베이스 저장
+        Server ->> DB: [roomId, members]
+        activate DB
+        deactivate DB
+
+        Server ->> Room: new Room(roomId)
+
+        activate Room
+        Server -->> Web1: on("room_created", roomId)
+        Server -->> Web2: on("room_invite", roomId)
+
+        %% 2-3. 방 참가
+        Web2 ->> Server: emit("join_room", roomId)
+        Server ->> Room: add(Web2)
+        Room -->> Web2: on("joined_room", roomId)
+
+        %% 2-4. 방 내 메시지 교환 & 타이핑 알림
+        loop Multiple events
+          Web1 ->> Room: emit("send_message", message)
+
+          %% 데이터베이스 저장
+          Room ->> DB: message
+          activate DB
+          deactivate DB
+
+          note over Room: Message and typing events exchange
+          Room ->> Room: broadcast
+          Room -->> Web2: on("new_message", message)
+
+          Web1 ->> Room: emit("typing")
+          Room -->> Web2: on("typing", who)
+        end
+
+        deactivate Room
+      end
+
+      %% 2-5. 연결 종료 시 DB 반영
+      Web2 ->> Server: disconnect()
+      Web1 ->> Server: disconnect()
+
+      Server ->> DB: remove/update socketId
+      activate DB
+      deactivate DB
+    end
+
+    deactivate Server
+```
+
+## 📂 폴더 구조
+
+<details>
+<summary>열기</summary>
+
+```
+server
+├─ .env
+├─ src
+│  ├─ main.ts
+│  ├─ common
+│  │  └─ redis.module.ts
+│  ├─ core
+│  │  ├─ controller.ts
+│  │  ├─ gateway.ts
+│  │  └─ module.ts
+│  ├─ domain
+│  │  ├─ user
+│  │  │  ├─ controller.ts
+│  │  │  ├─ gateway.ts
+│  │  │  └─ service.ts
+│  │  ├─ chat
+│  │  │  └─ gateway.ts
+│  │  └─ room
+│  │     ├─ gateway.ts
+│  │     └─ service.ts
+│  └─ repository
+│     ├─ interface.ts
+│     ├─ module.ts
+│     ├─ redis.ts
+│     └─ simple.ts
+├─ docker-compose.yml
+│  ├─ Dockerfile
+│  └─ .dockerignore
+├─ nest-cli.json
+├─ package.json
+│  └─ package-lock.json
+├─ tsconfig.json
+│  └─ tsconfig.build.json
+└─ eslint.config.mjs
+   └─ .prettierrc
+```
+
+</details>
+
+## 🚀 실행 방법
+
+```sh
+$ docker run -d \
+  --name redis-container \
+  --env-file ./.env \
+  -p ${REDIS_PORT}:6379 \
+  redis:latest
+
 $ npm install
-```
-
-## Compile and run the project
-
-```bash
-# development
 $ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

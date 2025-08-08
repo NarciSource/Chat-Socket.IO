@@ -4,5 +4,14 @@
   "useTabs": false,
   "endOfLine": "auto",
   "bracketSpacing": true,
-  "trailingComma": "all"
+  "trailingComma": "all",
+
+  "overrides": [
+    {
+      "files": "README.md",
+      "options": {
+        "proseWrap": "never"
+      }
+    }
+  ]
 }
