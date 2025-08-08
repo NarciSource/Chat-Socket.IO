@@ -1,5 +1,5 @@
 # 1) Node.js 베이스 이미지 선택
-FROM node:18-alpine AS builder
+FROM node:20-bullseye-slim AS builder
 
 # 2) 작업 디렉토리 설정
 WORKDIR /app
@@ -17,7 +17,9 @@ COPY . .
 RUN npm run build
 
 # ---- Production Stage (최종 이미지) ----
-FROM node:18-alpine AS runner
+FROM node:20-bullseye-slim AS runner
+
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

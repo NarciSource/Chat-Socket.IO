@@ -1,0 +1,76 @@
+services:
+  server:
+    image: chat-server:${SERVER_VERSION}
+    build:
+      context: project/server
+      dockerfile: Dockerfile
+
+    networks:
+      - net
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - ${SERVER_PORT}:3000
+
+    env_file:
+      - project/server/.env
+    environment:
+      - REPOSITORY_TYPE=redis
+      - REDIS_HOST=redis-container
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  client:
+    image: chat-client:${CLIENT_VERSION}
+    build:
+      context: project/client
+      dockerfile: Dockerfile
+      args:
+        - VITE_SOCKET_SERVER_URL=http://localhost:${SERVER_PORT}/chat
+        - VITE_MANUAL_USER_SET=true
+
+    networks:
+      - net
+    depends_on:
+      server:
+        condition: service_healthy
+    ports:
+      - ${CLIENT_PORT}:80
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:8.2.1
+    container_name: redis-container
+
+    networks:
+      - net
+
+    volumes:
+      - redis-data:/data
+    env_file:
+      - .env
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
+networks:
+  net:
+    name: net
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
