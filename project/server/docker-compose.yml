@@ -1,0 +1,29 @@
+services:
+  db-service:
+    image: redis:latest
+    container_name: chat-db-container
+    networks:
+      - chat-service-network
+    ports:
+      - "${REDIS_PORT}:6379"
+
+  chat-service:
+    image: pickme/chat
+    container_name: chat-service-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - chat-service-network
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=db-service
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      - db-service
+
+networks:
+  chat-service-network:
+    driver: bridge

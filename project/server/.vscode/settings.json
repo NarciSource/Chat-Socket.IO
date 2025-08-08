@@ -1,0 +1,10 @@
+{
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.module.ts": "$(capture).*.ts",
+    ".env": ".env.*",
+    ".gitconfig": ".gitattributes, .gitignore, .gitmessage",
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig"
+  }
+}
