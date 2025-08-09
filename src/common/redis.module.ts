@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { createAdapter } from '@socket.io/redis-adapter';
 import { createClient } from 'redis';
 
 @Global()
@@ -28,7 +29,24 @@ import { createClient } from 'redis';
       },
       inject: [ConfigService],
     },
+    {
+      provide: 'REDIS_PUBSUB',
+      useFactory: async (configService: ConfigService) => {
+        const host = configService.get<string>('REDIS_HOST', 'localhost');
+        const port = configService.get<number>('REDIS_PORT', 6379);
+        const redisUrl = `redis://${host}:${port}`;
+
+        const pub = createClient({ url: redisUrl });
+        const sub = pub.duplicate();
+
+        await pub.connect();
+        await sub.connect();
+
+        return createAdapter(pub, sub);
+      },
+      inject: [ConfigService],
+    },
   ],
-  exports: ['REDIS_CLIENT'],
+  exports: ['REDIS_CLIENT', 'REDIS_PUBSUB'],
 })
 export class RedisModule {}

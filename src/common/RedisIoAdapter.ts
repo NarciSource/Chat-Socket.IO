@@ -6,25 +6,11 @@ import { createClient } from 'redis';
 import { Server, ServerOptions } from 'socket.io';
 
 export class RedisIoAdapter extends IoAdapter {
-  private adapterConstructor!: ReturnType<typeof createAdapter>;
-  private readonly configService: ConfigService;
-
-  constructor(app: INestApplication) {
+  constructor(
+    app: INestApplication,
+    private adapterConstructor: ReturnType<typeof createAdapter>,
+  ) {
     super(app);
-    this.configService = app.get(ConfigService);
-  }
-
-  async connectToRedis() {
-    const host = this.configService.get<string>('REDIS_HOST', 'localhost');
-    const port = this.configService.get<number>('REDIS_PORT', 6379);
-
-    const pubClient = createClient({ url: `redis://${host}:${port}` });
-    const subClient = pubClient.duplicate();
-
-    await pubClient.connect();
-    await subClient.connect();
-
-    this.adapterConstructor = createAdapter(pubClient, subClient);
   }
 
   override createIOServer(port: number, options?: Partial<ServerOptions>): Server {
