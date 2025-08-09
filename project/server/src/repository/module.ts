@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RedisClientType } from 'redis';
 
@@ -13,8 +13,11 @@ import { SimpleRepository } from './simple';
     {
       provide: 'IRepository', // 추상 레포지토리
       useFactory: (ConfigService: ConfigService, redisClient: RedisClientType) => {
+        const logger = new Logger('Repository');
         // 구현체를 선택하는 팩토리 함수
         const repositoryType = ConfigService.get<string>('REPOSITORY_TYPE', 'simple');
+
+        logger.log(`선택된 레포지토리 형태: ${repositoryType}`);
 
         switch (repositoryType) {
           case 'simple':

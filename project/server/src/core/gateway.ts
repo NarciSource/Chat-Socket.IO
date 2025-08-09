@@ -10,6 +10,7 @@ import { Server, Socket } from 'socket.io';
 import { UserGateway } from 'src/domain/user/gateway';
 import { CreateRoomPayload, RoomGateway } from 'src/domain/room/gateway';
 import { ChatGateway, SendMessagePayload } from 'src/domain/chat/gateway';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({
   path: '/chat/ws',
@@ -22,6 +23,8 @@ export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
+  private logger = new Logger(CoreGateway.name);
+
   constructor(
     private readonly userGateway: UserGateway,
     private readonly roomGateway: RoomGateway,
@@ -33,7 +36,7 @@ export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.roomGateway.server = this.server;
     this.chatGateway.server = this.server;
 
-    console.log('소켓 서버 초기화 완료');
+    this.logger.log('소켓 서버 초기화 완료');
   }
 
   // 소켓 연결 시
