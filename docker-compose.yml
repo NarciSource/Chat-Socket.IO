@@ -14,3 +14,4 @@ services:
 
     volumes:
       - ./kong/kong.conf:/etc/kong/kong.conf
+      - ./kong/kong.yml:/kong/kong.yml
