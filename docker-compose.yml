@@ -32,6 +32,7 @@ services:
       - KONGA_SEED_USER_DATA_SOURCE_FILE=/app/seeds/user_seed.json
       - KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE=/app/seeds/kong_node_seed.json
     volumes:
+      - ./kong/konga/seeds:/app/seeds
       - konga-data:/data
 
 volumes:
