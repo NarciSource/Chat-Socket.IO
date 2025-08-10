@@ -22,3 +22,11 @@ services:
           - POST
           - OPTIONS
         preserve_host: false    # upstream으로 요청을 보낼 때 원본 Host 헤더를 그대로 전달할지 여부
+
+plugins:
+  - name: file-log
+    service: chat-api
+    config:
+      path: /dev/stdout
+      custom_fields_by_lua:
+        upstream: "return ngx.var.upstream_addr"
