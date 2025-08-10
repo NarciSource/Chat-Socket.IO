@@ -6,12 +6,12 @@ services:
       dockerfile: Dockerfile
 
     networks:
-      - net
+      - chat-net
     depends_on:
       redis:
         condition: service_healthy
-    ports:
-      - ${SERVER_PORT}:3000
+    deploy:
+      replicas: ${SERVER_REPLICA}
 
     env_file:
       - project/server/.env
@@ -35,7 +35,7 @@ services:
         - VITE_MANUAL_USER_SET=true
 
     networks:
-      - net
+      - chat-net
     depends_on:
       server:
         condition: service_healthy
@@ -53,7 +53,7 @@ services:
     container_name: redis-container
 
     networks:
-      - net
+      - chat-net
 
     volumes:
       - redis-data:/data
@@ -66,9 +66,12 @@ services:
       retries: 5
       start_period: 10s
 
+include:
+  - ./infra/docker-compose.yml
+
 networks:
-  net:
-    name: net
+  chat-net:
+    name: chat-net
     driver: bridge
 
 volumes:

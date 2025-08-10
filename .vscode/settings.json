@@ -10,5 +10,12 @@
     "docker-compose.*": "Dockerfile*, .dockerignore",
     "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, steiger.config.ts, steiger.config.*"
   },
-  "cSpell.words": ["codegen", "healthcheck", "pinia", "smui", "steiger"]
+  "cSpell.words": [
+    "codegen",
+    "healthcheck",
+    "konga",
+    "pinia",
+    "smui",
+    "steiger"
+  ]
 }
