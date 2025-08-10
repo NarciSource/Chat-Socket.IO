@@ -30,7 +30,23 @@ function CustomFieldLog:log(conf)
 	local upstream_last_octet = upstream:match("([^:]+)"):match("(%d+)$") or "?"
 
 	-- 응답 정보
-	local response_code = ngx.var.upstream_status or ngx.status or 0
+	local status_messages = {
+		[101] = "Switching Protocol",
+		[200] = "OK",
+		[201] = "Created",
+		[204] = "No Content",
+		[304] = "Not Modified",
+		[400] = "Bad Request",
+		[401] = "Unauthorized",
+		[403] = "Forbidden",
+		[404] = "Not Found",
+		[500] = "Internal Server Error",
+		[502] = "Bad Gateway",
+		[504] = "Gateway Timeout",
+	}
+	local upstream_status = ngx.var.upstream_status
+	local gateway_status = kong.response.get_status()
+	local status_message = status_messages[gateway_status] or "Unknown"
 	local response_bytes_sent = tonumber(ngx.var.body_bytes_sent) or 0
 
 	-- 로그 출력
@@ -51,7 +67,15 @@ function CustomFieldLog:log(conf)
 		)
 		f:write(string.format("            → %s:%s (gateway)\n", gateway_ip, gateway_port))
 		f:write(string.format("            → %s (#%s)\n", upstream, upstream_last_octet))
-		f:write(string.format("            → %s %sbytes\n", response_code, response_bytes_sent))
+		f:write(
+			string.format(
+				"            → %s/%s %s %sbytes\n",
+				upstream_status,
+				gateway_status,
+				status_message,
+				response_bytes_sent
+			)
+		)
 		f:close()
 	end
 end
