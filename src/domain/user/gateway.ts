@@ -29,6 +29,10 @@ export class UserGateway {
     }
 
     console.log(`유저 등록: userId=${userId}, socketId=${socket.id}`);
+
+    this.server.emit('get_users', {
+      users: await this.service.getUsers(),
+    });
   }
 
   async handleUserDisconnected(socket: Socket) {
