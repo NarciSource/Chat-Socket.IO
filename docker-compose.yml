@@ -54,6 +54,8 @@ services:
 
     networks:
       - chat-net
+    ports:
+      - ${REDIS_PORT}:6379
 
     volumes:
       - redis-data:/data

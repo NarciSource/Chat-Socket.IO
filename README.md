@@ -213,8 +213,8 @@ sequenceDiagram
 
 | 프로젝트 | 저장소                                                               | 설명                                    | 브랜치/버전        |
 | -------- | -------------------------------------------------------------------- | --------------------------------------- | ------------------ |
-| Backend  | https://github.com/NarciSource/Chat-Service--Backend/tree/socket.io  | Socket.IO + Redis 기반 실시간 채팅 서버 | socket.io / v1.2.0 |
-| Frontend | https://github.com/NarciSource/Chat-Service--Frontend/tree/socket.io | Vue + Vite 클라이언트                   | socket.io / v1.7.0 |
+| Backend  | https://github.com/NarciSource/Chat-Service--Backend/tree/socket.io  | Socket.IO + Redis 기반 실시간 채팅 서버 | socket.io / v1.3.1 |
+| Frontend | https://github.com/NarciSource/Chat-Service--Frontend/tree/socket.io | Vue + Vite 클라이언트                   | socket.io / v1.7.1 |
 
 ## 🚀 실행 방법
 
