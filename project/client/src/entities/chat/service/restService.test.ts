@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { User } from "../model";
 import { UserDTO } from "../api/dto";
-import { dto_to_user } from "./mapper/user";
+import { dto_to_users } from "./mapper/user";
 import { get_users } from "./restService";
 
 vi.mock("axios");
@@ -17,12 +17,12 @@ describe("restService", () => {
 
   it("사용자를 가져오고 올바르게 매핑", async () => {
     (axios.get as any).mockResolvedValue({ data: mockUserDTO });
-    (dto_to_user as any).mockReturnValue([mockUser]);
+    (dto_to_users as any).mockReturnValue([mockUser]);
 
     const users = await get_users();
 
     expect(axios.get).toHaveBeenCalledWith(SERVER_URL + "/users");
-    expect(dto_to_user).toHaveBeenCalledWith(mockUserDTO);
+    expect(dto_to_users).toHaveBeenCalledWith(mockUserDTO);
     expect(users).toEqual([mockUser]);
   });
 

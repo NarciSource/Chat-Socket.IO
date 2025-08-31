@@ -11,11 +11,14 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { storeToRefs } from "pinia";
 
 import { User } from "@/entities/chat/model";
 import useUsersStore from "./store/useUsersStore";
+import { get_users } from "./service/event_helper";
 import { UserList } from "./ui";
 
+const { users } = storeToRefs(useUsersStore());
 type OnSelected = (users: User[]) => void;
 const { onSelected } = defineProps<{ onSelected: OnSelected }>();
 const selected_users = ref<User[]>([]); // 선택된 사용자 목록
@@ -26,5 +29,7 @@ const handler = () => {
   show.value = false; // 팝업 닫기
 };
 
-useUsersStore().init_users(); // 접속중인 사용자 목록 초기화
+get_users((updated_users: User[]) => {
+  users.value = updated_users; // 접속중인 사용자 목록
+});
 </script>

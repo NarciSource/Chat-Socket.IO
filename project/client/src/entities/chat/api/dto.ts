@@ -1,6 +1,7 @@
 export type ResponsePayload = {
   senderId: string;
   content: string;
+  roomId: string;
 };
 
 export type SendPayload = {

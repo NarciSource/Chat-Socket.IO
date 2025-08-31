@@ -11,25 +11,26 @@ export default defineStore("chat", () => {
   const searching = ref(false); // 검색 중 여부
   const typing_user = ref<User | null>(null); // 타이핑 중인 사용자
 
-  const message_dictionary = reactive<Map<typeof room.value, Message[]>>(new Map()); // 전체 메시지 목록
+  const message_dictionary = reactive<Map<string | undefined, Message[]>>(new Map()); // 전체 메시지 목록
   const messages = // 현재방 메시지 목록
     computed(() => {
       // 방에 메시지가 없으면 빈 배열로 초기화
-      if (!message_dictionary.has(room.value)) {
-        message_dictionary.set(room.value, []);
+      if (!message_dictionary.has(room.value?.id)) {
+        message_dictionary.set(room.value?.id, []);
       }
-      return message_dictionary.get(room.value)!;
+      return message_dictionary.get(room.value?.id)!;
     });
 
   // 메시지 삽입 함수
-  const insert_message = (message: Message) => {
-    const last_message = messages.value.at(-1);
+  const insert_message = ([message, roomId]: [Message, string]) => {
+    const messages = message_dictionary.get(roomId)!;
+    const last_message = messages.at(-1);
 
     // 마지막 메시지와 동일한 대상이 보낸 메시지인 경우 이어서 추가
     if (last_message && message.name === last_message?.name && !message.is_system) {
       last_message.add_text(message.text[0]);
     } else {
-      messages.value.push(message);
+      messages.push(message);
     }
   };
 

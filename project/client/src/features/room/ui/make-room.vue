@@ -4,7 +4,7 @@
       <q-icon class="q-pa-md" name="meeting_room" size="2rem" />
     </q-item-section>
     <q-item-section>방 만들기</q-item-section>
-    <user-list-popup :on-selected="make" />
+    <user-list-popup v-if="connecting" :on-selected="make" />
   </q-item>
 </template>
 

@@ -8,6 +8,7 @@ interface ImportMetaEnv {
   readonly VITE_LAYOUT_WIDTH: string;
   readonly VITE_LAYOUT_HEIGHT: string;
   readonly VITE_SOCKET_SERVER_URL: string;
+  readonly VITE_SOCKET_ON_USERS: string;
   readonly VITE_SOCKET_ON_SYSTEM: string;
   readonly VITE_SOCKET_ON_MESSAGE: string;
   readonly VITE_SOCKET_ON_ROOM_CREATED: string;
