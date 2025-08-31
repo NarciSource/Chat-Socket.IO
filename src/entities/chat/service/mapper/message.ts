@@ -1,8 +1,12 @@
 import { Message, Room, User } from "../../model";
 import { ResponsePayload, SendPayload } from "../../api/dto";
 
-export const response_payload_to_message = ({ content, senderId }: ResponsePayload): Message => {
-  return new Message(new User(senderId), [content]);
+export const response_payload_to_message = ({
+  content,
+  senderId,
+  roomId,
+}: ResponsePayload): [Message, string] => {
+  return [new Message(new User(senderId), [content]), roomId];
 };
 
 export const response_payload_to_system_message = ({
