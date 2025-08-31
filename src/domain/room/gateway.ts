@@ -1,4 +1,4 @@
-import { Server, Socket } from 'socket.io';
+import { Namespace, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 
 import { RoomService } from './service';
@@ -14,7 +14,7 @@ export interface CreateRoomPayload {
 
 @Injectable()
 export class RoomGateway {
-  public server: Server;
+  public server: Namespace;
 
   constructor(private readonly service: RoomService) {}
 

@@ -5,7 +5,7 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Namespace, Socket } from 'socket.io';
 
 import { UserGateway } from 'src/domain/user/gateway';
 import { CreateRoomPayload, RoomGateway } from 'src/domain/room/gateway';
@@ -21,7 +21,7 @@ import { Logger } from '@nestjs/common';
 })
 export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server: Namespace;
 
   private logger = new Logger(CoreGateway.name);
 
