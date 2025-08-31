@@ -1,4 +1,5 @@
 import { SOCKET_EVENT } from "@/shared/socket_constants";
+import { response_payload_to_users } from "./user";
 import {
   room_created_payload_to_status,
   to_create_room_payload,
@@ -21,6 +22,7 @@ export const on_mappers_dictionary = new Map<string, Mapper>([
   [SOCKET_EVENT.ON_MESSAGE, response_payload_to_message],
   [SOCKET_EVENT.ON_SYSTEM, response_payload_to_system_message],
   [SOCKET_EVENT.ON_TYPING, response_typing_payload],
+  [SOCKET_EVENT.ON_USERS, response_payload_to_users],
 ]);
 export const emit_mappers_dictionary = new Map<string, Mapper>([
   [SOCKET_EVENT.EMIT_MESSAGE, message_to_send_payload],
