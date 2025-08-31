@@ -4,7 +4,7 @@ import { RedisClientType } from 'redis';
 import IRepository from './interface';
 
 @Injectable()
-export class RedisRepository implements IRepository {
+export default class RedisRepository implements IRepository {
   constructor(
     @Inject('REDIS_CLIENT')
     private readonly redis: RedisClientType,

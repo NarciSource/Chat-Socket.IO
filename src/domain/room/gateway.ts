@@ -1,7 +1,7 @@
 import { Namespace, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 
-import { RoomService } from './service';
+import RoomService from './service';
 
 /**
  * 방 정보를 생성할 때 사용할 'participantIds' 형식
@@ -13,7 +13,7 @@ export interface CreateRoomPayload {
 }
 
 @Injectable()
-export class RoomGateway {
+export default class RoomGateway {
   public server: Namespace;
 
   constructor(private readonly service: RoomService) {}

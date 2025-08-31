@@ -1,14 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { UserGateway } from 'src/domain/user/gateway';
-import { UserService } from 'src/domain/user/service';
-import { UsersController } from 'src/domain/user/controller';
-import { RoomGateway } from 'src/domain/room/gateway';
-import { RoomService } from 'src/domain/room/service';
-import { RoomEventsHandler } from 'src/domain/room/eventsHandler';
-import { ChatGateway } from 'src/domain/chat/gateway';
-import { RepositoryModule } from 'src/repository/module';
+import { UserGateway, UserService, UsersController } from 'src/domain/user';
+import { RoomGateway, RoomService, RoomEventsHandler } from 'src/domain/room';
+import { ChatGateway } from 'src/domain/chat';
+import { RepositoryModule } from 'src/repository';
 import { HealthCheckController } from './controller';
 import { CoreGateway } from './gateway';
 

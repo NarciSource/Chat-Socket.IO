@@ -1,10 +1,10 @@
 import { Namespace, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 
-import { UserService } from './service';
+import UserService from './service';
 
 @Injectable()
-export class UserGateway {
+export default class UserGateway {
   public server: Namespace;
 
   constructor(private readonly service: UserService) {}

@@ -15,7 +15,7 @@ import { Injectable } from '@nestjs/common';
  * ```
  */
 @Injectable()
-export class RoomEventsHandler {
+export default class RoomEventsHandler {
   public server: Namespace;
 
   public handle() {

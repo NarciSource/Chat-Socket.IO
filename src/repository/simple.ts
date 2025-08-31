@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import IRepository from './interface';
 
 @Injectable()
-export class SimpleRepository implements IRepository {
+export default class SimpleRepository implements IRepository {
   /*
    * 1) userId -> socketId
    *    사용자 하나당 현재 연결된 소켓(1개)을 추적

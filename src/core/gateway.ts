@@ -1,3 +1,4 @@
+import { Namespace, Socket } from 'socket.io';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -5,13 +6,11 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
 } from '@nestjs/websockets';
-import { Namespace, Socket } from 'socket.io';
-
-import { UserGateway } from 'src/domain/user/gateway';
-import { CreateRoomPayload, RoomGateway } from 'src/domain/room/gateway';
-import { RoomEventsHandler } from 'src/domain/room/eventsHandler';
-import { ChatGateway, SendMessagePayload } from 'src/domain/chat/gateway';
 import { Logger } from '@nestjs/common';
+
+import { UserGateway } from 'src/domain/user';
+import { CreateRoomPayload, RoomGateway, RoomEventsHandler } from 'src/domain/room';
+import { ChatGateway, SendMessagePayload } from 'src/domain/chat';
 
 @WebSocketGateway({
   path: '/chat/ws',
