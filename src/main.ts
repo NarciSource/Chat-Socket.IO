@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express';
 import { createAdapter } from '@socket.io/redis-adapter';
 
-import { RedisIoAdapter } from './common/RedisIoAdapter';
+import { RedisIoAdapter } from './common/redis';
 import { CoreModule } from './core/module';
 
 async function bootstrap() {
