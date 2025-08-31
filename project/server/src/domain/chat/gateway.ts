@@ -1,6 +1,6 @@
+import { Namespace, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 import { WebSocketGateway } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
 
 /**
  * 메시지 전송시 사용할 payload
@@ -13,8 +13,8 @@ export interface SendMessagePayload {
 
 @Injectable()
 @WebSocketGateway()
-export class ChatGateway {
-  public server: Server;
+export default class ChatGateway {
+  public server: Namespace;
 
   /**
    * 메시지 전송 - 1:1도, 1:N도 모두 동일 로직

@@ -1,7 +1,7 @@
-import { Server, Socket } from 'socket.io';
+import { Namespace, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 
-import { RoomService } from './service';
+import RoomService from './service';
 
 /**
  * 방 정보를 생성할 때 사용할 'participantIds' 형식
@@ -13,8 +13,8 @@ export interface CreateRoomPayload {
 }
 
 @Injectable()
-export class RoomGateway {
-  public server: Server;
+export default class RoomGateway {
+  public server: Namespace;
 
   constructor(private readonly service: RoomService) {}
 
@@ -28,19 +28,17 @@ export class RoomGateway {
    *  -> 해당 참여자들(userA,B,C)이 현재 소켓 연결 중이면 자동으로 room에 join
    *  -> roomId를 클라이언트에 반환 (필요시)
    */
-  async handleCreateRoom(socket: Socket, payload: CreateRoomPayload) {
-    const { hostId, participants } = payload;
+  async handleCreateRoom(self: Socket, { hostId, participants }: CreateRoomPayload) {
     const { roomId, participants: allParticipants } = await this.service.createRoom(
       hostId,
       participants,
     );
 
+    // 서버 간 동기화를 위해 모든 서버 인스턴스에 이벤트를 전달
     for (const userId of allParticipants) {
-      const sockId = await this.service.getSocketId(userId);
-      if (sockId) {
-        const userSocket = socket.nsp.sockets.get(sockId);
-        void userSocket?.join(roomId);
-      }
+      const socketId = await this.service.getSocketId(userId);
+
+      this.broadcastServerEvent('join-room', socketId, roomId);
     }
 
     // 생성된 roomId를 모든 room 참가자에게 알림
@@ -55,32 +53,30 @@ export class RoomGateway {
    * (이미 생성된 roomId에 대해, 특정 user가 뒤늦게 참여할 수 있음)
    *  - (예) socket.emit('join_room', { userId:'userA', roomId:'abc123' })
    */
-  async handleJoinRoom(socket: Socket, payload: { userId: string; roomId: string }) {
-    const { userId, roomId } = payload;
+  async handleJoinRoom(self: Socket, { userId, roomId }: { userId: string; roomId: string }) {
     const result = await this.service.joinRoom(userId, roomId);
 
     if (!result.success) {
-      socket.emit('system', { content: `존재하지 않는 방: ${roomId}` });
+      self.emit('system', { content: `존재하지 않는 방: ${roomId}` });
       return;
     }
 
     // 실제 소켓 join
     const socketId = await this.service.getSocketId(userId);
-
-    if (socketId) {
-      const userSocket = socket.nsp.sockets.get(socketId);
-
-      void userSocket?.join(roomId);
+    if (!socketId) {
+      return;
     }
+
+    console.log(`유저 ${userId}가 방 ${roomId}에 참여했습니다.`);
+
+    // 서버 간 동기화 이벤트
+    this.broadcastServerEvent('join-room', socketId, roomId);
 
     // 새로운 참가자 알림
     this.server.to(roomId).emit('system', {
       content: `${userId} joined room: ${roomId}`,
     });
 
-    console.log(`유저 ${userId}가 방 ${roomId}에 참여했습니다.`);
-
-    // 생성된 roomId를 모든 room 참가자에게 알림
     this.server.to(roomId).emit('room_created', {
       roomId,
       participants: result.participants,
@@ -91,25 +87,30 @@ export class RoomGateway {
    * 방 떠나기
    *  - (예) socket.emit('leave_room', { userId:'userB', roomId:'abc123' })
    */
-  async handleLeaveRoom(socket: Socket, payload: { userId: string; roomId: string }) {
-    const { userId, roomId } = payload;
-
+  async handleLeaveRoom(self: Socket, { userId, roomId }: { userId: string; roomId: string }) {
     await this.service.leaveRoom(userId, roomId);
 
     // 실제 소켓 leave
     const socketId = await this.service.getSocketId(userId);
-
-    if (socketId) {
-      const userSocket = socket.nsp.sockets.get(socketId);
-
-      void userSocket?.leave(roomId);
+    if (!socketId) {
+      return;
     }
+
+    console.log(`유저 ${userId}가 방 ${roomId}에서 나갔습니다.`);
+
+    // 서버 간 동기화 이벤트
+    this.broadcastServerEvent('leave-room', socketId, roomId);
 
     // 알림
     this.server.to(roomId).emit('system', {
       content: `${userId}님이 방을 떠났습니다.`,
     });
+  }
 
-    console.log(`유저 ${userId}가 방 ${roomId}에서 나갔습니다.`);
+  private broadcastServerEvent(event: string, ...args: string[]) {
+    // 자신 서버
+    this.server.listeners(event).forEach((listener) => listener(...args));
+    // 다른 서버
+    this.server.serverSideEmit(event, ...args);
   }
 }

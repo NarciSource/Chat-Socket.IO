@@ -1,3 +1,4 @@
+import { Namespace, Socket } from 'socket.io';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -5,12 +6,11 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-
-import { UserGateway } from 'src/domain/user/gateway';
-import { CreateRoomPayload, RoomGateway } from 'src/domain/room/gateway';
-import { ChatGateway, SendMessagePayload } from 'src/domain/chat/gateway';
 import { Logger } from '@nestjs/common';
+
+import { UserGateway } from 'src/domain/user';
+import { CreateRoomPayload, RoomGateway, RoomEventsHandler } from 'src/domain/room';
+import { ChatGateway, SendMessagePayload } from 'src/domain/chat';
 
 @WebSocketGateway({
   path: '/chat/ws',
@@ -21,7 +21,7 @@ import { Logger } from '@nestjs/common';
 })
 export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server: Namespace;
 
   private logger = new Logger(CoreGateway.name);
 
@@ -29,12 +29,16 @@ export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly userGateway: UserGateway,
     private readonly roomGateway: RoomGateway,
     private readonly chatGateway: ChatGateway,
+    private readonly roomEventHandler: RoomEventsHandler,
   ) {}
 
   afterInit() {
     this.userGateway.server = this.server;
     this.roomGateway.server = this.server;
     this.chatGateway.server = this.server;
+
+    this.roomEventHandler.server = this.server;
+    this.roomEventHandler.handle();
 
     this.logger.log('소켓 서버 초기화 완료');
   }

@@ -1,10 +1,10 @@
 import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { RedisClientType } from 'redis';
+import Redis from 'ioredis';
 
-import { RedisModule } from '../common/redis.module';
-import { RedisRepository } from './redis';
-import { SimpleRepository } from './simple';
+import { RedisModule } from 'src/common/redis';
+import RedisRepository from './redis';
+import SimpleRepository from './simple';
 
 @Module({
   imports: [RedisModule],
@@ -12,7 +12,7 @@ import { SimpleRepository } from './simple';
   providers: [
     {
       provide: 'IRepository', // 추상 레포지토리
-      useFactory: (ConfigService: ConfigService, redisClient: RedisClientType) => {
+      useFactory: (ConfigService: ConfigService, redisClient: Redis) => {
         const logger = new Logger('Repository');
         // 구현체를 선택하는 팩토리 함수
         const repositoryType = ConfigService.get<string>('REPOSITORY_TYPE', 'simple');
@@ -32,4 +32,4 @@ import { SimpleRepository } from './simple';
 
   exports: ['IRepository'], // 다른 모듈에서는 인터페이스를 사용하여 의존성 주입을 받을 수 있도록 export
 })
-export class RepositoryModule {}
+export default class RepositoryModule {}

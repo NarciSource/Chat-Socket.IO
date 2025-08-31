@@ -1,39 +1,39 @@
+import Redis from 'ioredis';
 import { Inject, Injectable } from '@nestjs/common';
-import { RedisClientType } from 'redis';
 
 import IRepository from './interface';
 
 @Injectable()
-export class RedisRepository implements IRepository {
+export default class RedisRepository implements IRepository {
   constructor(
     @Inject('REDIS_CLIENT')
-    private readonly redis: RedisClientType,
+    private readonly redis: Redis,
   ) {}
 
   // (1) userSocketMap 관련
   async setUserSocket(userId: string, socketId: string) {
-    await this.redis.hSet('userSocketMap', userId, socketId);
+    await this.redis.hset('userSocketMap', userId, socketId);
   }
 
   async getUserSocketByUserId(userId: string): Promise<string | undefined> {
-    const socketId = (await this.redis.hGet('userSocketMap', userId)) as string;
+    const socketId = await this.redis.hget('userSocketMap', userId);
     return socketId || undefined;
   }
 
   async hasUserSocket(userId: string): Promise<boolean> {
-    // redis.hExists()가 없으므로, hGet으로 체크
-    const socketId = await this.redis.hGet('userSocketMap', userId);
+    // redis.hExists()가 없으므로, hget으로 체크
+    const socketId = await this.redis.hget('userSocketMap', userId);
     return !!socketId;
   }
 
   async removeUserSocket(userId: string): Promise<void> {
-    await this.redis.hDel('userSocketMap', userId);
+    await this.redis.hdel('userSocketMap', userId);
 
     const userKey = this.userKey(userId);
-    const rooms = await this.redis.sMembers(userKey);
+    const rooms = await this.redis.smembers(userKey);
 
     for (const roomId of rooms) {
-      await this.redis.sRem(this.roomKey(roomId), userId);
+      await this.redis.srem(this.roomKey(roomId), userId);
     }
 
     await this.redis.del(userKey);
@@ -41,7 +41,7 @@ export class RedisRepository implements IRepository {
 
   async findUserIdBySocketId(socketId: string): Promise<string | undefined> {
     // Hash 전체 스캔 (데이터 많으면 비효율적)
-    const entries = await this.redis.hGetAll('userSocketMap');
+    const entries = await this.redis.hgetall('userSocketMap');
     for (const [uId, sId] of Object.entries(entries)) {
       if (sId == socketId) {
         return uId;
@@ -51,7 +51,7 @@ export class RedisRepository implements IRepository {
   }
 
   async getUserKeys(): Promise<string[]> {
-    return this.redis.hKeys('userSocketMap');
+    return this.redis.hkeys('userSocketMap');
   }
 
   // key helpers
@@ -65,7 +65,7 @@ export class RedisRepository implements IRepository {
 
   // (2) userRoomsMap, roomMembersMap 관련
   async getRoomsByUser(userId: string) {
-    return this.redis.sMembers(this.userKey(userId));
+    return this.redis.smembers(this.userKey(userId));
   }
 
   async getRooms() {
@@ -76,11 +76,11 @@ export class RedisRepository implements IRepository {
 
   async removeRoom(roomId: string) {
     const roomKey = this.roomKey(roomId);
-    const members = await this.redis.sMembers(roomKey);
+    const members = await this.redis.smembers(roomKey);
     {
       const multi = this.redis.multi();
       for (const userId of members) {
-        multi.sRem(this.userKey(userId), roomId);
+        multi.srem(this.userKey(userId), roomId);
       }
       multi.del(roomKey);
 
@@ -89,7 +89,7 @@ export class RedisRepository implements IRepository {
   }
 
   async getRoomMembers(roomId: string) {
-    return await this.redis.sMembers(this.roomKey(roomId));
+    return await this.redis.smembers(this.roomKey(roomId));
   }
 
   async addRoomToUser(userId: string, roomId: string) {
@@ -97,8 +97,8 @@ export class RedisRepository implements IRepository {
     const roomKey = this.roomKey(roomId);
     {
       const multi = this.redis.multi();
-      multi.sAdd(userKey, roomId);
-      multi.sAdd(roomKey, userId);
+      multi.sadd(userKey, roomId);
+      multi.sadd(roomKey, userId);
 
       await multi.exec();
     }
@@ -109,10 +109,10 @@ export class RedisRepository implements IRepository {
     const roomKey = this.roomKey(roomId);
     {
       const multi = this.redis.multi();
-      multi.sRem(userKey, roomId);
-      multi.sRem(roomKey, userId);
+      multi.srem(userKey, roomId);
+      multi.srem(roomKey, userId);
 
-      if ((await this.redis.sCard(roomKey)) === 1) {
+      if ((await this.redis.scard(roomKey)) === 1) {
         multi.del(roomKey);
       }
 
@@ -126,10 +126,7 @@ export class RedisRepository implements IRepository {
     let cursor = '0';
 
     do {
-      const { cursor: nextCursor, keys: batch } = await this.redis.scan(cursor, {
-        MATCH: pattern,
-        COUNT: 100,
-      });
+      const [nextCursor, batch] = await this.redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
       keys.push(...batch);
 
       cursor = nextCursor;

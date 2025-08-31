@@ -1,11 +1,11 @@
-import { Server, Socket } from 'socket.io';
+import { Namespace, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 
-import { UserService } from './service';
+import UserService from './service';
 
 @Injectable()
-export class UserGateway {
-  public server: Server;
+export default class UserGateway {
+  public server: Namespace;
 
   constructor(private readonly service: UserService) {}
 
@@ -29,6 +29,10 @@ export class UserGateway {
     }
 
     console.log(`유저 등록: userId=${userId}, socketId=${socket.id}`);
+
+    this.server.emit('get_users', {
+      users: await this.service.getUsers(),
+    });
   }
 
   async handleUserDisconnected(socket: Socket) {

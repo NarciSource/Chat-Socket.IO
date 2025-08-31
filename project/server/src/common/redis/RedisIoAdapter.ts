@@ -26,7 +26,7 @@ import { Server, ServerOptions } from 'socket.io';
  * await app.listen(3000);
  * ```
  */
-export class RedisIoAdapter extends IoAdapter {
+export default class RedisIoAdapter extends IoAdapter {
   private logger = new Logger(RedisIoAdapter.name);
 
   constructor(

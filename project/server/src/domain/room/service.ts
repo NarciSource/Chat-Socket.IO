@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import IRepository from 'src/repository/interface';
 
 @Injectable()
-export class RoomService {
+export default class RoomService {
   constructor(
     @Inject('IRepository')
     private readonly repository: IRepository,
