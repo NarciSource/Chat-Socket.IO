@@ -1,0 +1,13 @@
+{
+  "name": "stream-dynamo-consumer",
+  "version": "1.0.0",
+  "description": "redis-streams에서 dynamoDB로 동기화",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "NarciSource",
+  "devDependencies": {
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
