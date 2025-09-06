@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(CoreModule, new ExpressAdapter());
 
   // RedisIoAdapter(WS)를 사용하여 WebSocket 어댑터 설정
-  const adapterConstructor = app.get<ReturnType<typeof createAdapter>>('REDIS_PUBSUB_ADAPTER');
+  const adapterConstructor = app.get<ReturnType<typeof createAdapter>>('REDIS_STREAMS_ADAPTER');
   const redisIoAdapter = new RedisIoAdapter(app, adapterConstructor);
   app.useWebSocketAdapter(redisIoAdapter); // 어댑터 적용
 
