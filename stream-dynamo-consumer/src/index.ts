@@ -3,10 +3,11 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import RedisStreamReader from "./stream-reader";
-import { updateChatMessage } from "./dynamo-writer";
+import DynamoWriter from "./dynamo-writer";
 
 async function main() {
   const reader = new RedisStreamReader();
+  const writer = new DynamoWriter();
 
   for await (const events of reader.listen()) {
     for (const [eventId, data] of events) {
@@ -16,12 +17,12 @@ async function main() {
         const timestamp = eventId.split("-")[0];
         const createdAt = new Date(parseInt(timestamp));
 
-        updateChatMessage(eventId, {
+        writer.updateChatMessage(eventId, {
           roomId,
           senderId,
           content,
-          createdAt,
           uid,
+          createdAt,
         });
       }
     }
