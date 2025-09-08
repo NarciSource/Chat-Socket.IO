@@ -28,6 +28,7 @@ const schema = new dynamoose.Schema({
   senderId: String,
   content: String,
   uid: String,
+  createdAt: String,
 });
 
 // 모델 초기화

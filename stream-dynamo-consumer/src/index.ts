@@ -13,8 +13,16 @@ async function main() {
       if (data.eventName === "receive_message") {
         const { roomId, senderId, content } = data.payload as Record<string, any>;
         const uid = data.uid;
+        const timestamp = eventId.split("-")[0];
+        const createdAt = new Date(parseInt(timestamp));
 
-        updateChatMessage(eventId, { roomId, senderId, content, uid });
+        updateChatMessage(eventId, {
+          roomId,
+          senderId,
+          content,
+          createdAt,
+          uid,
+        });
       }
     }
   }
