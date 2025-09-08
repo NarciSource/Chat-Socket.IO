@@ -23,12 +23,34 @@ dynamoose.aws.ddb.set(ddb);
 
 // Dynamoose 스키마 정의
 const schema = new dynamoose.Schema({
-  eventId: String,
-  roomId: String,
-  senderId: String,
+  eventId: {
+    type: String,
+    hashKey: true, // 기본 키 (Partition Key)
+  },
+  roomId: {
+    type: String,
+    required: true,
+    index: {
+      type: "global", // 글로벌 인덱스 설정
+      name: "roomId-createdAt-index", // 인덱스 이름
+      rangeKey: "createdAt", // Range Key (정렬 기준)
+    },
+  },
+  senderId: {
+    type: String,
+    required: true,
+    index: {
+      type: "global",
+      name: "senderId-createdAt-index",
+      rangeKey: "createdAt",
+    },
+  },
   content: String,
   uid: String,
-  createdAt: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 // 모델 초기화
