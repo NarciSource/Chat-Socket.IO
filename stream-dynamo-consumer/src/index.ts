@@ -2,13 +2,14 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
+import { ChatMessage } from "./model";
+import { dynamoSchemaDefinition } from "./schemaDefinition";
 import RedisStreamReader from "./stream-reader";
 import DynamoWriter from "./dynamo-writer";
-import { ChatMessage } from "./model";
 
 async function main() {
   const reader = new RedisStreamReader<ChatMessage>();
-  const writer = new DynamoWriter<ChatMessage>();
+  const writer = new DynamoWriter<ChatMessage>(dynamoSchemaDefinition);
 
   for await (const events of reader.listen()) {
     for (const [eventId, data] of events) {
