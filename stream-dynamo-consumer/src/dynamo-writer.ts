@@ -2,15 +2,7 @@ import dynamoose from "dynamoose";
 import { Model } from "dynamoose/dist/Model";
 import { DynamoDB, DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
 
-interface ChatMessage {
-  roomId: string;
-  senderId: string;
-  content: string;
-  uid?: string;
-  createdAt?: Date;
-}
-
-export default class DynamoWriter {
+export default class DynamoWriter<T> {
   private ddb: DynamoDB;
   private model: Model<any>;
 
@@ -77,7 +69,7 @@ export default class DynamoWriter {
   }
 
   // 데이터 업데이트
-  async updateChatMessage(eventId: string, content: Partial<ChatMessage>) {
+  async updateChatMessage(eventId: string, content: T & { createdAt?: Date }) {
     try {
       await this.model.update(
         { eventId }, // Partition Key

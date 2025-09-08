@@ -10,15 +10,15 @@ type XReadStream = [streamName: string, entries: XReadStreamEntry[]];
 type XReadResult = XReadStream[] | null;
 type XReadArgs = Parameters<Redis["xread"]>;
 
-interface ParsedEvent {
+interface ParsedEvent<T> {
   eventName: string;
-  payload: string | Record<string, any>;
+  payload: string | T;
   type?: string;
   nsp?: string;
   uid?: string;
 }
 
-export default class RedisStreamReader {
+export default class RedisStreamReader<T> {
   // Redis 연결
   private redis = new Redis({ host: REDIS_HOST, port: REDIS_PORT });
   private xReadArgs = [
@@ -45,8 +45,8 @@ export default class RedisStreamReader {
   /**
    * xread 반환값 전체 파싱
    */
-  private parseResult(result: XReadResult): Map<string, ParsedEvent> {
-    const map = new Map<string, ParsedEvent>();
+  private parseResult(result: XReadResult): Map<string, ParsedEvent<T>> {
+    const map = new Map<string, ParsedEvent<T>>();
     if (!result) return map;
 
     for (const stream of result) {
@@ -61,8 +61,8 @@ export default class RedisStreamReader {
   /**
    * 개별 스트림 파싱
    */
-  private parseStream([, entries]: XReadStream): Map<string, ParsedEvent> {
-    const map = new Map<string, ParsedEvent>();
+  private parseStream([, entries]: XReadStream): Map<string, ParsedEvent<T>> {
+    const map = new Map<string, ParsedEvent<T>>();
     for (const entry of entries) {
       const parsed = this.parseEntry(entry);
       if (parsed) map.set(parsed[0], parsed[1]);
@@ -74,7 +74,7 @@ export default class RedisStreamReader {
    * 단일 엔트리 파싱
    */
   private parseEntry([id, fields]: XReadStreamEntry):
-    | [string, ParsedEvent]
+    | [string, ParsedEvent<T>]
     | null {
     const record = this.parseFields(fields);
     const data = this.parseData(record);
@@ -96,7 +96,7 @@ export default class RedisStreamReader {
   /**
    * record.data를 JSON 파싱해 ParsedEvent로 변환
    */
-  private parseData(record: Record<string, string>): ParsedEvent | null {
+  private parseData(record: Record<string, string>): ParsedEvent<T> | null {
     if (!record.data) return null;
     const { data, ...remains } = record;
 
