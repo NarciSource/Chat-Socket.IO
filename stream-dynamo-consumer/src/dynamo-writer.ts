@@ -32,3 +32,15 @@ const schema = new dynamoose.Schema({
 
 // 모델 초기화
 export const chatModel = dynamoose.model(DYNAMO_TABLE, schema);
+
+// 데이터 업데이트
+export async function updateChatMessage(eventId: string, content: Object) {
+  try {
+    await chatModel.update(
+      { eventId }, // Partition Key
+      { ...content }
+    );
+  } catch (error) {
+    console.error("Error updating message:", error);
+  }
+}

@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import RedisStreamReader from "./stream-reader";
-import { chatModel } from "./dynamo-writer";
+import { updateChatMessage } from "./dynamo-writer";
 
 async function main() {
   const reader = new RedisStreamReader();
@@ -14,7 +14,7 @@ async function main() {
         const { roomId, senderId, content } = data.payload as Record<string, any>;
         const uid = data.uid;
 
-        chatModel.update({ eventId, roomId, senderId, content, uid });
+        updateChatMessage(eventId, { roomId, senderId, content, uid });
       }
     }
   }
