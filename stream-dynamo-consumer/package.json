@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "author": "NarciSource",
   "description": "redis-streams에서 dynamoDB로 동기화",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "tsx src/index.ts",
     "build": "tsc"
   },
   "devDependencies": {
+    "@types/node": "^24.9.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },

@@ -42,7 +42,6 @@ export default class DynamoWriter<T> {
         { eventId }, // Partition Key
         { ...content } // 업데이트할 필드
       );
-      console.log(`Chat message with eventId ${eventId} updated successfully.`);
     } catch (error) {
       console.error("Error updating message:", error);
     }
