@@ -6,6 +6,7 @@ import { ChatMessage } from "./model";
 import { dynamoSchemaDefinition } from "./schemaDefinition";
 import RedisStreamReader from "./stream-reader";
 import DynamoWriter from "./dynamo-writer";
+import healthCheck, { setHealthy } from "./healthCheck";
 
 async function main() {
   const reader = new RedisStreamReader<ChatMessage>();
@@ -31,4 +32,12 @@ async function main() {
   }
 }
 
-void main();
+try {
+  void main();
+
+  healthCheck(); // 헬스체크 API
+  setHealthy(true);
+} catch (error) {
+  console.error(error);
+  setHealthy(false);
+}
