@@ -8,9 +8,9 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 
-import { UserGateway } from 'src/domain/user';
-import { CreateRoomPayload, RoomGateway, RoomEventsHandler } from 'src/domain/room';
-import { ChatGateway, SendMessagePayload } from 'src/domain/chat';
+import { UserGateway, UserPayload } from 'src/domain/user';
+import { RoomGateway, RoomPayload, RoomEventsHandler } from 'src/domain/room';
+import { ChatGateway, ChatPayload } from 'src/domain/chat';
 
 @WebSocketGateway({
   path: '/chat/ws',
@@ -57,31 +57,31 @@ export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   // user
   @SubscribeMessage('register')
-  async handleRegister(socket: Socket, payload: { userId: string }) {
+  async handleRegister(socket: Socket, payload: UserPayload) {
     return this.userGateway.handleRegister(socket, payload);
   }
 
   // room
   @SubscribeMessage('create_room')
-  async handleCreateRoom(socket: Socket, payload: CreateRoomPayload) {
+  async handleCreateRoom(socket: Socket, payload: RoomPayload) {
     return this.roomGateway.handleCreateRoom(socket, payload);
   }
   @SubscribeMessage('join_room')
-  async handleJoinRoom(socket: Socket, payload: { userId: string; roomId: string }) {
+  async handleJoinRoom(socket: Socket, payload: RoomPayload) {
     return this.roomGateway.handleJoinRoom(socket, payload);
   }
   @SubscribeMessage('leave_room')
-  async handleLeaveRoom(socket: Socket, payload: { userId: string; roomId: string }) {
+  async handleLeaveRoom(socket: Socket, payload: RoomPayload) {
     return this.roomGateway.handleLeaveRoom(socket, payload);
   }
 
   // chat
   @SubscribeMessage('send_message')
-  handleSendMessage(socket: Socket, payload: SendMessagePayload) {
+  handleSendMessage(socket: Socket, payload: ChatPayload) {
     return this.chatGateway.handleSendMessage(socket, payload);
   }
   @SubscribeMessage('typing')
-  handleSendingMessage(socket: Socket, payload: { userId: string; roomId: string }) {
+  handleSendingMessage(socket: Socket, payload: ChatPayload) {
     return this.chatGateway.handleSendingMessage(socket, payload);
   }
 }

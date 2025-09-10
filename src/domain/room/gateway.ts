@@ -3,13 +3,11 @@ import { Injectable } from '@nestjs/common';
 
 import RoomService from './service';
 
-/**
- * 방 정보를 생성할 때 사용할 'participantIds' 형식
- * - 원하는 만큼 참여자를 넣어 1:1 또는 1:N 모두 처리 가능
- */
-export interface CreateRoomPayload {
-  hostId: string; // 방을 생성한 사람 (옵션)
-  participants: string[]; // 이 방에 들어갈 유저들의 userId 목록
+export interface Payload {
+  userId?: string; // 유저 식별자
+  roomId?: string; // 방 식별자
+  hostId?: string; // 방을 생성한 사람
+  participants?: string[]; // 방에 들어갈 유저들의 목록
 }
 
 @Injectable()
@@ -20,15 +18,8 @@ export default class RoomGateway {
 
   /**
    * 방 생성 이벤트 (1:1 ~ 1:N 모두 처리)
-   *  - (예) socket.emit('create_room', {
-   *        hostId: 'userA',
-   *        participantIds: ['userA','userB','userC']
-   *     });
-   *  -> server가 랜덤 roomId를 만들어 roomMembersMap에 저장
-   *  -> 해당 참여자들(userA,B,C)이 현재 소켓 연결 중이면 자동으로 room에 join
-   *  -> roomId를 클라이언트에 반환 (필요시)
    */
-  async handleCreateRoom(self: Socket, { hostId, participants }: CreateRoomPayload) {
+  async handleCreateRoom(_socket: Socket, { hostId, participants }: Payload) {
     const { roomId, participants: allParticipants } = await this.service.createRoom(
       hostId,
       participants,
@@ -51,9 +42,8 @@ export default class RoomGateway {
   /**
    * 방에 직접 join하는 이벤트
    * (이미 생성된 roomId에 대해, 특정 user가 뒤늦게 참여할 수 있음)
-   *  - (예) socket.emit('join_room', { userId:'userA', roomId:'abc123' })
    */
-  async handleJoinRoom(self: Socket, { userId, roomId }: { userId: string; roomId: string }) {
+  async handleJoinRoom(self: Socket, { userId, roomId }: Payload) {
     const result = await this.service.joinRoom(userId, roomId);
 
     if (!result.success) {
@@ -85,9 +75,8 @@ export default class RoomGateway {
 
   /**
    * 방 떠나기
-   *  - (예) socket.emit('leave_room', { userId:'userB', roomId:'abc123' })
    */
-  async handleLeaveRoom(self: Socket, { userId, roomId }: { userId: string; roomId: string }) {
+  async handleLeaveRoom(_socket: Socket, { userId, roomId }: Payload) {
     await this.service.leaveRoom(userId, roomId);
 
     // 실제 소켓 leave

@@ -3,6 +3,10 @@ import { Injectable } from '@nestjs/common';
 
 import UserService from './service';
 
+export interface Payload {
+  userId?: string; // 유저 식별자
+}
+
 @Injectable()
 export default class UserGateway {
   public server: Namespace;
@@ -11,10 +15,9 @@ export default class UserGateway {
 
   /**
    * 유저 등록
-   * - (예) socket.emit('register', { userId: 'userA' });
    * - 이미 같은 userId로 등록된 소켓이 있다면 거부할 수도 있음
    */
-  async handleRegister(socket: Socket, payload: { userId: string }) {
+  async handleRegister(socket: Socket, payload: Payload) {
     const { userId } = payload;
     const ok = await this.service.registerUser(userId, socket.id);
 
