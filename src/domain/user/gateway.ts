@@ -1,7 +1,9 @@
 import { Namespace, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
-import UserService from './service';
+import { GetUserQuery } from './queries';
+import { DisconnectUserCommand, RegisterUserCommand } from './commands';
 
 export interface Payload {
   userId?: string; // 유저 식별자
@@ -11,7 +13,10 @@ export interface Payload {
 export default class UserGateway {
   public server: Namespace;
 
-  constructor(private readonly service: UserService) {}
+  constructor(
+    private readonly queryBus: QueryBus,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   /**
    * 유저 등록
@@ -19,7 +24,9 @@ export default class UserGateway {
    */
   async handleRegister(socket: Socket, payload: Payload) {
     const { userId } = payload;
-    const ok = await this.service.registerUser(userId, socket.id);
+
+    const command = new RegisterUserCommand({ userId, socketId: socket.id });
+    const ok = await this.commandBus.execute(command);
 
     // 중복 접속 제어 (정책에 따라)
     if (!ok) {
@@ -34,11 +41,12 @@ export default class UserGateway {
     console.log(`유저 등록: userId=${userId}, socketId=${socket.id}`);
 
     this.server.emit('get_users', {
-      users: await this.service.getUsers(),
+      users: await this.queryBus.execute(new GetUserQuery()),
     });
   }
 
   async handleUserDisconnected(socket: Socket) {
-    await this.service.disconnectUserBySocketId(socket.id);
+    const command = new DisconnectUserCommand(socket.id);
+    await this.commandBus.execute(command);
   }
 }

@@ -1,14 +1,15 @@
 import { Controller, Get } from '@nestjs/common';
+import { QueryBus } from '@nestjs/cqrs';
 
-import UserService from './service';
+import { GetUserQuery } from './queries';
 
 @Controller('chat')
 export default class UsersController {
-  constructor(private readonly service: UserService) {}
+  constructor(private readonly queryBus: QueryBus) {}
 
   @Get('users')
-  getUsers() {
+  async getUsers() {
     // Service를 통해 데이터 조회
-    return this.service.getUsers();
+    return await this.queryBus.execute(new GetUserQuery());
   }
 }
