@@ -11,6 +11,7 @@
     "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig, steiger.config.ts, steiger.config.*"
   },
   "cSpell.words": [
+    "dynamoose",
     "codegen",
     "healthcheck",
     "konga",

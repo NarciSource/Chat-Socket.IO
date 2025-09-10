@@ -1,6 +1,7 @@
 services:
   kong:
     image: kong:3.9.1
+    container_name: kong-container
 
     command: kong start
 
@@ -19,6 +20,7 @@ services:
 
   konga:
     image: pantsel/konga:latest
+    container_name: konga-container
 
     networks:
       - chat-net

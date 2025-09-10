@@ -1,6 +1,6 @@
 services:
   server:
-    image: chat-server:${SERVER_VERSION}
+    image: chat/server:${SERVER_VERSION}
     build:
       context: project/server
       dockerfile: Dockerfile
@@ -26,7 +26,7 @@ services:
       retries: 5
 
   client:
-    image: chat-client:${CLIENT_VERSION}
+    image: chat/client:${CLIENT_VERSION}
     build:
       context: project/client
       dockerfile: Dockerfile
@@ -68,8 +68,30 @@ services:
       retries: 5
       start_period: 10s
 
+  dynamodb:
+    image: amazon/dynamodb-local:3.1.0
+    container_name: dynamodb-container
+
+    user: root
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
+
+    networks:
+      - chat-net
+    ports:
+      - ${DYNAMO_PORT}:8000
+
+    volumes:
+      - dynamodb-data:/home/dynamodblocal/data
+
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-w", "%{http_code}", "http://localhost:8000"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
 include:
   - ./infra/docker-compose.yml
+  - ./project/consumers/docker-compose.yml
 
 networks:
   chat-net:
@@ -78,4 +100,6 @@ networks:
 
 volumes:
   redis-data:
+    driver: local
+  dynamodb-data:
     driver: local
