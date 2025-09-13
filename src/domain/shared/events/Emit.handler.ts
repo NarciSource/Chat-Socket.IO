@@ -18,6 +18,10 @@ export default class EmitHandler implements IEventHandler<EmitEvent> {
 
   handle({ eventName, target, data }: EmitEvent) {
     // 특정 대상 소켓 또는 방에 socket.io 이벤트를 전송
-    this.server.to(target).emit(eventName, data);
+    if (target) {
+      this.server.to(target).emit(eventName, data);
+    } else {
+      this.server.emit(eventName, data);
+    }
   }
 }

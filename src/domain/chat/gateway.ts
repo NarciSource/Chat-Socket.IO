@@ -1,6 +1,9 @@
 import { Namespace, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
 import { WebSocketGateway } from '@nestjs/websockets';
+
+import { EmitEvent } from '../shared/events';
 
 export interface Payload {
   senderId?: string; // 보낸 식별자
@@ -13,23 +16,25 @@ export interface Payload {
 export default class ChatGateway {
   public server: Namespace;
 
+  constructor(private readonly eventBus: EventBus) {}
+
   /**
    * 메시지 전송 - 1:1도, 1:N도 모두 동일 로직
    */
-  handleSendMessage(_socket: Socket, payload: Payload) {
-    const { roomId, senderId, content } = payload;
-
+  handleSendMessage(_socket: Socket, { roomId, senderId, content }: Payload) {
     // 방에 속해있는 모든 소켓에게 메시지 전송
-    this.server.to(roomId).emit('receive_message', {
+    const emitEvent = new EmitEvent('receive_message', roomId, {
       senderId,
       content,
       roomId,
     });
+
+    this.eventBus.publish(emitEvent);
   }
 
-  handleSendingMessage(_socket: Socket, payload: Payload) {
-    const { senderId, roomId } = payload;
+  handleSendingMessage(_socket: Socket, { senderId, roomId }: Payload) {
+    const emitEvent = new EmitEvent('typing', roomId, senderId);
 
-    this.server.to(roomId).emit('typing', senderId);
+    this.eventBus.publish(emitEvent);
   }
 }
