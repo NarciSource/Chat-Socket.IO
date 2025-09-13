@@ -1,8 +1,8 @@
 import { Namespace, Socket } from 'socket.io';
-import { Injectable } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 
 import { CreateRoomEvent, JoinRoomEvent, LeaveRoomEvent } from './commands';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
 export interface Payload {
   userId?: string; // 유저 식별자
@@ -11,8 +11,13 @@ export interface Payload {
   participants?: string[]; // 방에 들어갈 유저들의 목록
 }
 
-@Injectable()
+@WebSocketGateway({
+  path: '/chat/ws',
+  namespace: '/chat',
+  cors: { origin: '*' },
+})
 export default class RoomGateway {
+  @WebSocketServer()
   public server: Namespace;
 
   constructor(private readonly commandBus: CommandBus) {}
@@ -20,6 +25,7 @@ export default class RoomGateway {
   /**
    * 방 생성 이벤트 (1:1 ~ 1:N 모두 처리)
    */
+  @SubscribeMessage('create_room')
   async handleCreateRoom(_socket: Socket, { hostId, participants }: Payload) {
     const command = new CreateRoomEvent(hostId, participants);
 
@@ -32,6 +38,7 @@ export default class RoomGateway {
    * 방에 직접 join하는 이벤트
    * (이미 생성된 roomId에 대해, 특정 user가 뒤늦게 참여할 수 있음)
    */
+  @SubscribeMessage('join_room')
   async handleJoinRoom(_socket: Socket, { userId, roomId }: Payload) {
     const command = new JoinRoomEvent(userId, roomId);
 
@@ -43,6 +50,7 @@ export default class RoomGateway {
   /**
    * 방 떠나기
    */
+  @SubscribeMessage('leave_room')
   async handleLeaveRoom(_socket: Socket, { userId, roomId }: Payload) {
     const command = new LeaveRoomEvent(userId, roomId);
 
