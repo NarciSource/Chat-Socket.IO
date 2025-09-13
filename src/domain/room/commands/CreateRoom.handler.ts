@@ -1,15 +1,13 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler, QueryBus, EventBus } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 
-import { EmitEvent, SyncEvent } from 'src/domain/shared/events';
 import { IRepository } from 'src/repository';
-import { GetSocketIdQuery } from '../queries';
+import { CreatedRoomEvent } from '../events';
 import CreateRoomCommand from './CreateRoom.command';
 
 @CommandHandler(CreateRoomCommand)
 export default class CreateRoomHandler implements ICommandHandler<CreateRoomCommand> {
   constructor(
-    private readonly queryBus: QueryBus,
     private readonly eventBus: EventBus,
 
     @Inject('IRepository')
@@ -30,15 +28,8 @@ export default class CreateRoomHandler implements ICommandHandler<CreateRoomComm
       await this.repository.addRoomToUser(userId, roomId);
     }
 
-    // 서버 간 동기화 이벤트
-    const queries = members.map((userId) => new GetSocketIdQuery(userId));
-    const socketIds = await Promise.all(queries.map((q) => this.queryBus.execute(q)));
-    const syncEvent = new SyncEvent('join-room', roomId, socketIds);
-
-    // 새로운 참가자 알림
-    const notifyEvent = new EmitEvent('room_created', roomId, { roomId, participants: members });
-
-    this.eventBus.publishAll([syncEvent, notifyEvent]);
+    // 이벤트 발행
+    this.eventBus.publish(new CreatedRoomEvent(roomId, members));
 
     return true;
   }

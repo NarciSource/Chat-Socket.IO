@@ -1,15 +1,13 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler, QueryBus, EventBus } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 
-import { EmitEvent, SyncEvent } from 'src/domain/shared/events';
 import { IRepository } from 'src/repository';
-import { GetSocketIdQuery } from '../queries';
+import { LeavedRoomEvent } from '../events';
 import LeaveRoomCommand from './LeaveRoom.command';
 
 @CommandHandler(LeaveRoomCommand)
 export default class LeaveRoomHandler implements ICommandHandler<LeaveRoomCommand> {
   constructor(
-    private readonly queryBus: QueryBus,
     private readonly eventBus: EventBus,
 
     @Inject('IRepository')
@@ -17,25 +15,19 @@ export default class LeaveRoomHandler implements ICommandHandler<LeaveRoomComman
   ) {}
 
   async execute({ userId, roomId }: LeaveRoomCommand) {
-    const members = await this.repository.getRoomMembers(roomId);
-
-    if (!members) {
-      return false;
-    }
-
     // 레포지토리 로직
     await this.repository.removeRoomToUser(userId, roomId);
 
-    // 서버 간 동기화 이벤트
-    const socketId = await this.queryBus.execute(new GetSocketIdQuery(userId));
-    const syncEvent = new SyncEvent('leave-room', roomId, [socketId]);
+    const members = await this.repository.getRoomMembers(roomId);
 
-    // 시스템 메시지
-    const content = `${userId}님이 방을 떠났습니다.`;
-    const systemEvent = new EmitEvent('system', roomId, { content });
+    if (members) {
+      // 레포지토리 로직
+      await this.repository.addRoomToUser(userId, roomId);
+    }
 
-    this.eventBus.publishAll([syncEvent, systemEvent]);
+    // 이벤트 발행
+    this.eventBus.publish(new LeavedRoomEvent(roomId, userId, members));
 
-    return true;
+    return !!members;
   }
 }
