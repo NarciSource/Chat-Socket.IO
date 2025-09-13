@@ -1,9 +1,10 @@
 import { Namespace } from 'socket.io';
-import { Inject } from '@nestjs/common';
+import { Global, Inject } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 
 import EmitEvent from './Emit.event';
 
+@Global()
 @EventsHandler(EmitEvent)
 export default class EmitHandler implements IEventHandler<EmitEvent> {
   constructor(

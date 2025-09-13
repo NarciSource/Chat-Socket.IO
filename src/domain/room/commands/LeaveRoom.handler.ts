@@ -1,9 +1,9 @@
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler, QueryBus, EventBus } from '@nestjs/cqrs';
 
+import { EmitEvent, SyncEvent } from 'src/domain/shared/events';
 import { IRepository } from 'src/repository';
 import { GetSocketIdQuery } from '../queries';
-import { EmitEvent, SyncEvent } from '../events';
 import LeaveRoomCommand from './LeaveRoom.command';
 
 @CommandHandler(LeaveRoomCommand)

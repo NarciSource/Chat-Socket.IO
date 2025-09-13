@@ -84,4 +84,8 @@ export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleSendingMessage(socket: Socket, payload: ChatPayload) {
     return this.chatGateway.handleSendingMessage(socket, payload);
   }
+
+  public getServer() {
+    return this.server;
+  }
 }

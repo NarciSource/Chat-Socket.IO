@@ -50,8 +50,4 @@ export default class RoomGateway {
 
     console.log(`유저 ${userId}가 방 ${roomId}에서 나갔습니다.`);
   }
-
-  public getServer() {
-    return this.server;
-  }
 }

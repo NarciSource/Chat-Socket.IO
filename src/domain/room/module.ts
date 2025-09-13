@@ -16,11 +16,6 @@ import RoomGateway from './gateway';
     ...Object.values(queries),
     ...Object.values(commands),
     ...Object.values(events),
-    {
-      provide: 'SOCKET_SERVER',
-      useFactory: (gateway: RoomGateway) => () => gateway.getServer(),
-      inject: [RoomGateway],
-    },
   ],
   exports: [RoomGateway, RoomEventsHandler],
 })
