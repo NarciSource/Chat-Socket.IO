@@ -5,6 +5,7 @@ import * as events from 'src/domain/shared/events';
 import { ChatModule } from 'src/domain/chat';
 import { RoomModule } from 'src/domain/room';
 import { UserModule } from 'src/domain/user';
+import ServerEventRegistry from './eventRegistry';
 import { HealthCheckController } from './controller';
 import { CoreGateway } from './gateway';
 
@@ -13,6 +14,7 @@ import { CoreGateway } from './gateway';
   controllers: [HealthCheckController],
   providers: [
     CoreGateway,
+    ServerEventRegistry,
     ...Object.values(events),
     {
       provide: 'SOCKET_SERVER',
