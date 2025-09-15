@@ -9,7 +9,7 @@ import { Message, dynamoSchemaDefinition } from 'src/model/schemaDefinition';
 import IRepository from './interface';
 
 @Injectable()
-export default class RedisRepository implements IRepository {
+export default class DatabaseRepository implements IRepository {
   private dynamoModel: Model<Message & Item>;
 
   constructor(
