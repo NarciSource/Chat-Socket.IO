@@ -1,6 +1,7 @@
+import Redis from 'ioredis';
+import * as dynamoose from 'dynamoose';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import Redis from 'ioredis';
 
 import { RedisModule } from 'src/common/redis';
 import RedisRepository from './redis';
@@ -12,10 +13,14 @@ import SimpleRepository from './simple';
   providers: [
     {
       provide: 'IRepository', // 추상 레포지토리
-      useFactory: (ConfigService: ConfigService, redisClient: Redis) => {
+      useFactory: (
+        configService: ConfigService,
+        redisClient: Redis,
+        dynamoClient: typeof dynamoose,
+      ) => {
         const logger = new Logger('Repository');
         // 구현체를 선택하는 팩토리 함수
-        const repositoryType = ConfigService.get<string>('REPOSITORY_TYPE', 'simple');
+        const repositoryType = configService.get<string>('REPOSITORY_TYPE', 'simple');
 
         logger.log(`선택된 레포지토리 형태: ${repositoryType}`);
 
@@ -23,10 +28,10 @@ import SimpleRepository from './simple';
           case 'simple':
             return new SimpleRepository();
           case 'redis':
-            return new RedisRepository(redisClient);
+            return new RedisRepository(configService, redisClient, dynamoClient);
         }
       },
-      inject: [ConfigService, 'REDIS_CLIENT'],
+      inject: [ConfigService, 'REDIS_CLIENT', 'DYNAMO_CLIENT'],
     },
   ],
 

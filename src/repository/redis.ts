@@ -1,14 +1,31 @@
 import Redis from 'ioredis';
+import dynamoose from 'dynamoose';
+import { Item } from 'dynamoose/dist/Item';
+import { Model } from 'dynamoose/dist/Model';
+import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable } from '@nestjs/common';
 
+import { Message, dynamoSchemaDefinition } from 'src/model/schemaDefinition';
 import IRepository from './interface';
 
 @Injectable()
 export default class RedisRepository implements IRepository {
+  private dynamoModel: Model<Message & Item>;
+
   constructor(
+    configService: ConfigService,
+
     @Inject('REDIS_CLIENT')
     private readonly redis: Redis,
-  ) {}
+    @Inject('DYNAMO_CLIENT')
+    private readonly dynamo: typeof dynamoose,
+  ) {
+    const table = configService.get<string>('DYNAMO_TABLE', 'ChatMessages');
+
+    const schema = new dynamo.Schema(dynamoSchemaDefinition);
+
+    this.dynamoModel = this.dynamo.model(table, schema);
+  }
 
   // (1) userSocketMap 관련
   async setUserSocket(userId: string, socketId: string) {
@@ -118,6 +135,20 @@ export default class RedisRepository implements IRepository {
 
       await multi.exec();
     }
+  }
+
+  async getMessageHistory(roomId: string): Promise<Message[]> {
+    const response = await this.dynamoModel
+      .query('roomId')
+      .eq(roomId)
+      .using('roomId-createdAt-index')
+      .exec();
+
+    return response.map(({ senderId, content, createdAt }) => ({
+      senderId,
+      content,
+      createdAt,
+    }));
   }
 
   // Redis SCAN helper

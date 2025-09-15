@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { Injectable } from '@nestjs/common';
 
+import { Message } from 'src/model/schemaDefinition';
 import IRepository from './interface';
 
 @Injectable()
@@ -112,5 +113,9 @@ export default class SimpleRepository implements IRepository {
     if ((this.roomMembersMap.get(roomId)?.size ?? 0) === 0) {
       this.roomMembersMap.delete(roomId);
     }
+  }
+
+  async getMessageHistory(_roomId: string): Promise<Message[]> {
+    return [];
   }
 }
