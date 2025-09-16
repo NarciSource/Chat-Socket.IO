@@ -1,7 +1,7 @@
 import { EventsHandler, IEventHandler, EventBus, QueryBus } from '@nestjs/cqrs';
 
 import { EmitEvent, SyncEvent } from 'src/domain/shared/events';
-import { GetSocketIdQuery } from '../queries';
+import { GetMessageHistoryQuery, GetSocketIdQuery } from '../queries';
 import JoinedRoomEvent from './JoinedRoom.event';
 
 @EventsHandler(JoinedRoomEvent)
@@ -27,8 +27,12 @@ export default class JoinedRoomHandler implements IEventHandler<JoinedRoomEvent>
     // 새로운 참가자 알림
     const notifyEvent = new EmitEvent('room_created', roomId, { roomId, participants: members });
 
+    // 방 메시지 기록 읽기
+    const history = await this.queryBus.execute(new GetMessageHistoryQuery(roomId));
+    const historyEvent = new EmitEvent('receive_messages', roomId, { roomId, messages: history });
+
     this.eventBus.publishAll(
-      success ? [syncEvent, successSystemEvent, notifyEvent] : [failureSystemEvent],
+      success ? [syncEvent, successSystemEvent, notifyEvent, historyEvent] : [failureSystemEvent],
     );
   }
 }
