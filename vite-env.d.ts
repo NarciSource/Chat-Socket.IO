@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly VITE_SOCKET_ON_USERS: string;
   readonly VITE_SOCKET_ON_SYSTEM: string;
   readonly VITE_SOCKET_ON_MESSAGE: string;
+  readonly VITE_SOCKET_ON_MESSAGES: string;
   readonly VITE_SOCKET_ON_ROOM_CREATED: string;
   readonly VITE_SOCKET_ON_TYPING: string;
   readonly VITE_SOCKET_EMIT_REGISTER: string;

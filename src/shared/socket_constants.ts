@@ -4,6 +4,7 @@ export const SOCKET_EVENT = {
   ON_USERS: import.meta.env.VITE_SOCKET_ON_USERS,
   ON_SYSTEM: import.meta.env.VITE_SOCKET_ON_SYSTEM,
   ON_MESSAGE: import.meta.env.VITE_SOCKET_ON_MESSAGE,
+  ON_MESSAGES: import.meta.env.VITE_SOCKET_ON_MESSAGES,
   ON_ROOM_CREATED: import.meta.env.VITE_SOCKET_ON_ROOM_CREATED,
   ON_TYPING: import.meta.env.VITE_SOCKET_ON_TYPING,
   EMIT_REGISTER: import.meta.env.VITE_SOCKET_EMIT_REGISTER,
