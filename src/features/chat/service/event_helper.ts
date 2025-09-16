@@ -20,6 +20,9 @@ export const message_received = (callback: Callback) =>
 export const system_message_received = (callback: Callback) =>
   subscribe_on(SOCKET_EVENT.ON_SYSTEM, callback);
 
+export const messages_received = (callback: Callback) =>
+  subscribe_on(SOCKET_EVENT.ON_MESSAGES, callback);
+
 export const typing_message = (room: Room, user: User) =>
   emit_event(SOCKET_EVENT.EMIT_TYPING, { room, user });
 
