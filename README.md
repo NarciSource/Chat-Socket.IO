@@ -16,8 +16,9 @@
 ## 🛠️ 기술 스택
 
 [![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=flat-square&logo=socketdotio&logoColor=white)](https://socket.io/)  
-[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io)
+[![DynamoDB](https://img.shields.io/badge/DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white)](https://aws.amazon.com/ko/dynamodb/)  
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/ko)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  
 [![Vuejs](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
@@ -37,10 +38,15 @@
 
 ## 💁 소개
 
-**Socket.IO**와 **Redis**를 활용한 실시간 다대다 채팅 서비스입니다.  
+**Socket.IO**를 활용한 실시간 다대다 채팅 서비스입니다.
+
 사용자는 채팅 방을 생성하고, 다른 사용자와 동시에 메시지를 주고받으며,  
 타이핑 상태 알림으로 대화 몰입도를 높일 수 있습니다.  
-모든 메시지와 이벤트는 Redis에 저장 후 즉시 소비되어, 초저지연 실시간 통신을 제공합니다.
+모든 메시지와 이벤트는 **Redis**에 저장 후 즉시 소비되어, 초저지연 실시간 통신을 제공합니다.
+
+또한, 처리된 메시지와 이벤트는 **DynamoDB**에 영구 저장되어  
+필요 시 애플리케이션에서 이전 대화 내역이나 상태를 조회할 수 있습니다.  
+이를 통해 실시간성과 데이터 영속성을 모두 만족합니다.
 
 ## 🎥 데모
 
@@ -62,15 +68,16 @@ https://github.com/user-attachments/assets/87fa243e-9638-47b3-8105-221ba788b349
 
 ### 🏗️ Architecture Diagram
 
-![socketio-kong drawio](https://github.com/user-attachments/assets/a94f9ca8-8e5b-4009-8e32-697da2f03eb2)
+![socketio-dynamo drawio](https://github.com/user-attachments/assets/a71a6c61-5d56-472d-852c-485101832914)
 
 - 백엔드
   - **Kong API Gateway**: 클라이언트 요청 라우팅 및 로드밸런싱, WebSocket 업그레이드 지원
   - **NestJS 서버**: Socket.IO 이벤트 처리, 비즈니스 로직 실행
   - **Business**: 클라이언트 요청 처리, 레플리카 간 **Redis Adapter**를 통해 세션 동기화
   - **Redis**
-    - **Pub/Sub**: 서버 레플리카 간 Socket.IO 이벤트 동기화
+    - **Streams**: 서버 레플리카 간 Socket.IO 이벤트 동기화
     - **Storage**: 캐싱 및 데이터 저장소 역할
+  - **DynamoDB**: Redis Streams에서 전달된 이벤트 데이터를 영구 저장
 - 프론트엔드
   - **NGINX**: 프론트엔드 애플리케이션 정적 파일 서빙
   - **Vue**: UI 렌더링 및 상태 관리
@@ -80,9 +87,10 @@ https://github.com/user-attachments/assets/87fa243e-9638-47b3-8105-221ba788b349
   2. Kong API Gateway가 WebSocket 업그레이드를 처리하고 요청을 NestJS 서버 레플리카로 전달
   3. NestJS 서버 레플리카에서 비즈니스 로직 수행
      - Redis Storage에서 데이터 조회/저장
-     - Redis Pub/Sub로 이벤트를 다른 레플리카에 브로드캐스트
-  4. 처리된 이벤트/데이터가 Socket.IO를 통해 클라이언트로 전달
-  5. 클라이언트에서 실시간 UI 업데이트 수행
+     - Redis Streams로 이벤트를 발행 및 다른 레플리카에 브로드캐스트
+  4. Consumer가 이벤트를 읽어 DynamoDB에 데이터 저장
+  5. 처리된 이벤트/데이터가 Socket.IO를 통해 클라이언트로 전달
+  6. 클라이언트에서 실시간 UI 업데이트 수행
 
 ### 📡 Communication Diagram
 
@@ -101,6 +109,7 @@ classDiagram
         +system() // 시스템 메시지 수신
         +room_created() // 방 생성 메시지 확인
         +receive_message() // 채팅 메시지 수신 확인
+        +receive_messages() // 메시지 기록 수신 확인
         +typing() // 타이핑 상태 확인
     }
 
@@ -122,99 +131,111 @@ classDiagram
 
 ```mermaid
 sequenceDiagram
-    %% Participants
-    participant Web1
-    participant Web2
-    participant APIGateway@{ "type" : "queue" }
-    participant Servers@{ "type" : "collections" }
-    participant Redis@{ "type" : "queue" }
-    participant DB@{ "type": "database"}
+  %% Participants
+  participant Web1
+  participant Web2
+  participant APIGateway@{ "type" : "queue" }
+  participant Servers@{ "type" : "collections" }
+  participant RedisStore@{ "type": "database" }
+  participant RedisStreams@{ "type" : "queue" }
+  participant DynamoDB@{ "type" : "database" }
 
-    %% 1. 연결 단계
-    Web1 ->> APIGateway: connect() (WebSocket handshake)
-    Web2 ->> APIGateway: connect() (WebSocket handshake)
+  %% 1. 연결 단계
+  Web1 ->> APIGateway: connect() (WebSocket handshake)
+  Web2 ->> APIGateway: connect() (WebSocket handshake)
 
-    %% APIGateway 로드밸런싱
-    APIGateway -->> APIGateway: LoadBalance
-    APIGateway ->> Servers: forward connect()
+  %% APIGateway 로드밸런싱
+  APIGateway -->> APIGateway: LoadBalance
+  APIGateway ->> Servers: forward connect()
 
-    activate Servers
+  activate Servers
 
-    Servers ->> Redis: publish session
-    Redis -->> Servers: subscribe session (replicas)
-    Servers -->> APIGateway: connection established (ack)
-    APIGateway -->> Web1: connection established (ack)
-    APIGateway -->> Web2: connection established (ack)
+  Servers ->> RedisStreams: publish session
+  RedisStreams -->> Servers: subscribe session (replicas)
+  Servers -->> APIGateway: connection established (ack)
+  APIGateway -->> Web1: connection established (ack)
+  APIGateway -->> Web2: connection established (ack)
 
-    %% 2. 연결 성공 시 동작
-    opt connection established
-        %% 2-1. 사용자 등록
-        Web1 ->> APIGateway: emit("register", id)
-        APIGateway ->> Servers: forward emit("register", id)
+  %% 2. 연결 성공 시 동작
+  opt connection established
+    %% 2-1. 사용자 등록
+    Web1 ->> APIGateway: emit("register", id)
+    APIGateway ->> Servers: forward emit("register", id)
 
-        %% 데이터베이스 저장
-        Servers ->> DB: [id, socketId]
-        activate DB
-        deactivate DB
+    %% 데이터베이스 저장
+    Servers ->> RedisStore: [id, socketId]
+    activate RedisStore
+    deactivate RedisStore
 
-        %% 2-2. 여러 방 생성 시나리오
-        loop For each room
-            Web1 ->> APIGateway: emit("create_room", [hostId, participants])
-            APIGateway ->> Servers: forward emit("create_room", ...)
+    %% 3. 여러 방 생성 시나리오
+    loop For each room
+      Web1 ->> APIGateway: emit("create_room", [hostId, participants])
+      APIGateway ->> Servers: forward emit("create_room", ...)
 
-            %% 데이터베이스 저장
-            Servers ->> DB: [roomId, members]
-            activate DB
-            deactivate DB
+      %% 데이터베이스 저장
+      Servers ->> RedisStore: [roomId, members]
+      activate RedisStore
+      deactivate RedisStore
 
-            Servers -->> Web1: on("room_created", roomId)
-            Servers -->> Web2: on("room_invite", roomId)
+      Servers -->> Web1: on("room_created", roomId)
+      Servers -->> Web2: on("room_invite", roomId)
 
-            %% 방 참가
-            Web2 ->> APIGateway: emit("join_room", roomId)
-            APIGateway ->> Servers: forward emit("join_room", roomId)
-            Servers -->> Web2: on("joined_room", roomId)
+      opt room created
+        %% 3-1. 방 참가
+        Web2 ->> APIGateway: emit("join_room", roomId)
+        APIGateway ->> Servers: forward emit("join_room", roomId)
+        Servers -->> Web2: on("joined_room", roomId)
+
+        %% 메시지 기록 불러오기
+        Servers ->> DynamoDB: getMessageHistory
+        DynamoDB -->> Servers: MessageHistory
+        Servers -->> Web2: on("receive_messages", roomId)
+      end
+
+      %% 4. 메시지 교환 & 타이핑 알림
+      loop Multiple events
+        Web1 ->> APIGateway: emit("typing")
+        Web1 ->> APIGateway: emit("send_message", message)
+        APIGateway ->> Servers: forward emit("send_message", message)
+
+        %% RedisStreams Pub/Sub로 이벤트/세션 동기화
+        note over Servers: Message and typing events exchange
+        Servers ->> RedisStreams: publish message
+
+        %% 4-1. 영속성 저장
+        par Synchronization
+          RedisStreams ->> DynamoDB: store message
+        and Persistence
+          RedisStreams -->> Servers: subscribe message
         end
 
-        %% 2-3. 메시지 교환 & 타이핑 알림
-        loop Multiple events
-            Web1 ->> APIGateway: emit("typing")
-            Web1 ->> APIGateway: emit("send_message", message)
-            APIGateway ->> Servers: forward emit("send_message", message)
-
-            %% DB 저장
-            Servers ->> DB: message
-            activate DB
-            deactivate DB
-
-            %% Redis Pub/Sub로 이벤트/세션 동기화
-            note over Servers: Message and typing events exchange
-            Servers ->> Redis: publish message/typing
-            Redis -->> Servers: subscribe message/typing
-
-            Servers -->> Web2: on("typing", who)
-            Servers -->> Web2: on("new_message", message)
+        par
+          Servers -->> Web2: on("typing", who)
+        and
+          Servers -->> Web2: on("receive_message", message)
         end
+      end
     end
+  end
 
-    %% 3. 연결 종료
-    Web2 ->> APIGateway: disconnect()
-    Web1 ->> APIGateway: disconnect()
-    APIGateway ->> Servers: forward disconnect()
+  %% 5. 연결 종료
+  Web2 ->> APIGateway: disconnect()
+  Web1 ->> APIGateway: disconnect()
+  APIGateway ->> Servers: forward disconnect()
 
-    Servers ->> DB: remove/update socketId
-    activate DB
-    deactivate DB
+  Servers ->> RedisStore: remove/update socketId
+  activate RedisStore
+  deactivate RedisStore
 
-    deactivate Servers
+  deactivate Servers
 ```
 
 ## 🗂️ 서브 프로젝트
 
 | 프로젝트 | 저장소                                                               | 설명                                    | 브랜치/버전        |
 | -------- | -------------------------------------------------------------------- | --------------------------------------- | ------------------ |
-| Backend  | https://github.com/NarciSource/Chat-Service--Backend/tree/socket.io  | Socket.IO + Redis 기반 실시간 채팅 서버 | socket.io / v1.3.1 |
-| Frontend | https://github.com/NarciSource/Chat-Service--Frontend/tree/socket.io | Vue + Vite 클라이언트                   | socket.io / v1.7.1 |
+| Backend  | https://github.com/NarciSource/Chat-Service--Backend/tree/socket.io  | Socket.IO + Redis 기반 실시간 채팅 서버 | socket.io / v1.4.0 |
+| Frontend | https://github.com/NarciSource/Chat-Service--Frontend/tree/socket.io | Vue + Vite 클라이언트                   | socket.io / v1.8.0 |
 
 ## 🚀 실행 방법
 
