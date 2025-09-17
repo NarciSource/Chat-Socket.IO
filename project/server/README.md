@@ -3,7 +3,7 @@
 ## 🛠️ 기술 스택
 
 [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=socketdotio&logoColor=white)](https://socket.io/)  
-[![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io)  
+[![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io) [![DynamoDB](https://img.shields.io/badge/DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white)](https://aws.amazon.com/ko/dynamodb/)  
 [![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/) [![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/ko) [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  
 [![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)](https://eslint.org/) [![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=prettier&logoColor=black)](https://prettier.io/)
 
@@ -17,84 +17,109 @@
 | 방 떠나기 | 방에서 사용자 제거 &rarr; 떠남 알림 | emit("leave_room", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [userId, roomId]) | on("system", content) |
 | 메시지 교환 | 방에서 메시지 중계 | emit("send_message", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [roomId, senderId, content] ) | on("receive_message", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [senderId, roomId, content]) |
 | 타이핑 알림 | 방에서 타이핑 이벤트 중계 | emit("typing", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [roomId, userId]) | on("typing", userId) |
+| 메시지 기록 <br>불러오기 | 방 참가 전 메시지 기록 불러오기 |  | on("receive_messages", roomId) |
 
 ## 📐 시퀀스 다이어그램
 
 ```mermaid
 sequenceDiagram
-    participant Web1
-    participant Web2
-    participant Server
-    participant Room
-    participant DB
+  %% Participants
+  participant Web1
+  participant Web2
+  participant APIGateway@{ "type" : "queue" }
+  participant Servers@{ "type" : "collections" }
+  participant RedisStore@{ "type": "database" }
+  participant RedisStreams@{ "type" : "queue" }
+  participant DynamoDB@{ "type" : "database" }
 
-    %% 1. 연결 단계
-    Web1 ->> Server: connect() (WebSocket handshake)
-    activate Server
-    Web2 ->> Server: connect() (WebSocket handshake)
-    Server -->> Web1: connection established (ack)
-    Server -->> Web2: connection established (ack)
+  %% 1. 연결 단계
+  Web1 ->> APIGateway: connect() (WebSocket handshake)
+  Web2 ->> APIGateway: connect() (WebSocket handshake)
 
-    %% 2. 연결 성공 시 동작
-    opt connection established
-      %% 2-1. 사용자 등록
-      Web1 ->> Server: emit("register", id)
+  %% APIGateway 로드밸런싱
+  APIGateway -->> APIGateway: LoadBalance
+  APIGateway ->> Servers: forward connect()
+
+  activate Servers
+
+  Servers ->> RedisStreams: publish session
+  RedisStreams -->> Servers: subscribe session (replicas)
+  Servers -->> APIGateway: connection established (ack)
+  APIGateway -->> Web1: connection established (ack)
+  APIGateway -->> Web2: connection established (ack)
+
+  %% 2. 연결 성공 시 동작
+  opt connection established
+    %% 2-1. 사용자 등록
+    Web1 ->> APIGateway: emit("register", id)
+    APIGateway ->> Servers: forward emit("register", id)
+
+    %% 데이터베이스 저장
+    Servers ->> RedisStore: [id, socketId]
+    activate RedisStore
+    deactivate RedisStore
+
+    %% 3. 여러 방 생성 시나리오
+    loop For each room
+      Web1 ->> APIGateway: emit("create_room", [hostId, participants])
+      APIGateway ->> Servers: forward emit("create_room", ...)
 
       %% 데이터베이스 저장
-      Server ->> DB: [id, socketId]
-      activate DB
-      deactivate DB
+      Servers ->> RedisStore: [roomId, members]
+      activate RedisStore
+      deactivate RedisStore
 
-      %% 2-2. 여러 방 생성 시나리오
-      loop For each room
-        Web1 ->> Server: emit("create_room", [hostId, participants])
+      Servers -->> Web1: on("room_created", roomId)
+      Servers -->> Web2: on("room_invite", roomId)
 
-        %% 데이터베이스 저장
-        Server ->> DB: [roomId, members]
-        activate DB
-        deactivate DB
+      opt room created
+        %% 3-1. 방 참가
+        Web2 ->> APIGateway: emit("join_room", roomId)
+        APIGateway ->> Servers: forward emit("join_room", roomId)
+        Servers -->> Web2: on("joined_room", roomId)
 
-        Server ->> Room: new Room(roomId)
-
-        activate Room
-        Server -->> Web1: on("room_created", roomId)
-        Server -->> Web2: on("room_invite", roomId)
-
-        %% 2-3. 방 참가
-        Web2 ->> Server: emit("join_room", roomId)
-        Server ->> Room: add(Web2)
-        Room -->> Web2: on("joined_room", roomId)
-
-        %% 2-4. 방 내 메시지 교환 & 타이핑 알림
-        loop Multiple events
-          Web1 ->> Room: emit("send_message", message)
-
-          %% 데이터베이스 저장
-          Room ->> DB: message
-          activate DB
-          deactivate DB
-
-          note over Room: Message and typing events exchange
-          Room ->> Room: broadcast
-          Room -->> Web2: on("new_message", message)
-
-          Web1 ->> Room: emit("typing")
-          Room -->> Web2: on("typing", who)
-        end
-
-        deactivate Room
+        %% 메시지 기록 불러오기
+        Servers ->> DynamoDB: getMessageHistory
+        DynamoDB -->> Servers: MessageHistory
+        Servers -->> Web2: on("receive_messages", roomId)
       end
 
-      %% 2-5. 연결 종료 시 DB 반영
-      Web2 ->> Server: disconnect()
-      Web1 ->> Server: disconnect()
+      %% 4. 메시지 교환 & 타이핑 알림
+      loop Multiple events
+        Web1 ->> APIGateway: emit("typing")
+        Web1 ->> APIGateway: emit("send_message", message)
+        APIGateway ->> Servers: forward emit("send_message", message)
 
-      Server ->> DB: remove/update socketId
-      activate DB
-      deactivate DB
+        %% RedisStreams Pub/Sub로 이벤트/세션 동기화
+        note over Servers: Message and typing events exchange
+        Servers ->> RedisStreams: publish message
+
+        %% 4-1. 영속성 저장
+        par Synchronization
+          RedisStreams ->> DynamoDB: store message
+        and Persistence
+          RedisStreams -->> Servers: subscribe message
+        end
+
+        par
+          Servers -->> Web2: on("typing", who)
+        and
+          Servers -->> Web2: on("receive_message", message)
+        end
+      end
     end
+  end
 
-    deactivate Server
+  %% 5. 연결 종료
+  Web2 ->> APIGateway: disconnect()
+  Web1 ->> APIGateway: disconnect()
+  APIGateway ->> Servers: forward disconnect()
+
+  Servers ->> RedisStore: remove/update socketId
+  activate RedisStore
+  deactivate RedisStore
+
+  deactivate Servers
 ```
 
 ## 📂 폴더 구조
@@ -108,26 +133,86 @@ server
 ├─ src
 │  ├─ main.ts
 │  ├─ common
-│  │  └─ redis.module.ts
+│  │  ├─ dynamo
+│  │  │  ├─ index.ts
+│  │  │  ├─ module.ts
+│  │  │  └─ provider.ts
+│  │  └─ redis
+│  │     ├─ index.ts
+│  │     ├─ module.ts
+│  │     ├─ adapters
+│  │     │  └─ RedisIoAdapter.ts
+│  │     └─ providers
+│  │        ├─ index.ts
+│  │        ├─ db.provider.ts
+│  │        ├─ pubsubAdapter.provider.ts
+│  │        └─ streamsAdapter.provider.ts
 │  ├─ core
+│  │  ├─ module.ts
+│  │  ├─ eventRegistry.ts
 │  │  ├─ controller.ts
-│  │  ├─ gateway.ts
-│  │  └─ module.ts
+│  │  └─ gateway.ts
+│  ├─ model
+│  │  └─ schemaDefinition.ts
 │  ├─ domain
+│  │  ├─ shared
+│  │  │  └─ events
+│  │  │     ├─ index.ts
+│  │  │     ├─ Sync.event.ts
+│  │  │     │  └─ Sync.handler.ts
+│  │  │     └─ Emit.event.ts
+│  │  │        └─ Emit.handler.ts
 │  │  ├─ user
+│  │  │  ├─ index.ts
+│  │  │  ├─ module.ts
 │  │  │  ├─ controller.ts
 │  │  │  ├─ gateway.ts
-│  │  │  └─ service.ts
+│  │  │  ├─ commands
+│  │  │  │  ├─ index.ts
+│  │  │  │  ├─ RegisterUser.command.ts
+│  │  │  │  │  └─ RegisterUser.handler.ts
+│  │  │  │  └─ DisconnectUser.command.ts
+│  │  │  │     └─ DisconnectUser.handler.ts
+│  │  │  └─ queries
+│  │  │     ├─ index.ts
+│  │  │     └─ GetUser.query.ts
+│  │  │        └─ GetUser.handler.ts
 │  │  ├─ chat
+│  │  │  ├─ index.ts
+│  │  │  ├─ module.ts
 │  │  │  └─ gateway.ts
 │  │  └─ room
+│  │     ├─ index.ts
 │  │     ├─ gateway.ts
-│  │     └─ service.ts
+│  │     ├─ module.ts
+│  │     ├─ queries
+│  │     │  ├─ index.ts
+│  │     │  ├─ GetSocketId.query.ts
+│  │     │  │  └─ GetSocketId.handler.ts
+│  │     │  └─ GetMessageHistory.query.ts
+│  │     │     └─ GetMessageHistory.handler.ts
+│  │     ├─ commands
+│  │     │  ├─ index.ts
+│  │     │  ├─ CreateRoom.command.ts
+│  │     │  │  └─ CreateRoom.handler.ts
+│  │     │  ├─ JoinRoom.command.ts
+│  │     │  │  └─ JoinRoom.handler.ts
+│  │     │  └─ LeaveRoom.command.ts
+│  │     │     └─ LeaveRoom.handler.ts
+│  │     └─ events
+│  │        ├─ index.ts
+│  │        ├─ CreatedRoom.event.ts
+│  │        │  └─ CreatedRoom.handler.ts
+│  │        ├─ JoinedRoom.event.ts
+│  │        │  └─ JoinedRoom.handler.ts
+│  │        └─ LeavedRoom.event.ts
+│  │           └─ LeavedRoom.handler.ts
 │  └─ repository
-│     ├─ interface.ts
+│     ├─ index.ts
 │     ├─ module.ts
-│     ├─ redis.ts
-│     └─ simple.ts
+│     └─ interface.ts
+│        ├─ InMemoryRepository.ts
+│        └─ DatabaseRepository.ts
 ├─ docker-compose.yml
 │  ├─ Dockerfile
 │  └─ .dockerignore
@@ -149,7 +234,13 @@ $ docker run -d \
   --name redis-container \
   --env-file ./.env \
   -p ${REDIS_PORT}:6379 \
-  redis:latest
+  redis:8.2.1
+
+$ docker run -d \
+  --name dynamodb-container \
+  --env-file ./.env \
+  -p ${DYNAMO_PORT}:8000 \
+  amazon/dynamodb-local:3.1.0
 
 $ npm install
 $ npm run start

@@ -1,41 +1,47 @@
 import { Namespace, Socket } from 'socket.io';
-import { Injectable } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 
-import UserService from './service';
+import { DisconnectUserCommand, RegisterUserCommand } from './commands';
+import {
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
 
-@Injectable()
-export default class UserGateway {
-  public server: Namespace;
+export interface Payload {
+  userId?: string; // 유저 식별자
+}
 
-  constructor(private readonly service: UserService) {}
+@WebSocketGateway({
+  path: '/chat/ws',
+  namespace: '/chat',
+  cors: { origin: '*' },
+})
+export default class UserGateway implements OnGatewayDisconnect {
+  @WebSocketServer()
+  server: Namespace;
+
+  constructor(private readonly commandBus: CommandBus) {}
+
+  // 소켓 연결 해제 시
+  async handleDisconnect({ id: socketId }: Socket) {
+    const command = new DisconnectUserCommand(socketId);
+    await this.commandBus.execute(command);
+
+    console.log('클라이언트 연결 해제:', socketId);
+  }
 
   /**
    * 유저 등록
-   * - (예) socket.emit('register', { userId: 'userA' });
    * - 이미 같은 userId로 등록된 소켓이 있다면 거부할 수도 있음
    */
-  async handleRegister(socket: Socket, payload: { userId: string }) {
-    const { userId } = payload;
-    const ok = await this.service.registerUser(userId, socket.id);
+  @SubscribeMessage('register')
+  async handleRegister({ id: socketId }: Socket, { userId }: Payload) {
+    const command = new RegisterUserCommand({ userId, socketId });
 
-    // 중복 접속 제어 (정책에 따라)
-    if (!ok) {
-      console.log(`이미 userId=${userId}로 연결된 소켓이 존재합니다.`);
+    await this.commandBus.execute(command);
 
-      socket.emit('system', { content: `userId=${userId}가 이미 존재합니다.` });
-      socket.disconnect(true);
-
-      return;
-    }
-
-    console.log(`유저 등록: userId=${userId}, socketId=${socket.id}`);
-
-    this.server.emit('get_users', {
-      users: await this.service.getUsers(),
-    });
-  }
-
-  async handleUserDisconnected(socket: Socket) {
-    await this.service.disconnectUserBySocketId(socket.id);
+    console.log(`유저 등록: userId=${userId}, socketId=${socketId}`);
   }
 }

@@ -1,3 +1,5 @@
+import { Message } from 'src/model/schemaDefinition';
+
 export default interface IRepository {
   setUserSocket(userId: string, socketId: string): Promise<void>; // userId에 해당하는 소켓 ID 등록
   getUserSocketByUserId(userId: string): Promise<string | undefined>; // userId에 해당하는 소켓 ID를 가져옴
@@ -12,4 +14,6 @@ export default interface IRepository {
   getRoomMembers(roomId: string): Promise<string[]>; // 방의 멤버 목록을 가져옴
   addRoomToUser(roomId: string, userId: string): Promise<void>; // 방에 유저 추가
   removeRoomToUser(userId: string, roomId: string): Promise<void>; // 방에서 유저 제거
+
+  getMessageHistory(roomId: string): Promise<Message[]>; // 메시지 기록 불러오기
 }

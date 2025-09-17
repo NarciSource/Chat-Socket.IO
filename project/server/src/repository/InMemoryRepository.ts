@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { Injectable } from '@nestjs/common';
 
+import { Message } from 'src/model/schemaDefinition';
 import IRepository from './interface';
 
 @Injectable()
-export default class SimpleRepository implements IRepository {
+export default class InMemoryRepository implements IRepository {
   /*
    * 1) userId -> socketId
    *    사용자 하나당 현재 연결된 소켓(1개)을 추적
@@ -112,5 +113,9 @@ export default class SimpleRepository implements IRepository {
     if ((this.roomMembersMap.get(roomId)?.size ?? 0) === 0) {
       this.roomMembersMap.delete(roomId);
     }
+  }
+
+  async getMessageHistory(_roomId: string): Promise<Message[]> {
+    return [];
   }
 }
