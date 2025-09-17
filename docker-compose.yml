@@ -16,8 +16,9 @@ services:
     env_file:
       - project/server/.env
     environment:
-      - REPOSITORY_TYPE=redis
+      - REPOSITORY_TYPE=Database
       - REDIS_HOST=redis-container
+      - DYNAMO_HOST=dynamodb-container
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/"]
