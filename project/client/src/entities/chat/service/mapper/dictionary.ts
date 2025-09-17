@@ -11,6 +11,7 @@ import {
   message_to_send_payload,
   to_typing_payload,
   response_typing_payload,
+  response_payload_to_messages,
 } from "./message";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,6 +21,7 @@ type Mapper = (data: any) => any;
 export const on_mappers_dictionary = new Map<string, Mapper>([
   [SOCKET_EVENT.ON_ROOM_CREATED, room_created_payload_to_status],
   [SOCKET_EVENT.ON_MESSAGE, response_payload_to_message],
+  [SOCKET_EVENT.ON_MESSAGES, response_payload_to_messages],
   [SOCKET_EVENT.ON_SYSTEM, response_payload_to_system_message],
   [SOCKET_EVENT.ON_TYPING, response_typing_payload],
   [SOCKET_EVENT.ON_USERS, response_payload_to_users],

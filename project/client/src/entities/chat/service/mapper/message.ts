@@ -32,7 +32,21 @@ export const message_to_send_payload = ({
 
 export const to_typing_payload = ({ room, user }: { room: Room; user: User }) => ({
   roomId: room.id,
-  userId: user.id,
+  senderId: user.id,
 });
 
-export const response_typing_payload = (userId: string) => userId;
+export const response_typing_payload = (senderId: string) => senderId;
+
+export const response_payload_to_messages = ({
+  roomId,
+  messages,
+}: {
+  roomId: string;
+  messages: { senderId: string; content: string; createdAt: string }[];
+}) => ({
+  roomId,
+  incoming_messages: messages.map(
+    ({ senderId, content, createdAt }) =>
+      new Message(new User(senderId), [content], false, new Date(createdAt)),
+  ),
+});

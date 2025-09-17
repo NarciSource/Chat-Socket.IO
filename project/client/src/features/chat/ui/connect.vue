@@ -22,10 +22,11 @@ import {
   message_received,
   system_message_received,
   handle_typing_message,
+  messages_received,
 } from "../service/event_helper";
 import useChatStore from "../store/useChatStore";
 
-const { insert_message, alarm_typing } = useChatStore();
+const { insert_message, alarm_typing, update_messages } = useChatStore();
 const store = useChatStore();
 
 watchEffect(() => {
@@ -35,6 +36,7 @@ watchEffect(() => {
     connect_failed(() => (store.connecting = false)); // 연결 실패
     disconnected(() => (store.connecting = false)); // 연결 종료
     message_received(insert_message); // 일반 메시지 수신
+    messages_received(update_messages); // 메시지 기록 업데이트
     system_message_received(insert_message); // 시스템 메시지 수신
     handle_typing_message(alarm_typing); // 타이핑 알림
   }
