@@ -2,7 +2,7 @@ import Redis from "ioredis";
 
 const REDIS_HOST = process.env.REDIS_HOST || "localhost";
 const REDIS_PORT = Number(process.env.REDIS_PORT || 6379);
-const STREAM_KEY = process.env.STREAM_KEY || "socket.io";
+const REDIS_STREAM_KEY = process.env.REDIS_STREAM_KEY || "message";
 
 // 타입 정의
 type XReadStreamEntry = [id: string, fields: string[]];
@@ -23,11 +23,11 @@ export default class RedisStreamReader<T> {
   private redis = new Redis({ host: REDIS_HOST, port: REDIS_PORT });
   private xReadArgs = [
     ["BLOCK", 5000],
-    ["STREAMS", STREAM_KEY, "$"],
+    ["STREAMS", REDIS_STREAM_KEY, "$"],
   ];
 
   constructor() {
-    console.log(`Listening stream ${STREAM_KEY}...`);
+    console.log(`Listening stream ${REDIS_STREAM_KEY}...`);
   }
 
   async *listen() {
@@ -97,13 +97,13 @@ export default class RedisStreamReader<T> {
    * record.data를 JSON 파싱해 ParsedEvent로 변환
    */
   private parseData(record: Record<string, string>): ParsedEvent<T> | null {
-    if (!record.data) return null;
-    const { data, ...remains } = record;
+    if (!record.message) return null;
+    const { message, ...remains } = record;
 
     try {
-      const [eventName, payload] = JSON.parse(data).packet.data;
+      const payload = JSON.parse(message);
       return {
-        eventName,
+        eventName: "receive_message",
         payload,
         ...remains,
       };
