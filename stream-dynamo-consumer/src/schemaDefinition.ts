@@ -14,12 +14,12 @@ export const dynamoSchemaDefinition: SchemaDefinition = {
       rangeKey: "createdAt", // Range Key (정렬 기준)
     },
   },
-  senderId: {
+  userId: {
     type: String,
     required: true,
     index: {
       type: "global",
-      name: "senderId-createdAt-index",
+      name: "userId-createdAt-index",
       rangeKey: "createdAt",
     },
   },
