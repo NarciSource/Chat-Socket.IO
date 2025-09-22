@@ -1,12 +1,12 @@
 export type ResponsePayload = {
-  senderId: string;
+  userId: string;
   content: string;
   roomId: string;
 };
 
 export type SendPayload = {
   roomId: string; // 메시지를 전송할 방
-  senderId: string; // 보낸 사람
+  userId: string; // 보낸 사람
   content: string; // 메시지 내용
 };
 

@@ -3,17 +3,17 @@ import { ResponsePayload, SendPayload } from "../../api/dto";
 
 export const response_payload_to_message = ({
   content,
-  senderId,
+  userId,
   roomId,
 }: ResponsePayload): [Message, string] => {
-  return [new Message(new User(senderId), [content]), roomId];
+  return [new Message(new User(userId), [content]), roomId];
 };
 
 export const response_payload_to_system_message = ({
   content,
-  senderId,
+  userId,
 }: ResponsePayload): Message => {
-  return new Message(new User(senderId), [content], true);
+  return new Message(new User(userId), [content], true);
 };
 
 export const message_to_send_payload = ({
@@ -25,28 +25,28 @@ export const message_to_send_payload = ({
 }): SendPayload => {
   return {
     roomId: room.id,
-    senderId: message.name,
+    userId: message.name,
     content: message.text.join("\n"),
   } as SendPayload;
 };
 
 export const to_typing_payload = ({ room, user }: { room: Room; user: User }) => ({
   roomId: room.id,
-  senderId: user.id,
+  userId: user.id,
 });
 
-export const response_typing_payload = (senderId: string) => senderId;
+export const response_typing_payload = (userId: string) => userId;
 
 export const response_payload_to_messages = ({
   roomId,
   messages,
 }: {
   roomId: string;
-  messages: { senderId: string; content: string; createdAt: string }[];
+  messages: { userId: string; content: string; createdAt: string }[];
 }) => ({
   roomId,
   incoming_messages: messages.map(
-    ({ senderId, content, createdAt }) =>
-      new Message(new User(senderId), [content], false, new Date(createdAt)),
+    ({ userId, content, createdAt }) =>
+      new Message(new User(userId), [content], false, new Date(createdAt)),
   ),
 });
