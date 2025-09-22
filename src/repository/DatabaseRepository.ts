@@ -144,8 +144,8 @@ export default class DatabaseRepository implements IRepository {
       .using('roomId-createdAt-index')
       .exec();
 
-    return response.map(({ senderId, content, createdAt }) => ({
-      senderId,
+    return response.map(({ userId, content, createdAt }) => ({
+      userId,
       content,
       createdAt,
     }));
