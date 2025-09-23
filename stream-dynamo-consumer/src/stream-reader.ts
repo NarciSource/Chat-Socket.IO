@@ -1,5 +1,7 @@
 import Redis from "ioredis";
 
+import { IStreamParser, ParsedEvent } from "./parsers";
+
 const REDIS_HOST = process.env.REDIS_HOST || "localhost";
 const REDIS_PORT = Number(process.env.REDIS_PORT || 6379);
 const REDIS_STREAM_KEY = process.env.REDIS_STREAM_KEY || "message";
@@ -10,14 +12,6 @@ type XReadStream = [streamName: string, entries: XReadStreamEntry[]];
 type XReadResult = XReadStream[] | null;
 type XReadArgs = Parameters<Redis["xread"]>;
 
-interface ParsedEvent<T> {
-  eventName: string;
-  payload: string | T;
-  type?: string;
-  nsp?: string;
-  uid?: string;
-}
-
 export default class RedisStreamReader<T> {
   // Redis 연결
   private redis = new Redis({ host: REDIS_HOST, port: REDIS_PORT });
@@ -26,7 +20,7 @@ export default class RedisStreamReader<T> {
     ["STREAMS", REDIS_STREAM_KEY, "$"],
   ];
 
-  constructor() {
+  constructor(private readonly parser: IStreamParser<T>) {
     console.log(`Listening stream ${REDIS_STREAM_KEY}...`);
   }
 
@@ -77,7 +71,9 @@ export default class RedisStreamReader<T> {
     | [string, ParsedEvent<T>]
     | null {
     const record = this.parseFields(fields);
-    const data = this.parseData(record);
+
+    const data = this.parser.parse(record);
+
     return data ? [id, data] : null;
   }
 
@@ -91,25 +87,5 @@ export default class RedisStreamReader<T> {
       record[fields[i]] = fields[i + 1];
     }
     return record;
-  }
-
-  /**
-   * record.data를 JSON 파싱해 ParsedEvent로 변환
-   */
-  private parseData(record: Record<string, string>): ParsedEvent<T> | null {
-    if (!record.message) return null;
-    const { message, ...remains } = record;
-
-    try {
-      const payload = JSON.parse(message);
-      return {
-        eventName: "receive_message",
-        payload,
-        ...remains,
-      };
-    } catch (err) {
-      console.error("[RedisStreamParser] Failed to parse record.data", err);
-      return null;
-    }
   }
 }

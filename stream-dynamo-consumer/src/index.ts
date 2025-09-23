@@ -4,12 +4,24 @@ dotenv.config();
 
 import { ChatMessage } from "./model";
 import { dynamoSchemaDefinition } from "./schemaDefinition";
+import { BasicParser, IStreamParser, SocketIOParser } from "./parsers";
 import RedisStreamReader from "./stream-reader";
 import DynamoWriter from "./dynamo-writer";
 import healthCheck, { setHealthy } from "./healthCheck";
 
+const REDIS_STREAM_PARSER = process.env.REDIS_STREAM_PARSER || "basic";
+
 async function main() {
-  const reader = new RedisStreamReader<ChatMessage>();
+  const parserMap: Record<string, IStreamParser<ChatMessage>> = {
+    basic: new BasicParser(),
+    "socket.io": new SocketIOParser(),
+  };
+
+  // 파서 선택
+  const parser = parserMap[REDIS_STREAM_PARSER];
+  // 스트림 읽기
+  const reader = new RedisStreamReader<ChatMessage>(parser);
+  // 데이터 쓰기
   const writer = new DynamoWriter<ChatMessage>(dynamoSchemaDefinition);
 
   for await (const events of reader.listen()) {
