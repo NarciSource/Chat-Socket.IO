@@ -1,6 +1,6 @@
 import { SchemaDefinition } from "dynamoose/dist/Schema";
 
-export const dynamoSchemaDefinition: SchemaDefinition = {
+export default {
   eventId: {
     type: String,
     hashKey: true, // 기본 키 (Partition Key)
@@ -28,4 +28,4 @@ export const dynamoSchemaDefinition: SchemaDefinition = {
     type: Date,
     default: Date.now,
   },
-};
+} as SchemaDefinition;

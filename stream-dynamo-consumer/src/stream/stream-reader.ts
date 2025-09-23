@@ -1,6 +1,6 @@
 import Redis from "ioredis";
 
-import { IStreamParser, ParsedEvent } from "./parsers";
+import { IStreamParser, ParsedEvent } from "../parsers";
 
 const REDIS_HOST = process.env.REDIS_HOST || "localhost";
 const REDIS_PORT = Number(process.env.REDIS_PORT || 6379);

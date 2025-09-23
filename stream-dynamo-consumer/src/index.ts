@@ -2,12 +2,11 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-import { ChatMessage } from "./model";
-import { dynamoSchemaDefinition } from "./schemaDefinition";
+import { ChatMessage } from "./models";
 import { BasicParser, IStreamParser, SocketIOParser } from "./parsers";
-import RedisStreamReader from "./stream-reader";
-import DynamoWriter from "./dynamo-writer";
-import healthCheck, { setHealthy } from "./healthCheck";
+import { RedisStreamReader } from "./stream";
+import { DynamoWriter, dynamoSchemaDefinition } from "./database";
+import { healthCheck, setHealthy } from "./api";
 
 const REDIS_STREAM_PARSER = process.env.REDIS_STREAM_PARSER || "basic";
 

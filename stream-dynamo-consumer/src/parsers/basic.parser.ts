@@ -1,4 +1,4 @@
-import { ChatMessage } from "../model";
+import { ChatMessage } from "../models";
 import IStreamParser from "./interface";
 
 export default class BasicParser implements IStreamParser<ChatMessage> {
