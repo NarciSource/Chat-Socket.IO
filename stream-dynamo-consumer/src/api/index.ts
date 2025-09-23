@@ -1,1 +1,2 @@
-export { default as healthCheck, setHealthy } from "./healthCheck";
+export { default as apiServer } from "./server";
+export { healthService } from "./health.service";

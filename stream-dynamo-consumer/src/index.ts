@@ -3,10 +3,10 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import { ChatMessage } from "./models";
-import { BasicParser, IStreamParser, SocketIOParser } from "./parsers";
+import { IStreamParser, BasicParser, SocketIOParser } from "./parsers";
 import { RedisStreamReader } from "./stream";
 import { DynamoWriter, dynamoSchemaDefinition } from "./database";
-import { healthCheck, setHealthy } from "./api";
+import { apiServer, healthService } from "./api";
 
 const REDIS_STREAM_PARSER = process.env.REDIS_STREAM_PARSER || "basic";
 
@@ -46,9 +46,9 @@ async function main() {
 try {
   void main();
 
-  healthCheck(); // 헬스체크 API
-  setHealthy(true);
+  apiServer.start(); // REST API
+  healthService.healthy = true;
 } catch (error) {
   console.error(error);
-  setHealthy(false);
+  healthService.healthy = false;
 }
