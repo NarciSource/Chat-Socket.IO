@@ -1,45 +1,17 @@
-import Redis from "ioredis";
-
 import { IStreamParser, ParsedEvent } from "../parsers";
-
-const REDIS_HOST = process.env.REDIS_HOST || "localhost";
-const REDIS_PORT = Number(process.env.REDIS_PORT || 6379);
-const REDIS_STREAM_KEY = process.env.REDIS_STREAM_KEY || "message";
 
 // 타입 정의
 type XReadStreamEntry = [id: string, fields: string[]];
 type XReadStream = [streamName: string, entries: XReadStreamEntry[]];
 type XReadResult = XReadStream[] | null;
-type XReadArgs = Parameters<Redis["xread"]>;
 
-export default class RedisStreamReader<T> {
-  // Redis 연결
-  private redis = new Redis({ host: REDIS_HOST, port: REDIS_PORT });
-  private xReadArgs = [
-    ["BLOCK", 5000],
-    ["STREAMS", REDIS_STREAM_KEY, "$"],
-  ];
-
-  constructor(private readonly parser: IStreamParser<T>) {
-    console.log(`Listening stream ${REDIS_STREAM_KEY}...`);
-  }
-
-  async *listen() {
-    while (true) {
-      const streams = await this.redis.xread(
-        ...(this.xReadArgs.flat() as XReadArgs)
-      );
-      if (!streams) continue;
-
-      const parsed = this.parseResult(streams);
-      if (parsed.size > 0) yield parsed;
-    }
-  }
+export default class StreamService<T> {
+  constructor(private readonly parser: IStreamParser<T>) {}
 
   /**
    * xread 반환값 전체 파싱
    */
-  private parseResult(result: XReadResult): Map<string, ParsedEvent<T>> {
+  public parseResult(result: XReadResult): Map<string, ParsedEvent<T>> {
     const map = new Map<string, ParsedEvent<T>>();
     if (!result) return map;
 

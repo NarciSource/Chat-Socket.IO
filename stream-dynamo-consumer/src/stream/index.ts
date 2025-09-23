@@ -1,1 +1,1 @@
-export { default as RedisStreamReader } from "./stream-reader";
+export { default as RedisStreamReader } from "./stream.reader";
