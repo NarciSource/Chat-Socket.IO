@@ -1,6 +1,6 @@
 import { SchemaDefinition } from "dynamoose/dist/Schema";
 
-export const dynamoSchemaDefinition: SchemaDefinition = {
+export default {
   eventId: {
     type: String,
     hashKey: true, // 기본 키 (Partition Key)
@@ -14,12 +14,12 @@ export const dynamoSchemaDefinition: SchemaDefinition = {
       rangeKey: "createdAt", // Range Key (정렬 기준)
     },
   },
-  senderId: {
+  userId: {
     type: String,
     required: true,
     index: {
       type: "global",
-      name: "senderId-createdAt-index",
+      name: "userId-createdAt-index",
       rangeKey: "createdAt",
     },
   },
@@ -28,4 +28,4 @@ export const dynamoSchemaDefinition: SchemaDefinition = {
     type: Date,
     default: Date.now,
   },
-};
+} as SchemaDefinition;

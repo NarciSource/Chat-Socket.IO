@@ -20,4 +20,6 @@ services:
       - ./stream-dynamo-consumer/.env
     environment:
       - REDIS_HOST=redis-container
+      - REDIS_STREAM_KEY=${REDIS_STREAM_KEY}
+      - REDIS_STREAM_PARSER=${REDIS_STREAM_PARSER}
       - DYNAMO_HOST=dynamodb-container

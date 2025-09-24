@@ -2,26 +2,37 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-import { ChatMessage } from "./model";
-import { dynamoSchemaDefinition } from "./schemaDefinition";
-import RedisStreamReader from "./stream-reader";
-import DynamoWriter from "./dynamo-writer";
-import healthCheck, { setHealthy } from "./healthCheck";
+import { ChatMessage } from "./models";
+import { IStreamParser, BasicParser, SocketIOParser } from "./parsers";
+import { RedisStreamReader } from "./stream";
+import { DynamoWriter, dynamoSchemaDefinition } from "./database";
+import { apiServer, healthService } from "./api";
+
+const REDIS_STREAM_PARSER = process.env.REDIS_STREAM_PARSER || "basic";
 
 async function main() {
-  const reader = new RedisStreamReader<ChatMessage>();
+  const parserMap: Record<string, IStreamParser<ChatMessage>> = {
+    basic: new BasicParser(),
+    "socket.io": new SocketIOParser(),
+  };
+
+  // 파서 선택
+  const parser = parserMap[REDIS_STREAM_PARSER];
+  // 스트림 읽기
+  const reader = new RedisStreamReader<ChatMessage>(parser);
+  // 데이터 쓰기
   const writer = new DynamoWriter<ChatMessage>(dynamoSchemaDefinition);
 
   for await (const events of reader.listen()) {
     for (const [eventId, data] of events) {
       if (data.eventName === "receive_message") {
-        const { roomId, senderId, content } = data.payload as ChatMessage;
+        const { roomId, userId, content } = data.payload as ChatMessage;
         const timestamp = eventId.split("-")[0];
         const createdAt = new Date(parseInt(timestamp));
 
         const message = {
           roomId,
-          senderId,
+          userId,
           content,
           createdAt,
         };
@@ -35,9 +46,9 @@ async function main() {
 try {
   void main();
 
-  healthCheck(); // 헬스체크 API
-  setHealthy(true);
+  apiServer.start(); // REST API
+  healthService.healthy = true;
 } catch (error) {
   console.error(error);
-  setHealthy(false);
+  healthService.healthy = false;
 }
