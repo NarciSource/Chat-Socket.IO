@@ -5,7 +5,7 @@ import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/web
 import { EmitEvent } from '../shared/events';
 
 export interface Payload {
-  senderId?: string; // 보낸 식별자
+  userId?: string; // 보낸 식별자
   roomId?: string; // 방 식별자
   content?: string; // 메시지 내용
 }
@@ -25,10 +25,10 @@ export default class ChatGateway {
    * 메시지 전송 - 1:1도, 1:N도 모두 동일 로직
    */
   @SubscribeMessage('send_message')
-  handleSendMessage(_socket: Socket, { roomId, senderId, content }: Payload) {
+  handleSendMessage(_socket: Socket, { roomId, userId, content }: Payload) {
     // 방에 속해있는 모든 소켓에게 메시지 전송
     const emitEvent = new EmitEvent('receive_message', roomId, {
-      senderId,
+      userId,
       content,
       roomId,
     });
@@ -37,8 +37,8 @@ export default class ChatGateway {
   }
 
   @SubscribeMessage('typing')
-  handleSendingMessage(_socket: Socket, { senderId, roomId }: Payload) {
-    const emitEvent = new EmitEvent('typing', roomId, senderId);
+  handleSendingMessage(_socket: Socket, { userId, roomId }: Payload) {
+    const emitEvent = new EmitEvent('typing', roomId, userId);
 
     this.eventBus.publish(emitEvent);
   }
