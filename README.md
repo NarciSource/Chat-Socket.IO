@@ -10,17 +10,19 @@
   - [🏗️ Architecture Diagram](#️-architecture-diagram)
   - [📡 Communication Diagram](#-communication-diagram)
   - [📐 Sequence Diagram](#-sequence-diagram)
+- [📂 폴더 구조](#-폴더-구조)
 - [🗂️ 서브 프로젝트](#%EF%B8%8F-서브-프로젝트)
 - [🚀 실행 방법](#-실행-방법)
+- [🖥️ 접속 안내](#%EF%B8%8F-접속-안내)
 
 ## 🛠️ 기술 스택
 
 [![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=flat-square&logo=socketdotio&logoColor=white)](https://socket.io/)  
-[![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io)
-[![DynamoDB](https://img.shields.io/badge/DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white)](https://aws.amazon.com/ko/dynamodb/)  
 [![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/ko)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  
+[![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io)
+[![DynamoDB](https://img.shields.io/badge/DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white)](https://aws.amazon.com/ko/dynamodb/)  
 [![Vuejs](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)](https://ko.vite.dev)
 [![Pinia](https://img.shields.io/badge/🍍_Pinia-FFD859?style=flat-square&logoColor=white)](https://pinia.vuejs.org/)
@@ -230,12 +232,40 @@ sequenceDiagram
   deactivate Servers
 ```
 
+## 📂 폴더 구조
+
+<details>
+<summary>열기</summary>
+
+```
+Chat-Service
+├─ infra
+│  └─ docker-compose.yml
+├─ project
+│  ├─ client
+│  │  ├─ Dockerfile
+│  │  └─ nginx.conf
+│  ├─ server
+│  │  └─ Dockerfile
+│  └─ consumers
+│     ├─ stream-dynamo-consumer
+│     │  └─ Dockerfile
+│     └─ docker-compose.yml
+├─ .env
+├─ .prettierrc
+├─ docker-compose.yml
+└─ README.md
+```
+
+</details>
+
 ## 🗂️ 서브 프로젝트
 
-| 프로젝트 | 저장소                                                               | 설명                                    | 브랜치/버전        |
-| -------- | -------------------------------------------------------------------- | --------------------------------------- | ------------------ |
-| Backend  | https://github.com/NarciSource/Chat-Service--Backend/tree/socket.io  | Socket.IO + Redis 기반 실시간 채팅 서버 | socket.io / v1.4.0 |
-| Frontend | https://github.com/NarciSource/Chat-Service--Frontend/tree/socket.io | Vue + Vite 클라이언트                   | socket.io / v1.8.0 |
+| 프로젝트  | 저장소                                                                                                         | 설명                                    | 브랜치/버전        |
+| --------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------- | ------------------ |
+| Backend   | [/Chat-Service--Backend/tree/socket.io](https://github.com/NarciSource/Chat-Service--Backend/tree/socket.io)   | Socket.IO + Redis 기반 실시간 채팅 서버 | socket.io / v1.4.1 |
+| Frontend  | [/Chat-Service--Frontend/tree/socket.io](https://github.com/NarciSource/Chat-Service--Frontend/tree/socket.io) | Vue + Vite 클라이언트                   | socket.io / v1.8.1 |
+| Consumers | [/Chat-Socket.IO/tree/consumers](https://github.com/NarciSource/Chat-Socket.IO/tree/consumers)                 | Redis-Streams에서 DynamoDB로 동기화     | main / v1.1.0      |
 
 ## 🚀 실행 방법
 
