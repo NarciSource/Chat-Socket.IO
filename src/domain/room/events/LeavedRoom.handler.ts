@@ -20,7 +20,7 @@ export default class LeavedRoomHandler implements IEventHandler<LeavedRoomEvent>
 
     // 시스템 메시지
     const content = `${userId}님이 방을 떠났습니다.`;
-    const systemEvent = new EmitEvent('system', roomId, { content });
+    const systemEvent = new EmitEvent('system', roomId, { roomId, content });
 
     // 참가자 갱신
     const notifyEvent = new EmitEvent('room_created', roomId, { roomId, participants: members });

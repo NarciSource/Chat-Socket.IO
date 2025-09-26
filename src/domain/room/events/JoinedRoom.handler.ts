@@ -20,9 +20,9 @@ export default class JoinedRoomHandler implements IEventHandler<JoinedRoomEvent>
 
     // 시스템 메시지
     const successContent = `${userId}님이 방에 참여했습니다.`;
-    const successSystemEvent = new EmitEvent('system', roomId, { content: successContent });
+    const successSystemEvent = new EmitEvent('system', roomId, { roomId, content: successContent });
     const failureContent = `존재하지 않는 방입니다.`;
-    const failureSystemEvent = new EmitEvent('system', roomId, { content: failureContent });
+    const failureSystemEvent = new EmitEvent('system', roomId, { roomId, content: failureContent });
 
     // 새로운 참가자 알림
     const notifyEvent = new EmitEvent('room_created', roomId, { roomId, participants: members });
