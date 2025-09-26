@@ -11,9 +11,9 @@ export const response_payload_to_message = ({
 
 export const response_payload_to_system_message = ({
   content,
-  userId,
-}: ResponsePayload): Message => {
-  return new Message(new User(userId), [content], true);
+  roomId,
+}: ResponsePayload): [Message, string] => {
+  return [new Message(new User("system"), [content], true), roomId];
 };
 
 export const message_to_send_payload = ({

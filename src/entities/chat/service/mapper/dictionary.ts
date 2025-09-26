@@ -3,6 +3,7 @@ import { response_payload_to_users } from "./user";
 import {
   room_created_payload_to_status,
   to_create_room_payload,
+  to_join_room_payload,
   to_leave_room_payload,
 } from "./room";
 import {
@@ -30,6 +31,6 @@ export const emit_mappers_dictionary = new Map<string, Mapper>([
   [SOCKET_EVENT.EMIT_MESSAGE, message_to_send_payload],
   [SOCKET_EVENT.EMIT_CREATE_ROOM, to_create_room_payload],
   [SOCKET_EVENT.EMIT_LEAVE_ROOM, to_leave_room_payload],
-  [SOCKET_EVENT.EMIT_INVITE_ROOM, to_leave_room_payload],
+  [SOCKET_EVENT.EMIT_INVITE_ROOM, to_join_room_payload],
   [SOCKET_EVENT.EMIT_TYPING, to_typing_payload],
 ]);
