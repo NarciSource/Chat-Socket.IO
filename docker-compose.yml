@@ -1,6 +1,7 @@
 services:
   kong:
     image: kong:3.9.1
+    container_name: kong-container
 
     command: kong start
 
@@ -19,6 +20,7 @@ services:
 
   konga:
     image: pantsel/konga:latest
+    container_name: konga-container
 
     networks:
       - chat-net
@@ -34,6 +36,44 @@ services:
     volumes:
       - ./kong/konga/seeds:/app/seeds
       - konga-data:/data
+
+  elasticsearch-init:
+    image: alpine:3.20
+    container_name: elasticsearch-init
+
+    entrypoint: >
+      sh -c "
+          apk add --no-cache curl gettext jq;
+          echo 'Register index templates';
+          sh ./init/create_index_templates.sh;"
+
+    networks:
+      - chat-net
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+    environment:
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+    volumes:
+      - ./elasticsearch:/init
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.2.0
+    container_name: kibana-container
+
+    networks:
+      - chat-net
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - ${KB_PORT}:5601
+
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - NODE_OPTIONS=--max-old-space-size=1024
 
 volumes:
   konga-data:
