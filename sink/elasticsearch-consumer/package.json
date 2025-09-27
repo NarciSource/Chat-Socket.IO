@@ -1,0 +1,11 @@
+{
+  "name": "stream-elasticsearch-consumer",
+  "version": "1.0.0",
+  "author": "NarciSource",
+  "description": "redis-streams에서 elasticsearch로 인덱싱화",
+  "type": "commonjs",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "tsc && tsc-alias"
+  }
+}
