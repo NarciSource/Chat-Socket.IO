@@ -3,7 +3,7 @@ services:
     image: chat/consumer/stream-dynamo:${STREAM_DYNAMO_CONSUMER_VERSION}
     container_name: consumer-stream-dynamo
     build:
-      context: stream-dynamo-consumer
+      context: ./sink/dynamo-consumer
       dockerfile: Dockerfile
 
     networks:
@@ -13,11 +13,9 @@ services:
         condition: service_healthy
       dynamodb:
         condition: service_healthy
-    ports:
-      - ${STREAM_DYNAMO_CONSUMER_PORT}:3000
 
     env_file:
-      - ./stream-dynamo-consumer/.env
+      - ./sink/dynamo-consumer/.env
     environment:
       - REDIS_HOST=redis-container
       - REDIS_STREAM_KEY=${REDIS_STREAM_KEY}

@@ -1,4 +1,4 @@
-import { ChatMessage } from "../models";
+import { ChatMessage } from "@shared/models";
 import IStreamParser from "./interface";
 
 export default class SocketIOParser implements IStreamParser<ChatMessage> {

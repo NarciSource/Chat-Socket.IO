@@ -1,0 +1,24 @@
+{
+  "name": "consumers",
+  "version": "1.1.0",
+  "workspaces": [
+    "source/*",
+    "sink/*"
+  ],
+  "scripts": {
+    "build:stream-dynamo": "npm --workspace stream-dynamo-consumer run build",
+    "build:stream-elasticsearch": "npm --workspace stream-elasticsearch-consumer run build",
+    "start:stream-dynamo": "npm --workspace stream-dynamo-consumer run start",
+    "start:stream-elasticsearch": "npm --workspace stream-elasticsearch-consumer run start"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+  }
+}
