@@ -6,7 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "tsx src/index.ts",
-    "build": "tsc"
+    "build": "tsc && tsc-alias"
   },
   "dependencies": {
     "dynamoose": "^4.0.4",

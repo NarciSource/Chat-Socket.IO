@@ -3,8 +3,8 @@ services:
     image: chat/consumer/stream-dynamo:${STREAM_DYNAMO_CONSUMER_VERSION}
     container_name: consumer-stream-dynamo
     build:
-      context: ./sink/dynamo-consumer
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: sink/dynamo-consumer/Dockerfile
 
     networks:
       - chat-net
