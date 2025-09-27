@@ -21,3 +21,26 @@ services:
       - REDIS_STREAM_KEY=${REDIS_STREAM_KEY}
       - REDIS_STREAM_PARSER=${REDIS_STREAM_PARSER}
       - DYNAMO_HOST=dynamodb-container
+
+  consumer-stream-elasticsearch:
+    image: chat/consumer/stream-elasticsearch:${STREAM_ES_CONSUMER_VERSION}
+    container_name: consumer-stream-elasticsearch
+    build:
+      context: .
+      dockerfile: sink/elasticsearch-consumer/Dockerfile
+
+    networks:
+      - chat-net
+    depends_on:
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+
+    env_file:
+      - ./sink/elasticsearch-consumer/.env
+    environment:
+      - REDIS_HOST=redis-container
+      - REDIS_STREAM_KEY=${REDIS_STREAM_KEY}
+      - REDIS_STREAM_PARSER=${REDIS_STREAM_PARSER}
+      - ES_HOST=es-container
