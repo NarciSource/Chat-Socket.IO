@@ -1,3 +1,12 @@
 /.bsp/
 target/
+
+project/target/
+project/project/target/
+project/boot/
+project/project/boot/
+project/streams/
+
+metals.sbt
 .metals/
+.bloop/
