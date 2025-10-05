@@ -1,4 +1,5 @@
-package models
+package consumers.shared
+package config
 
 object Env {
   val dotenv = io.github.cdimascio.dotenv.Dotenv.load()
