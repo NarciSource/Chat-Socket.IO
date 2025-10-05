@@ -37,6 +37,25 @@ services:
       - ./kong/konga/seeds:/app/seeds
       - konga-data:/data
 
+  dynamodb-init:
+    image: amazon/aws-cli
+    container_name: dynamodb-init
+
+    entrypoint: ["/bin/bash", "/dynamo/create_schema.sh"]
+
+    networks:
+      - chat-net
+    depends_on:
+      dynamodb:
+        condition: service_healthy
+
+    environment:
+      - AWS_ACCESS_KEY_ID=fakeKey
+      - AWS_SECRET_ACCESS_KEY=fakeSecretKey
+      - AWS_DEFAULT_REGION=ap-northeast-2
+    volumes:
+      - ./dynamo:/dynamo
+
   elasticsearch-init:
     image: alpine:3.20
     container_name: elasticsearch-init
