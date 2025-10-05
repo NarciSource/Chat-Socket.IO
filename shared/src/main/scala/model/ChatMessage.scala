@@ -4,5 +4,6 @@ package model
 case class ChatMessage(
     roomId: String,
     userId: String,
-    content: String
+    content: String,
+    createdAt: String
 )

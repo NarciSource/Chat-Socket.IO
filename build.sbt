@@ -23,6 +23,15 @@ lazy val streamsSource = (project in file("source/streams"))
     )
   )
 
+lazy val dynamoSink = (project in file("sink/dynamo-consumer"))
+  .dependsOn(shared, streamsSource)
+  .settings(
+    libraryDependencies ++= Seq(
+      "software.amazon.awssdk" % "dynamodb" % "2.23.2"
+    )
+  )
+  .settings(name := "consumer-streams-dynamo")
+
 lazy val root = (project in file("."))
-  .aggregate(streamsSource, shared)
+  .aggregate(dynamoSink, streamsSource, shared)
   .settings(name := "consumers")
