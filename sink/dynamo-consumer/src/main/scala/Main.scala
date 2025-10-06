@@ -3,11 +3,11 @@ package consumers.dynamo.sink
 import java.time.Instant
 import scala.jdk.CollectionConverters._
 
-import consumers.shared.config.Env._
+import consumers.shared.config.Env.{REDIS_STREAMS_PARSER}
 import consumers.shared.model.ChatMessage
 import consumers.streams.source.parser.{BasicParser, SocketIOParser}
 import consumers.streams.source.RedisStreamReader
-import consumers.dynamo.sink.database.DynamoWriter
+import consumers.dynamo.sink.database.{DynamoWriter, given}
 
 object Main extends App {
   val parser = REDIS_STREAMS_PARSER match {
@@ -26,19 +26,14 @@ object Main extends App {
         val timestamp = eventId.split("-")(0)
         val createdAt = Instant.ofEpochMilli(timestamp.toLong)
 
-        val messageMap = data.payload match {
-          case Right(message) =>
-            Map(
-              "roomId" -> message.roomId,
-              "userId" -> message.userId,
-              "content" -> message.content,
-              "createdAt" -> createdAt.toString
-            )
+        data.payload match {
           case Left(errorMessage) =>
-            Map("error" -> errorMessage)
-        }
+            println(s"ChatMessage 파싱 실패: $errorMessage")
 
-        writer.updateChatMessage(eventId, messageMap)
+          case Right(message) =>
+            val enriched = message.copy(createdAt = Some(createdAt))
+            writer.updateChatMessage(eventId, enriched)
+        }
       }
     }
   }
