@@ -11,24 +11,36 @@ trait DynamoMappable[T] {
 
 // given은 DynamoMappable[T]을 자동으로 제공하는 인스턴스 정의
 given [T <: Product]: DynamoMappable[T] with {
-  def toAttributes(value: T): Map[String, AttributeValue] = {
+  def toAttributes(value: T): Map[String, AttributeValue] =
     // 주어진 객체의 필드를 순회하며 필드명 map
-    value.getClass.getDeclaredFields
-      .map { field =>
-        // private, protected 필드도 접근할 수 있도록 설정
-        field.setAccessible(true)
+    value.getClass.getDeclaredFields.map { field =>
+      // private, protected 필드도 접근할 수 있도록 설정
+      field.setAccessible(true)
 
-        // 필드명
-        val fieldName = field.getName
-        // 필드 값
-        val fieldValue = field.get(value)
+      // 필드명
+      val fieldName = field.getName
+      // 필드 값
+      val fieldValue = field.get(value)
 
-        fieldName -> (fieldValue match {
-          case null => AttributeValue.builder().nul(true).build()
+      fieldName -> (fieldValue match {
+        case null =>
+          AttributeValue.builder().nul(true).build()
 
-          case _    => AttributeValue.builder().s(fieldValue.toString).build()
-        })
-      }
-      .toMap
-  }
+        case v: String =>
+          AttributeValue.builder().s(v).build()
+
+        case v: java.lang.Number =>
+          AttributeValue.builder().n(v.toString).build()
+
+        case v: Boolean =>
+          AttributeValue.builder().bool(v).build()
+
+        case v: java.time.Instant =>
+          AttributeValue.builder().n(v.toEpochMilli.toString).build()
+
+        case other =>
+          AttributeValue.builder().s(other.toString).build()
+      })
+    }.toMap
+
 }
