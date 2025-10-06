@@ -20,21 +20,7 @@ object Main extends App {
   val writer = new DynamoWriter[ChatMessage]
 
   // 스트림 리스닝 및 DynamoDB에 업데이트
-  for (events <- reader.listen()) {
-    for ((eventId, data) <- events) {
-      if (data.eventName == "receive_message") {
-        val timestamp = eventId.split("-")(0)
-        val createdAt = Instant.ofEpochMilli(timestamp.toLong)
-
-        data.payload match {
-          case Left(errorMessage) =>
-            println(s"ChatMessage 파싱 실패: $errorMessage")
-
-          case Right(message) =>
-            val enriched = message.copy(createdAt = Some(createdAt))
-            writer.updateChatMessage(eventId, enriched)
-        }
-      }
-    }
+  for ((eventId, message) <- reader.listen().flatten) {
+    writer.updateChatMessage(eventId, message)
   }
 }
