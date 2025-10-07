@@ -7,6 +7,9 @@ ThisBuild / organization := "dev.narcisource"
 lazy val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "com.typesafe.play" %% "play-json" % "2.10.6",
+    "io.circe" %% "circe-core" % "0.14.7",
+    "io.circe" %% "circe-generic" % "0.14.7",
+    "io.circe" %% "circe-parser" % "0.14.7",
     "io.github.cdimascio" % "dotenv-java" % "3.2.0"
   ),
   resolvers += Resolver.mavenCentral
@@ -32,6 +35,17 @@ lazy val dynamoSink = (project in file("sink/dynamo-consumer"))
   )
   .settings(name := "consumer-streams-dynamo")
 
+lazy val esSink = (project in file("sink/elasticsearch-consumer"))
+  .dependsOn(shared, streamsSource)
+  .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      "nl.gn0s1s" %% "elastic4s-core" % "9.1.1",
+      "nl.gn0s1s" %% "elastic4s-client-esjava" % "9.1.1"
+    )
+  )
+  .settings(name := "consumer-streams-elasticsearch")
+
 lazy val root = (project in file("."))
-  .aggregate(dynamoSink, streamsSource, shared)
+  .aggregate(dynamoSink, esSink, streamsSource, shared)
   .settings(name := "consumers")
