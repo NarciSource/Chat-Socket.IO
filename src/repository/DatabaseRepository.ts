@@ -1,34 +1,38 @@
 import Redis from 'ioredis';
 import dynamoose from 'dynamoose';
-import { Item } from 'dynamoose/dist/Item';
-import { Model } from 'dynamoose/dist/Model';
+import { Item as DynamoItem } from 'dynamoose/dist/Item';
+import { Model as DynamoModel } from 'dynamoose/dist/Model';
 import { Client as ESClient } from '@elastic/elasticsearch';
 import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Message, dynamoSchemaDefinition } from 'src/model/schemaDefinition';
+import { REDIS_STORAGE, DYNAMO_STORAGE, ES_STORAGE } from 'src/common/symbols';
+import Message from 'src/model/Message';
+import { dynamoSchemaDefinition } from 'src/model/schemaDefinition';
 import IRepository from './interface';
+
+type DynamoClient = typeof dynamoose;
 
 @Injectable()
 export default class DatabaseRepository implements IRepository {
-  private dynamoModel: Model<Message & Item>;
+  private dynamoModel: DynamoModel<Message & DynamoItem>;
   private indexName: string;
 
   constructor(
     configService: ConfigService,
 
-    @Inject('REDIS_CLIENT')
+    @Inject(REDIS_STORAGE)
     private readonly redis: Redis,
-    @Inject('DYNAMO_CLIENT')
-    private readonly dynamo: typeof dynamoose,
-    @Inject('ES_CLIENT')
+    @Inject(DYNAMO_STORAGE)
+    private readonly dynamo: DynamoClient,
+    @Inject(ES_STORAGE)
     private readonly es: ESClient,
   ) {
-    const table = configService.get<string>('DYNAMO_TABLE', 'ChatMessages');
+    const dynamoTable = configService.get<string>('DYNAMO_TABLE', 'ChatMessages');
 
-    const schema = new dynamo.Schema(dynamoSchemaDefinition);
+    const dynamoSchema = new dynamo.Schema(dynamoSchemaDefinition);
 
-    this.dynamoModel = this.dynamo.model(table, schema);
+    this.dynamoModel = this.dynamo.model(dynamoTable, dynamoSchema);
 
     this.indexName = configService.get<string>('ES_INDEX', 'chat-messages');
   }

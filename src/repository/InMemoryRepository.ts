@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { Injectable } from '@nestjs/common';
 
-import { Message } from 'src/model/schemaDefinition';
+import Message from 'src/model/Message';
 import IRepository from './interface';
 
 @Injectable()

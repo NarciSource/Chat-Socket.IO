@@ -29,9 +29,3 @@ export const dynamoSchemaDefinition: SchemaDefinition = {
     default: Date.now,
   },
 };
-
-export type Message = {
-  userId: string;
-  content: string;
-  createdAt: Date;
-};

@@ -2,8 +2,10 @@ import { Client } from '@elastic/elasticsearch';
 import { Logger, Provider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+export const ES_STORAGE = Symbol('ES_STORAGE');
+
 export default {
-  provide: 'ES_CLIENT',
+  provide: ES_STORAGE,
   useFactory: async (configService: ConfigService) => {
     const logger = new Logger('Elasticsearch');
     const host = configService.get<string>('ES_HOST', 'localhost');

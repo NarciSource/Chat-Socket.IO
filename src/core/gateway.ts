@@ -1,6 +1,6 @@
 import { Namespace, Socket } from 'socket.io';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection } from '@nestjs/websockets';
 
 @WebSocketGateway({
   path: '/chat/ws',

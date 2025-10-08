@@ -1,7 +1,7 @@
+import { Server, ServerOptions } from 'socket.io';
+import { createAdapter } from '@socket.io/redis-adapter';
 import { INestApplication, Logger } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';
-import { createAdapter } from '@socket.io/redis-adapter';
-import { Server, ServerOptions } from 'socket.io';
 
 /**
  * # RedisIoAdapter

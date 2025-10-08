@@ -1,4 +1,4 @@
-import { Message } from 'src/model/schemaDefinition';
+import Message from 'src/model/Message';
 
 export default interface IRepository {
   setUserSocket(userId: string, socketId: string): Promise<void>; // userId에 해당하는 소켓 ID 등록

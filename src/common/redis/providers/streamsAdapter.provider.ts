@@ -1,10 +1,12 @@
+import { Redis } from 'ioredis';
+import { createAdapter } from '@socket.io/redis-streams-adapter';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createAdapter } from '@socket.io/redis-streams-adapter';
-import { Redis } from 'ioredis';
+
+export const REDIS_STREAMS_ADAPTER = Symbol('REDIS_STREAMS_ADAPTER');
 
 export default {
-  provide: 'REDIS_STREAMS_ADAPTER',
+  provide: REDIS_STREAMS_ADAPTER,
   useFactory: (configService: ConfigService): ReturnType<typeof createAdapter> => {
     const logger = new Logger('RedisStorage');
     const host = configService.get<string>('REDIS_HOST', 'localhost');

@@ -1,11 +1,14 @@
 import Redis from 'ioredis';
 import * as dynamoose from 'dynamoose';
+import { Client as ESClient } from '@elastic/elasticsearch';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Client as ESClient } from '@elastic/elasticsearch';
 
+import { REDIS_STORAGE, DYNAMO_STORAGE, ES_STORAGE } from 'src/common/symbols';
 import InMemoryRepository from './InMemoryRepository';
 import DatabaseRepository from './DatabaseRepository';
+
+type DynamoClient = typeof dynamoose;
 
 @Module({
   providers: [
@@ -14,7 +17,7 @@ import DatabaseRepository from './DatabaseRepository';
       useFactory: (
         configService: ConfigService,
         redisClient: Redis,
-        dynamoClient: typeof dynamoose,
+        dynamoClient: DynamoClient,
         esClient: ESClient,
       ) => {
         const logger = new Logger('Repository');
@@ -30,7 +33,7 @@ import DatabaseRepository from './DatabaseRepository';
             return new DatabaseRepository(configService, redisClient, dynamoClient, esClient);
         }
       },
-      inject: [ConfigService, 'REDIS_CLIENT', 'DYNAMO_CLIENT', 'ES_CLIENT'],
+      inject: [ConfigService, REDIS_STORAGE, DYNAMO_STORAGE, ES_STORAGE],
     },
   ],
 
