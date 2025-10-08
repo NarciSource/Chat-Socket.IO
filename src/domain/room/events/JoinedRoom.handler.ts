@@ -1,7 +1,8 @@
 import { EventsHandler, IEventHandler, EventBus, QueryBus } from '@nestjs/cqrs';
 
 import { EmitEvent, SyncEvent } from 'src/domain/shared/events';
-import { GetMessageHistoryQuery, GetSocketIdQuery } from '../queries';
+import { GetSocketIdQuery } from 'src/domain/user/queries';
+import { GetMessageHistoryQuery } from 'src/domain/chat/queries';
 import JoinedRoomEvent from './JoinedRoom.event';
 
 @EventsHandler(JoinedRoomEvent)
