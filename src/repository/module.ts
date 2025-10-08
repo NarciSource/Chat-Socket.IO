@@ -1,16 +1,13 @@
 import Redis from 'ioredis';
 import * as dynamoose from 'dynamoose';
 import { Logger, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
+import { Client as ESClient } from '@elastic/elasticsearch';
 
-import { RedisModule } from 'src/common/redis';
-import { DynamoModule } from 'src/common/dynamo';
 import InMemoryRepository from './InMemoryRepository';
 import DatabaseRepository from './DatabaseRepository';
 
 @Module({
-  imports: [ConfigModule, RedisModule, DynamoModule],
-
   providers: [
     {
       provide: 'IRepository', // 추상 레포지토리
@@ -18,6 +15,7 @@ import DatabaseRepository from './DatabaseRepository';
         configService: ConfigService,
         redisClient: Redis,
         dynamoClient: typeof dynamoose,
+        esClient: ESClient,
       ) => {
         const logger = new Logger('Repository');
         // 구현체를 선택하는 팩토리 함수
@@ -29,10 +27,10 @@ import DatabaseRepository from './DatabaseRepository';
           case 'InMemory':
             return new InMemoryRepository();
           case 'Database':
-            return new DatabaseRepository(configService, redisClient, dynamoClient);
+            return new DatabaseRepository(configService, redisClient, dynamoClient, esClient);
         }
       },
-      inject: [ConfigService, 'REDIS_CLIENT', 'DYNAMO_CLIENT'],
+      inject: [ConfigService, 'REDIS_CLIENT', 'DYNAMO_CLIENT', 'ES_CLIENT'],
     },
   ],
 

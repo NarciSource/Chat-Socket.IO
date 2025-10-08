@@ -2,6 +2,7 @@ import Redis from 'ioredis';
 import dynamoose from 'dynamoose';
 import { Item } from 'dynamoose/dist/Item';
 import { Model } from 'dynamoose/dist/Model';
+import { Client as ESClient } from '@elastic/elasticsearch';
 import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable } from '@nestjs/common';
 
@@ -11,6 +12,7 @@ import IRepository from './interface';
 @Injectable()
 export default class DatabaseRepository implements IRepository {
   private dynamoModel: Model<Message & Item>;
+  private indexName: string;
 
   constructor(
     configService: ConfigService,
@@ -19,12 +21,16 @@ export default class DatabaseRepository implements IRepository {
     private readonly redis: Redis,
     @Inject('DYNAMO_CLIENT')
     private readonly dynamo: typeof dynamoose,
+    @Inject('ES_CLIENT')
+    private readonly es: ESClient,
   ) {
     const table = configService.get<string>('DYNAMO_TABLE', 'ChatMessages');
 
     const schema = new dynamo.Schema(dynamoSchemaDefinition);
 
     this.dynamoModel = this.dynamo.model(table, schema);
+
+    this.indexName = configService.get<string>('ES_INDEX', 'chat-messages');
   }
 
   // (1) userSocketMap 관련
@@ -149,6 +155,19 @@ export default class DatabaseRepository implements IRepository {
       content,
       createdAt,
     }));
+  }
+
+  async searchByKeyword(userId: string, keyword: string) {
+    const result = await this.es.search({
+      index: this.indexName,
+      query: {
+        bool: {
+          must: [{ term: { userId } }, { match: { content: keyword } }],
+        },
+      },
+    });
+
+    return result.hits.hits.map((hit) => hit._source as Message);
   }
 
   // Redis SCAN helper
