@@ -1,6 +1,6 @@
 {
   "name": "chat-service--backend",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "채팅 서비스 백엔드",
   "author": "NarciSource",
   "private": true,
@@ -24,6 +24,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.6",
     "@nestjs/cqrs": "^11.0.3",
+    "@nestjs/elasticsearch": "^11.1.0",
     "@nestjs/platform-express": "^11.1.6",
     "@nestjs/platform-socket.io": "^11.1.6",
     "@nestjs/websockets": "^11.1.6",
