@@ -10,13 +10,20 @@ lazy val commonSettings = Seq(
     "io.circe" %% "circe-core" % "0.14.7",
     "io.circe" %% "circe-generic" % "0.14.7",
     "io.circe" %% "circe-parser" % "0.14.7",
-    "io.github.cdimascio" % "dotenv-java" % "3.2.0"
+    "io.github.cdimascio" % "dotenv-java" % "3.2.0",
+    "org.typelevel" %% "cats-effect" % "3.6.3"
   ),
   resolvers += Resolver.mavenCentral
 )
 
 lazy val shared = (project in file("shared"))
   .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.http4s" %% "http4s-ember-server" % "0.23.30",
+      "org.http4s" %% "http4s-dsl" % "0.23.32"
+    )
+  )
 
 lazy val streamsSource = (project in file("source/streams"))
   .dependsOn(shared)
