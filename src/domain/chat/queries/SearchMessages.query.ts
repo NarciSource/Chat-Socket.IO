@@ -1,10 +1,11 @@
 import { Query } from '@nestjs/cqrs';
 
 import Message from 'src/model/Message';
+import Room from 'src/model/Room';
 
-export default class SearchMessagesByUserQuery extends Query<Message[]> {
+export default class SearchMessagesQuery extends Query<Message[]> {
   constructor(
-    public readonly userId: string,
+    public readonly rooms: Room[],
     public readonly keyword: string,
   ) {
     super();

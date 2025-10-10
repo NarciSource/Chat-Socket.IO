@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 
-import { SearchMessagesByUserQuery } from './queries';
+import { GetRoomsByUserQuery } from '../room/quires';
+import { SearchMessagesQuery } from './queries';
 
 @Controller('chat')
 export default class ChatController {
@@ -9,6 +10,8 @@ export default class ChatController {
 
   @Post('search')
   async search(@Body() { userId, keyword }: { userId: string; keyword: string }) {
-    return this.queryBus.execute(new SearchMessagesByUserQuery(userId, keyword));
+    const rooms = await this.queryBus.execute(new GetRoomsByUserQuery(userId));
+
+    return this.queryBus.execute(new SearchMessagesQuery(rooms, keyword));
   }
 }

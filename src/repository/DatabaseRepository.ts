@@ -154,19 +154,21 @@ export default class DatabaseRepository implements IRepository {
       .using('roomId-createdAt-index')
       .exec();
 
-    return response.map(({ userId, content, createdAt }) => ({
+    return response.map(({ userId, roomId, content, createdAt }) => ({
       userId,
+      roomId,
       content,
       createdAt,
     }));
   }
 
-  async searchByKeyword(userId: string, keyword: string) {
+  async searchByKeyword(roomIds: string[], keyword: string) {
     const result = await this.es.search({
       index: this.indexName,
       query: {
         bool: {
-          must: [{ term: { userId } }, { match: { content: keyword } }],
+          filter: [{ terms: { roomId: roomIds } }],
+          must: [{ match: { content: keyword } }],
         },
       },
     });

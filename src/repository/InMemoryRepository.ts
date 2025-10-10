@@ -119,7 +119,7 @@ export default class InMemoryRepository implements IRepository {
     return [];
   }
 
-  async searchByKeyword(userId: string, keyword: string) {
+  async searchByKeyword(roomIds: string[], keyword: string) {
     return [];
   }
 }
