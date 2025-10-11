@@ -25,6 +25,7 @@ lazy val shared = (project in file("shared"))
     )
   )
 
+// streams
 lazy val streamsSource = (project in file("source/streams"))
   .dependsOn(shared)
   .settings(
@@ -33,6 +34,7 @@ lazy val streamsSource = (project in file("source/streams"))
     )
   )
 
+// stream - dynamo 컨슈머
 lazy val dynamoSink = (project in file("sink/dynamo-consumer"))
   .dependsOn(shared, streamsSource)
   .settings(
@@ -40,8 +42,16 @@ lazy val dynamoSink = (project in file("sink/dynamo-consumer"))
       "software.amazon.awssdk" % "dynamodb" % "2.23.2"
     )
   )
-  .settings(name := "consumer-streams-dynamo")
+  .settings(
+    name := "streams-dynamo-consumer",
+    assembly / mainClass := Some("consumers.dynamo.sink.Main"),
+    assembly / assemblyJarName := "streams-dynamo-consumer.jar",
+    assembly / assemblyOutputPath := file(
+      "./target/" + (assembly / assemblyJarName).value
+    )
+  )
 
+// stream - elasticsearch 컨슈머
 lazy val esSink = (project in file("sink/elasticsearch-consumer"))
   .dependsOn(shared, streamsSource)
   .settings(commonSettings: _*)
@@ -51,7 +61,14 @@ lazy val esSink = (project in file("sink/elasticsearch-consumer"))
       "nl.gn0s1s" %% "elastic4s-client-esjava" % "9.1.1"
     )
   )
-  .settings(name := "consumer-streams-elasticsearch")
+  .settings(
+    name := "streams-elasticsearch-consumer",
+    assembly / mainClass := Some("consumers.es.sink.Main"),
+    assembly / assemblyJarName := "streams-elasticsearch-consumer.jar",
+    assembly / assemblyOutputPath := file(
+      "./target/" + (assembly / assemblyJarName).value
+    )
+  )
 
 lazy val root = (project in file("."))
   .aggregate(dynamoSink, esSink, streamsSource, shared)
