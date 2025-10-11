@@ -39,7 +39,8 @@ lazy val dynamoSink = (project in file("sink/dynamo-consumer"))
   .dependsOn(shared, streamsSource)
   .settings(
     libraryDependencies ++= Seq(
-      "software.amazon.awssdk" % "dynamodb" % "2.23.2"
+      "software.amazon.awssdk" % "dynamodb" % "2.37.3",
+      "software.amazon.awssdk" % "url-connection-client" % "2.37.2"
     )
   )
   .settings(

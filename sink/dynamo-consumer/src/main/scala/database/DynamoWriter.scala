@@ -7,6 +7,7 @@ import scala.jdk.CollectionConverters._
 
 import software.amazon.awssdk.auth.credentials.{AwsBasicCredentials, StaticCredentialsProvider}
 import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient
 import software.amazon.awssdk.services.dynamodb.model._
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
@@ -19,6 +20,7 @@ class DynamoWriter[T <: Product: DynamoMappable]() {
   // DynamoDB 클라이언트 설정
   private val client: DynamoDbClient = DynamoDbClient
     .builder()
+    .httpClient(UrlConnectionHttpClient.builder().build())
     .endpointOverride(URI.create(endpoint))
     .region(Region.US_WEST_2)
     .credentialsProvider(
@@ -54,7 +56,9 @@ class DynamoWriter[T <: Product: DynamoMappable]() {
       val updateRequest = UpdateItemRequest
         .builder()
         .tableName(DYNAMO_TABLE)
-        .key(Map("eventId" -> AttributeValue.builder().s(eventId).build()).asJava)
+        .key(
+          Map("eventId" -> AttributeValue.builder().s(eventId).build()).asJava
+        )
         .updateExpression(s"SET $updateExpr") // 업데이트 표현식
         .expressionAttributeNames(exprAttrNames) // 속성 이름 매핑
         .expressionAttributeValues(exprAttrValues) // 속성 값 매핑
