@@ -2,7 +2,11 @@ package consumers.shared
 package config
 
 object Env {
-  val dotenv = io.github.cdimascio.dotenv.Dotenv.load()
+  val dotenv = io.github.cdimascio.dotenv.Dotenv
+    .configure()
+    .ignoreIfMalformed()
+    .ignoreIfMissing()
+    .load()
 
   val REDIS_HOST: String = dotenv.get("REDIS_HOST")
   val REDIS_PORT: Int = dotenv.get("REDIS_PORT").toInt
