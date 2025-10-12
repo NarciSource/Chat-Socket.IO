@@ -1,0 +1,58 @@
+services:
+  streams-dynamo-consumer:
+    image: chat/consumers/streams-dynamo:${STREAMS_DYNAMO_CONSUMER_VERSION}
+    container_name: consumer-streams-dynamo
+    build:
+      context: .
+      dockerfile: sink/dynamo-consumer/Dockerfile
+
+    networks:
+      - chat-net
+    depends_on:
+      redis:
+        condition: service_healthy
+      dynamodb:
+        condition: service_healthy
+
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis-container
+      - REDIS_STREAMS_KEY=${REDIS_STREAMS_KEY}
+      - REDIS_STREAMS_PARSER=${REDIS_STREAMS_PARSER}
+      - DYNAMO_HOST=dynamodb-container
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  streams-elasticsearch-consumer:
+    image: chat/consumers/streams-elasticsearch:${STREAMS_ES_CONSUMER_VERSION}
+    container_name: consumer-streams-elasticsearch
+    build:
+      context: .
+      dockerfile: sink/elasticsearch-consumer/Dockerfile
+
+    networks:
+      - chat-net
+    depends_on:
+      redis:
+        condition: service_healthy
+      dynamodb:
+        condition: service_healthy
+
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis-container
+      - REDIS_STREAMS_KEY=${REDIS_STREAMS_KEY}
+      - REDIS_STREAMS_PARSER=${REDIS_STREAMS_PARSER}
+      - ES_HOST=es-container
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
