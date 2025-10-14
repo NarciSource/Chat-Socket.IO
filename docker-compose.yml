@@ -62,10 +62,10 @@ services:
     container_name: es-container
 
     command: >
-      bash -c '
+      bash -c "
         elasticsearch-plugin install --batch analysis-nori;
         /usr/local/bin/docker-entrypoint.sh elasticsearch
-      '
+      "
 
     networks:
       - chat-net
@@ -95,9 +95,10 @@ services:
 
     entrypoint: >
       sh -c "
-          apk add --no-cache curl gettext jq;
-          echo 'Register index templates';
-          sh ./init/create_index_templates.sh;"
+        apk add --no-cache bash curl gettext jq dos2unix;
+        dos2unix ./init/create_index_templates.sh;
+        bash ./init/create_index_templates.sh;
+      "
 
     networks:
       - chat-net
