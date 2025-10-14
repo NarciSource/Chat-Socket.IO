@@ -1,41 +1,42 @@
 services:
-  kong:
-    image: kong:3.9.1
-    container_name: kong-container
-
-    command: kong start
+  redis:
+    image: redis:8.2.1
+    container_name: redis-container
 
     networks:
       - chat-net
-    depends_on:
-      - server
     ports:
-      - ${SERVER_PORT}:8000
-      - ${API_GATEWAY_ADMIN_PORT}:8001
+      - ${REDIS_PORT}:6379
 
     volumes:
-      - ./kong/kong.conf:/etc/kong/kong.conf
-      - ./kong/kong.yml:/kong/kong.yml
-      - ./kong/plugins:/kong/plugins:ro
+      - redis-data:/data
 
-  konga:
-    image: pantsel/konga:latest
-    container_name: konga-container
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
+  dynamodb:
+    image: amazon/dynamodb-local:3.1.0
+    container_name: dynamodb-container
+
+    user: root
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
 
     networks:
       - chat-net
-    depends_on:
-      - kong
     ports:
-      - ${API_GATEWAY_UI_PORT}:1337
+      - ${DYNAMO_PORT}:8000
 
-    environment:
-      - NODE_ENV=development
-      - KONGA_SEED_USER_DATA_SOURCE_FILE=/app/seeds/user_seed.json
-      - KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE=/app/seeds/kong_node_seed.json
     volumes:
-      - ./kong/konga/seeds:/app/seeds
-      - konga-data:/data
+      - dynamodb-data:/home/dynamodblocal/data
+
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-w", "%{http_code}", "http://localhost:8000"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
 
   dynamodb-init:
     image: amazon/aws-cli
@@ -55,6 +56,38 @@ services:
       - AWS_DEFAULT_REGION=ap-northeast-2
     volumes:
       - ./dynamo:/dynamo
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.0
+    container_name: es-container
+
+    command: >
+      bash -c '
+        elasticsearch-plugin install --batch analysis-nori;
+        /usr/local/bin/docker-entrypoint.sh elasticsearch
+      '
+
+    networks:
+      - chat-net
+    ports:
+      - ${ES_PORT}:9200
+
+    environment:
+      - ES_USERNAME=${ES_USERNAME}
+      - ES_PASSWORD=${ES_PASSWORD}
+
+      - discovery.type=single-node
+      - xpack.ml.enabled=false
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 10s
+      retries: 100
+      start_period: 60s
 
   elasticsearch-init:
     image: alpine:3.20
@@ -94,6 +127,50 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - NODE_OPTIONS=--max-old-space-size=1024
 
+  kong:
+    image: kong:3.9.1
+    container_name: kong-container
+
+    command: kong start
+
+    networks:
+      - chat-net
+    depends_on:
+      - server
+    ports:
+      - ${SERVER_PORT}:8000
+      - ${API_GATEWAY_ADMIN_PORT}:8001
+
+    volumes:
+      - ./kong/kong.conf:/etc/kong/kong.conf
+      - ./kong/kong.yml:/kong/kong.yml
+      - ./kong/plugins:/kong/plugins:ro
+
+  konga:
+    image: pantsel/konga:latest
+    container_name: konga-container
+
+    networks:
+      - chat-net
+    depends_on:
+      - kong
+    ports:
+      - ${API_GATEWAY_UI_PORT}:1337
+
+    environment:
+      - NODE_ENV=development
+      - KONGA_SEED_USER_DATA_SOURCE_FILE=/app/seeds/user_seed.json
+      - KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE=/app/seeds/kong_node_seed.json
+    volumes:
+      - ./kong/konga/seeds:/app/seeds
+      - konga-data:/data
+
 volumes:
+  redis-data:
+    driver: local
+  dynamodb-data:
+    driver: local
+  es-data:
+    driver: local
   konga-data:
     driver: local
