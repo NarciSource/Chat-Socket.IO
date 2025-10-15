@@ -1,5 +1,5 @@
 <template>
-  <q-item class="no-padding make-room" title="방 만들기" clickable>
+  <q-item class="no-padding bg-teal-8 text-white" title="방 만들기" clickable>
     <q-item-section avatar>
       <q-icon class="q-pa-md" name="meeting_room" size="2rem" />
     </q-item-section>
@@ -34,10 +34,3 @@ watchEffect(() => {
   }
 });
 </script>
-
-<style scoped>
-.make-room {
-  background: teal;
-  color: white;
-}
-</style>

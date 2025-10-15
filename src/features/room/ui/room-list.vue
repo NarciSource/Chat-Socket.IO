@@ -9,12 +9,6 @@
       clickable
       @click="() => enter(room)"
     >
-      <q-item-section>
-        <q-item-label>
-          <q-input v-model="room.name" title="방 제목 수정" borderless dense />
-        </q-item-label>
-      </q-item-section>
-
       <q-item-section side>
         <avatar :user="room.participants[0]">
           <q-badge v-if="room.is_new" color="primary" rounded floating label="New" />
@@ -22,7 +16,13 @@
         </avatar>
       </q-item-section>
 
-      <q-item-section side>
+      <q-item-section>
+        <q-item-label>
+          <q-input v-model="room.name" borderless dense title="방 제목 수정" />
+        </q-item-label>
+      </q-item-section>
+
+      <q-item-section>
         <leave-room :room="room" />
       </q-item-section>
     </q-item>
