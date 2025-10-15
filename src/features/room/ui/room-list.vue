@@ -15,8 +15,13 @@
         </q-item-label>
       </q-item-section>
 
-      <q-item-section v-show="room.is_new" side>
-        <q-badge rounded color="primary" label="New" />
+      <q-item-section side>
+        <q-avatar size="32px">
+          <img :src="room.participants[0].avatar_url" />
+
+          <q-badge v-if="room.is_new" color="primary" rounded floating label="New" />
+          <q-badge v-else color="primary" rounded floating :label="room.participants.length" />
+        </q-avatar>
       </q-item-section>
 
       <q-item-section side>
