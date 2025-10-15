@@ -4,9 +4,7 @@
   </q-item-section>
 
   <q-item-section avatar>
-    <q-avatar>
-      <img :src="user.avatar_url" />
-    </q-avatar>
+    <avatar :user="user" />
   </q-item-section>
 
   <q-item-section>
@@ -20,6 +18,7 @@
 
 <script setup lang="ts">
 import { User } from "@/entities/chat/model";
+import { Avatar } from "@/shared/components";
 
 const { user } = defineProps<{ user: User }>();
 const check = defineModel<boolean>();

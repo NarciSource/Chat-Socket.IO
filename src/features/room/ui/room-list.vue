@@ -16,12 +16,10 @@
       </q-item-section>
 
       <q-item-section side>
-        <q-avatar size="32px">
-          <img :src="room.participants[0].avatar_url" />
-
+        <avatar :user="room.participants[0]">
           <q-badge v-if="room.is_new" color="primary" rounded floating label="New" />
           <q-badge v-else color="primary" rounded floating :label="room.participants.length" />
-        </q-avatar>
+        </avatar>
       </q-item-section>
 
       <q-item-section side>
@@ -35,6 +33,7 @@
 import { storeToRefs } from "pinia";
 
 import { Room } from "@/entities/chat/model";
+import { Avatar } from "@/shared/components";
 import useRoomStore from "../store/useRoomStore";
 import LeaveRoom from "./leave-room.vue";
 
