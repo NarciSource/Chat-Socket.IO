@@ -7,7 +7,7 @@
         <room :connecting="connecting" :current_user="current_user" />
       </template>
 
-      <template #chat>
+      <template #contents>
         <chat
           v-if="!!selected_room?.id"
           :connecting="connecting"
