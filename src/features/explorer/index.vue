@@ -6,7 +6,9 @@
       </q-toolbar>
     </template>
 
-    <template #content> </template>
+    <template #content>
+      <found-list />
+    </template>
   </layout>
 </template>
 
@@ -15,7 +17,7 @@ import { watch } from "vue";
 
 import { Room, User } from "@/entities/chat/model";
 import useExplorerStore from "./store/useExplorerStore";
-import { Layout, Search } from "./ui";
+import { Layout, Search, FoundList } from "./ui";
 
 const { connecting, rooms, current_user, selected_room } = defineProps<{
   connecting: boolean;
