@@ -8,12 +8,14 @@
       </template>
 
       <template #contents>
-        <chat
-          v-if="!!selected_room?.id"
+        <explorer
+          v-if="!selected_room?.id"
           :connecting="connecting"
-          :room="selected_room"
+          :rooms="rooms"
+          :selected_room="selected_room"
           :current_user="current_user"
         />
+        <chat v-else :connecting="connecting" :room="selected_room" :current_user="current_user" />
       </template>
     </layout>
   </div>
@@ -22,6 +24,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 
+import Explorer from "@/features/explorer";
 import Room, { useRoomStore } from "@/features/room";
 import { Register } from "@/features/user-auth";
 import Chat from "@/features/chat";
@@ -34,5 +37,5 @@ const LAYOUT_HEIGHT = Number(import.meta.env.VITE_LAYOUT_HEIGHT);
 
 // feature간 데이터 공유
 const { connecting, current_user } = storeToRefs(useUserStore());
-const { selected_room } = storeToRefs(useRoomStore());
+const { selected_room, rooms } = storeToRefs(useRoomStore());
 </script>
