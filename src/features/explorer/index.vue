@@ -1,6 +1,10 @@
 <template>
   <layout>
-    <template #header> </template>
+    <template #header>
+      <q-toolbar class="q-my-sm">
+        <search />
+      </q-toolbar>
+    </template>
 
     <template #content> </template>
   </layout>
@@ -11,7 +15,7 @@ import { watch } from "vue";
 
 import { Room, User } from "@/entities/chat/model";
 import useExplorerStore from "./store/useExplorerStore";
-import { Layout } from "./ui";
+import { Layout, Search } from "./ui";
 
 const { connecting, rooms, current_user, selected_room } = defineProps<{
   connecting: boolean;
