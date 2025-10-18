@@ -24,11 +24,11 @@ import { Room, User } from "@/entities/chat/model";
 import useChatStore from "./store/useChatStore";
 import { Layout, Search, Title, Actions, Connect, Content, Submit } from "./ui";
 
-const { connecting, room, current_user } = defineProps({
-  connecting: Boolean,
-  room: Room,
-  current_user: User,
-});
+const { connecting, room, current_user } = defineProps<{
+  connecting: boolean;
+  room: Room;
+  current_user: User;
+}>();
 
 const store = useChatStore();
 

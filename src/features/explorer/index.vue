@@ -13,11 +13,11 @@ import { Room, User } from "@/entities/chat/model";
 import useExplorerStore from "./store/useExplorerStore";
 import { Layout } from "./ui";
 
-const { connecting, current_user, rooms, selected_room } = defineProps<{
+const { connecting, rooms, current_user, selected_room } = defineProps<{
   connecting: boolean;
-  current_user: User;
   rooms: Map<string, Room>;
-  selected_room: Room;
+  current_user: User | undefined;
+  selected_room: Room | null;
 }>();
 
 const store = useExplorerStore();
