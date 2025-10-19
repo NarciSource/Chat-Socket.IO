@@ -1,4 +1,4 @@
-import { SOCKET_EVENT } from "@/shared/socket_constants";
+import { SOCKET_EVENT } from "@/shared/constants";
 import { response_payload_to_users } from "./user";
 import {
   room_created_payload_to_status,

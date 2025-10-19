@@ -15,6 +15,7 @@ import { storeToRefs } from "pinia";
 
 import UserListPopup from "@/features/user-presence/index.vue";
 import { Room, User } from "@/entities/chat/model";
+import { RouterName } from "@/shared/constants";
 import { make_room, room_created } from "../service/event_helper";
 import useRoomStore from "../store/useRoomStore";
 
@@ -33,7 +34,8 @@ watchEffect(() => {
       rooms.value.set(room.id, room); // 방 정보 업데이트
 
       router.push({
-        path: `/room/${room.id}`,
+        name: RouterName.Room,
+        params: { id: room.id },
         state: { room } as unknown as HistoryState,
       }); // 방 이동 및 방 상태 전달
     });

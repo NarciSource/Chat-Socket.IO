@@ -7,6 +7,7 @@ import { HistoryState, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import { Room } from "@/entities/chat/model";
+import { RouterName } from "@/shared/constants";
 import useRoomStore from "../store/useRoomStore";
 import { leave_room } from "../service/event_helper";
 
@@ -22,7 +23,7 @@ const leave = () => {
   rooms.value.delete(room.id);
 
   router.push({
-    path: `/`,
+    name: RouterName.Explorer,
     state: { rooms: rooms.value } as unknown as HistoryState,
   }); // 방 이동 및 방 상태 전달
 };

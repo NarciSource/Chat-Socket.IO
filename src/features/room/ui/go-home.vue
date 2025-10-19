@@ -20,6 +20,7 @@
 <script setup lang="ts">
 import { HistoryState, useRouter } from "vue-router";
 
+import { RouterName } from "@/shared/constants";
 import useRoomStore from "../store/useRoomStore";
 
 const router = useRouter();
@@ -27,7 +28,7 @@ const { rooms } = useRoomStore();
 
 const click = () => {
   router.push({
-    path: `/`,
+    name: RouterName.Explorer,
     state: { rooms } as unknown as HistoryState,
   }); // 방 이동 및 방 상태 전달
 };

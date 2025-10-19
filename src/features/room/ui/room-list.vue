@@ -34,6 +34,7 @@ import { HistoryState, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import { Room } from "@/entities/chat/model";
+import { RouterName } from "@/shared/constants";
 import { Avatar } from "@/shared/components";
 import useRoomStore from "../store/useRoomStore";
 import LeaveRoom from "./leave-room.vue";
@@ -45,7 +46,8 @@ const enter = (room: Room) => {
   room.is_new = false; // 새로운 방 표시 해제
 
   router.push({
-    path: `/room/${room.id}`,
+    name: RouterName.Room,
+    params: { id: room.id },
     state: { room } as unknown as HistoryState,
   }); // 방 이동 및 방 상태 전달
 };

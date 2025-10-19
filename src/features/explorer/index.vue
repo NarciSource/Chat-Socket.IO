@@ -17,6 +17,7 @@ import { watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { Room } from "@/entities/chat/model";
+import { RouterName } from "@/shared/constants";
 import useExplorerStore from "./store/useExplorerStore";
 import { Layout, Search, FoundList } from "./ui";
 
@@ -25,9 +26,9 @@ const router = useRouter();
 const store = useExplorerStore();
 
 watch(
-  () => route.path,
-  (route_path) => {
-    if (route_path === "/") {
+  () => route.name,
+  (route_name) => {
+    if (route_name === RouterName.Explorer) {
       store.rooms = router.options.history.state["rooms"] as unknown as Map<string, Room>;
     }
   },

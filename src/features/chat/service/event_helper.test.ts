@@ -2,10 +2,9 @@ import { describe, it, expect, vi } from "vitest";
 
 import { Message, Room, User } from "@/entities/chat/model";
 import { emit_event, subscribe_on } from "@/entities/chat/service/socketService";
-import { SOCKET_EVENT } from "@/shared/socket_constants";
+import { SOCKET_EVENT } from "@/shared/constants";
 import {
   send_message,
-  invite_user,
   connect_failed,
   disconnected,
   message_received,
