@@ -22,7 +22,13 @@
       </q-item>
 
       <!-- 메시지들 -->
-      <q-item v-for="(message, index) in messages" :key="index" :to="`room/${id}`" clickable>
+      <q-item
+        v-for="(message, index) in messages"
+        :key="index"
+        :to="`room/${id}`"
+        clickable
+        @click="(e) => (e.preventDefault(), enter(rooms.get(id)!))"
+      >
         <q-item-section>
           <q-item-label>{{ message.text[0] }}</q-item-label>
         </q-item-section>
@@ -36,10 +42,22 @@
 </template>
 
 <script setup lang="ts">
+import { HistoryState, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
+import { Room } from "@/entities/chat/model";
 import { Avatar } from "@/shared/components";
 import useExplorerStore from "../store/useExplorerStore";
 
+const router = useRouter();
 const { search_result, rooms } = storeToRefs(useExplorerStore());
+
+const enter = (room: Room) => {
+  room.is_new = false; // 새로운 방 표시 해제
+
+  router.push({
+    path: `/room/${room.id}`,
+    state: { room } as unknown as HistoryState,
+  }); // 방 이동 및 방 상태 전달
+};
 </script>

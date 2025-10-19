@@ -3,12 +3,14 @@
 </template>
 
 <script setup lang="ts">
+import { HistoryState, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import { Room } from "@/entities/chat/model";
 import useRoomStore from "../store/useRoomStore";
 import { leave_room } from "../service/event_helper";
 
+const router = useRouter();
 const { current_user, rooms } = storeToRefs(useRoomStore());
 const { room } = defineProps<{ room: Room }>();
 
@@ -18,5 +20,10 @@ const leave = () => {
 
   // 방 목록에서 제거
   rooms.value.delete(room.id);
+
+  router.push({
+    path: `/`,
+    state: { rooms: rooms.value } as unknown as HistoryState,
+  }); // 방 이동 및 방 상태 전달
 };
 </script>

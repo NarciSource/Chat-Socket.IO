@@ -19,15 +19,16 @@
 
 <script setup lang="ts">
 import { watchEffect } from "vue";
-import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 
+import { Room } from "@/entities/chat/model";
 import { Layout, Search, Title, Actions, Connect, Content, Submit } from "./ui";
 import useChatStore from "./store/useChatStore";
 
-const route = useRoute();
+const router = useRouter();
 const store = useChatStore();
 
 watchEffect(() => {
-  store.room_id = route.params["id"] as string;
+  store.room = router.options.history.state["room"] as unknown as Room;
 });
 </script>

@@ -1,14 +1,13 @@
 import { computed, reactive, ref } from "vue";
 import { defineStore, storeToRefs } from "pinia";
 
-import { Message, User } from "@/entities/chat/model";
+import { Message, Room, User } from "@/entities/chat/model";
 import useGlobalStore from "@/shared/store/useGlobalStore";
 
 export default defineStore("chat", () => {
-  const { connecting, current_user, rooms } = storeToRefs(useGlobalStore());
+  const { connecting, current_user } = storeToRefs(useGlobalStore());
 
-  const room_id = ref<string>(); // 현재 방 ID
-  const room = computed(() => rooms.value.get(room_id.value ?? ""));
+  const room = ref<Room>(); // 현재 방 정보
   const query = ref(""); // 검색어
   const searching = ref(false); // 검색 중 여부
   const typing_user = ref<User | null>(null); // 타이핑 중인 사용자
@@ -66,7 +65,6 @@ export default defineStore("chat", () => {
 
   return {
     connecting,
-    room_id,
     room,
     current_user,
     messages,
