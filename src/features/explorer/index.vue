@@ -13,17 +13,24 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from "vue";
-import { useRouter } from "vue-router";
+import { watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import { Room } from "@/entities/chat/model";
 import useExplorerStore from "./store/useExplorerStore";
 import { Layout, Search, FoundList } from "./ui";
 
+const route = useRoute();
 const router = useRouter();
 const store = useExplorerStore();
 
-watchEffect(() => {
-  store.rooms = router.options.history.state["rooms"] as unknown as Map<string, Room>;
-});
+watch(
+  () => route.path,
+  (route_path) => {
+    if (route_path === "/") {
+      store.rooms = router.options.history.state["rooms"] as unknown as Map<string, Room>;
+    }
+  },
+  { immediate: true },
+);
 </script>
