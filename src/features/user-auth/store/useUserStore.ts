@@ -1,11 +1,9 @@
-import { ref } from "vue";
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
 
-import { User } from "@/entities/chat/model";
+import useGlobalStore from "@/shared/store/useGlobalStore";
 
 export default defineStore("user", () => {
-  const connecting = ref(false); // 소켓 연결 여부
-  const current_user = ref<User>(); // 사용자
+  const { connecting, current_user } = storeToRefs(useGlobalStore());
 
   return { current_user, connecting };
 });

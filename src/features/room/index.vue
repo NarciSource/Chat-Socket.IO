@@ -14,27 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { User } from "@/entities/chat/model";
-import useRoomStore from "./store/useRoomStore";
+import { ref } from "vue";
 import { Layout, MakeRoom, RoomList, GoHome } from "./ui";
-
-const { connecting, current_user } = defineProps<{
-  connecting: boolean;
-  current_user: User | undefined;
-}>();
-
-const store = useRoomStore();
-
-// store에 props를 업데이트
-watch(
-  () => ({ connecting, current_user }),
-  (props) => {
-    store.connecting = props.connecting;
-    store.current_user = props.current_user!;
-  },
-  { immediate: true, deep: true },
-);
 
 const show_tooltip = ref(true); // 툴팁 표시 여부
 </script>

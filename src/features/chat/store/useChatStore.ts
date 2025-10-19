@@ -1,12 +1,12 @@
 import { computed, reactive, ref } from "vue";
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
 
-import { Message, Room, User } from "@/entities/chat/model";
+import { Message, User } from "@/entities/chat/model";
+import useGlobalStore from "@/shared/store/useGlobalStore";
 
 export default defineStore("chat", () => {
-  const connecting = ref(false); // 소켓 연결 여부
-  const room = ref<Room>(); // 현재 방 정보
-  const current_user = ref<User>(); // 사용자
+  const { connecting, current_user, selected_room: room } = storeToRefs(useGlobalStore());
+
   const query = ref(""); // 검색어
   const searching = ref(false); // 검색 중 여부
   const typing_user = ref<User | null>(null); // 타이핑 중인 사용자
