@@ -3,7 +3,7 @@
     <q-item
       v-for="[, room] in rooms"
       :key="room.id"
-      :active="room === selected_room"
+      :to="`/room/${room.id}`"
       active-class="bg-teal-2"
       :title="room.name"
       clickable
@@ -37,10 +37,9 @@ import { Avatar } from "@/shared/components";
 import useRoomStore from "../store/useRoomStore";
 import LeaveRoom from "./leave-room.vue";
 
-const { rooms, selected_room } = storeToRefs(useRoomStore());
+const { rooms } = storeToRefs(useRoomStore());
 
 const enter = (room: Room) => {
-  selected_room.value = room; // 선택 방을 업데이트
   room.is_new = false; // 새로운 방 표시 해제
 };
 </script>

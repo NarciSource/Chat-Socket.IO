@@ -22,7 +22,7 @@
       </q-item>
 
       <!-- 메시지들 -->
-      <q-item v-for="(message, index) in messages" :key="index" clickable @click="() => enter(id)">
+      <q-item v-for="(message, index) in messages" :key="index" :to="`room/${id}`" clickable>
         <q-item-section>
           <q-item-label>{{ message.text[0] }}</q-item-label>
         </q-item-section>
@@ -41,9 +41,5 @@ import { storeToRefs } from "pinia";
 import { Avatar } from "@/shared/components";
 import useExplorerStore from "../store/useExplorerStore";
 
-const { search_result, rooms, selected_room } = storeToRefs(useExplorerStore());
-
-const enter = (id: string) => {
-  selected_room.value = rooms.value.get(id) ?? null;
-};
+const { search_result, rooms } = storeToRefs(useExplorerStore());
 </script>

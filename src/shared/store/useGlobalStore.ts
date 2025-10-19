@@ -12,7 +12,5 @@ export default defineStore("global", () => {
 
   const rooms = ref<Map<RoomId, Room>>(new Map([])) as Ref<Map<RoomId, Room>>; // 방 목록
 
-  const selected_room = ref<Room | null>(null) as Ref<Room | null>; // 현재 선택된 방
-
-  return { connecting, current_user, rooms, selected_room };
+  return { connecting, current_user, rooms };
 });
