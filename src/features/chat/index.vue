@@ -18,17 +18,22 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from "vue";
-import { useRouter } from "vue-router";
+import { watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import { Room } from "@/entities/chat/model";
 import { Layout, Search, Title, Actions, Connect, Content, Submit } from "./ui";
 import useChatStore from "./store/useChatStore";
 
+const route = useRoute();
 const router = useRouter();
 const store = useChatStore();
 
-watchEffect(() => {
-  store.room = router.options.history.state["room"] as unknown as Room;
-});
+watch(
+  () => route.params.id,
+  () => {
+    store.room = router.options.history.state["room"] as unknown as Room;
+  },
+  { immediate: true },
+);
 </script>
