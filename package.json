@@ -2,7 +2,7 @@
   "name": "chat-service--frontend",
   "private": true,
   "description": "채팅 서비스 프론트엔드",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "type": "module",
   "author": "NarciSource",
   "scripts": {
@@ -47,7 +47,8 @@
     "quasar": "^2.18.5",
     "socket.io-client": "^4.8.1",
     "vite-plugin-css-injected-by-js": "^3.5.2",
-    "vue": "^3.5.22"
+    "vue": "^3.5.22",
+    "vue-router": "^4.6.3"
   },
   "homepage": "https://github.com/NarciSource/Chat-Service--Frontend",
   "repository": {
