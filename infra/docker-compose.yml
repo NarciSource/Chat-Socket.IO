@@ -1,4 +1,133 @@
 services:
+  redis:
+    image: redis:8.2.1
+    container_name: redis-container
+
+    networks:
+      - chat-net
+    ports:
+      - ${REDIS_PORT}:6379
+
+    volumes:
+      - redis-data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
+  dynamodb:
+    image: amazon/dynamodb-local:3.1.0
+    container_name: dynamodb-container
+
+    user: root
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
+
+    networks:
+      - chat-net
+    ports:
+      - ${DYNAMO_PORT}:8000
+
+    volumes:
+      - dynamodb-data:/home/dynamodblocal/data
+
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-w", "%{http_code}", "http://localhost:8000"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
+  dynamodb-init:
+    image: amazon/aws-cli
+    container_name: dynamodb-init
+
+    entrypoint: ["/bin/bash", "/dynamo/create_schema.sh"]
+
+    networks:
+      - chat-net
+    depends_on:
+      dynamodb:
+        condition: service_healthy
+
+    environment:
+      - AWS_ACCESS_KEY_ID=fakeKey
+      - AWS_SECRET_ACCESS_KEY=fakeSecretKey
+      - AWS_DEFAULT_REGION=ap-northeast-2
+    volumes:
+      - ./dynamo:/dynamo
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.0
+    container_name: es-container
+
+    command: >
+      bash -c "
+        elasticsearch-plugin install --batch analysis-nori;
+        /usr/local/bin/docker-entrypoint.sh elasticsearch
+      "
+
+    networks:
+      - chat-net
+    ports:
+      - ${ES_PORT}:9200
+
+    environment:
+      - ES_USERNAME=${ES_USERNAME}
+      - ES_PASSWORD=${ES_PASSWORD}
+
+      - discovery.type=single-node
+      - xpack.ml.enabled=false
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 10s
+      retries: 100
+      start_period: 60s
+
+  elasticsearch-init:
+    image: alpine:3.20
+    container_name: elasticsearch-init
+
+    entrypoint: >
+      sh -c "
+        apk add --no-cache bash curl gettext jq dos2unix;
+        dos2unix ./init/create_index_templates.sh;
+        bash ./init/create_index_templates.sh;
+      "
+
+    networks:
+      - chat-net
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+    environment:
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+    volumes:
+      - ./elasticsearch:/init
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.2.0
+    container_name: kibana-container
+
+    networks:
+      - chat-net
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - ${KB_PORT}:5601
+
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - NODE_OPTIONS=--max-old-space-size=1024
+
   kong:
     image: kong:3.9.1
     container_name: kong-container
@@ -38,5 +167,11 @@ services:
       - konga-data:/data
 
 volumes:
+  redis-data:
+    driver: local
+  dynamodb-data:
+    driver: local
+  es-data:
+    driver: local
   konga-data:
     driver: local
