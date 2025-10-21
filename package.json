@@ -2,7 +2,7 @@
   "name": "chat-service--frontend",
   "private": true,
   "description": "채팅 서비스 프론트엔드",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "type": "module",
   "author": "NarciSource",
   "scripts": {

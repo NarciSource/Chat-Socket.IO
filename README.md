@@ -4,7 +4,7 @@
 
 [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=socketdotio&logoColor=white)](https://socket.io/)  
 [![Vuejs](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
-[![Pinia](https://img.shields.io/badge/🍍_Pinia-FFD859?style=flat-square&logoColor=white)](https://pinia.vuejs.org/)
+[![Pinia](https://img.shields.io/badge/Pinia-FFD859?style=flat-square&logo=pinia&logoColor=black)](https://pinia.vuejs.org/)
 [![Quasar](https://img.shields.io/badge/Quasar-050A14?style=flat-square&logo=quasar&logoColor=white)](https://quasar.dev/)  
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)](https://ko.vite.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  
@@ -65,7 +65,8 @@ https://github.com/user-attachments/assets/33a33082-bac5-4f8f-bbcf-1c338ebad78e
 
 ### 🧩 컴포넌트 구성
 
-![component](https://github.com/user-attachments/assets/241349df-2744-4b89-92c1-f02328752b9b)
+| ![component-01](https://github.com/user-attachments/assets/2b18b060-a12b-4376-bcf1-d282ac374f58) | ![component-02](https://github.com/user-attachments/assets/33309472-7d62-41fd-a33a-79fd25a26b2a) |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
 
 ### 📡 통신 다이어그램
 
@@ -96,6 +97,7 @@ classDiagram
         +join_room() // 방 참여 이벤트 수신
         +send_message() // 메시지 송신 이벤트 수신
         +typing() // 타이핑 상태 이벤트 수신
+        search() // 검색 질의
     }
 
     Client --|> Server : websocket
@@ -150,7 +152,8 @@ client
 │  ├─ app
 │  │  ├─ App.vue # 애플리케이션 컴포넌트 진입점
 │  │  ├─ application.ts # single-spa 애플리케이션 진입점
-│  │  └─ main.ts # 프로바이더 스택
+│  │  ├─ main.ts # 프로바이더 스택
+│  │  └─ router.ts # 라우터
 │  ├─ entities # 비즈니스 엔터티 레이어
 │  │  └─ chat
 │  │     ├─ api
@@ -190,6 +193,15 @@ client
 │  │  │     ├─ invite.vue # 추가 사용자 초대
 │  │  │     ├─ participants.vue # 참여자 확인
 │  │  │     └─ save.vue # 채팅 파일로 저장
+│  │  ├─ explorer
+│  │  │  ├─ index.vue
+│  │  │  ├─ store
+│  │  │  │  └─ useExplorerStore.ts
+│  │  │  └─ ui
+│  │  │     ├─ index.ts
+│  │  │     ├─ layout.vue
+│  │  │     ├─ search.vue # 키워드 검색
+│  │  │     └─ found-list.vue # 검색결과
 │  │  ├─ room
 │  │  │  ├─ index.ts
 │  │  │  ├─ index.vue
@@ -204,7 +216,8 @@ client
 │  │  │     ├─ register.vue # 서버 접속
 │  │  │     ├─ make-room.vue # 방 만들기
 │  │  │     ├─ leave-room.vue # 방 나가기
-│  │  │     └─ room-list.vue # 방 목록
+│  │  │     ├─ room-list.vue # 방 목록
+│  │  │     └─ go-home.vue # 초기로 이동
 │  │  ├─ user-auth # 현재 사용자
 │  │  │  ├─ index.ts
 │  │  │  ├─ store
@@ -215,6 +228,8 @@ client
 │  │  │     └─ register.vue
 │  │  └─ user-presence # 접속 사용자들
 │  │     ├─ index.vue
+│  │     ├─ service
+│  │     │  └─ event_helper.ts
 │  │     ├─ store
 │  │     │  └─ useUsersStore.ts
 │  │     └─ ui
@@ -236,10 +251,20 @@ client
 │  │        ├─ layout.vue
 │  │        └─ fab-layout.vue # 플로팅버튼 레이아웃
 │  └─ shared # 공유 레이어
+|     ├─ constants # 상수 정의
+|     |  ├─ index.ts
+|     |  ├─ socket.ts # 소켓 환경변수
+|     |  └─ routerName.ts # 라우터 경로별 이름
 │     ├─ lib
 │     │  ├─ tokens.ts # 토큰 3종
 │     │  └─ getUser.ts # 접속 유저 정보 불러오기
-│     └─ socket_constants.ts # 환경변수 불러오기
+│     ├─ store # 공용 스토어
+|     |  └─ useGlobalStore.ts
+│     └─ components # 공용 컴포넌트
+|        ├─ index.ts
+|        └─ avatar.ts
+├─ Dockerfile # 컨테이너화
+│  └─ nginx.conf # 클라이언트 리버스 프록시
 ├─ package.json # 의존성 설정
 │  ├─ .prettierrc # 포맷터 설정
 │  ├─ eslint.config.js # 린트 설정
@@ -254,7 +279,27 @@ client
 
 ## 🚀 실행 방법
 
+### 로컬
+
 ```sh
 $ npm install
+
 $ npm run dev
+```
+
+### 도커
+
+```sh
+# 환경변수 주입 빌드
+$ docker build \
+  -f Dockerfile \
+  $(grep -v '^#' .env | sed 's/^/--build-arg /') \
+  -t chat/client:latest \
+  .
+
+# 컨테이너 실행
+$ docker run -d \
+  --name chat/client \
+  -p 80:80 \
+  chat/client:latest
 ```
