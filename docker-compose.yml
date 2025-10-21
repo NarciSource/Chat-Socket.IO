@@ -10,6 +10,10 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+      dynamodb:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     deploy:
       replicas: ${SERVER_REPLICA}
 
@@ -19,6 +23,7 @@ services:
       - REPOSITORY_TYPE=Database
       - REDIS_HOST=redis-container
       - DYNAMO_HOST=dynamodb-container
+      - ES_HOST=es-container
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/"]
@@ -49,47 +54,6 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:8.2.1
-    container_name: redis-container
-
-    networks:
-      - chat-net
-    ports:
-      - ${REDIS_PORT}:6379
-
-    volumes:
-      - redis-data:/data
-    env_file:
-      - .env
-
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      retries: 5
-      start_period: 10s
-
-  dynamodb:
-    image: amazon/dynamodb-local:3.1.0
-    container_name: dynamodb-container
-
-    user: root
-    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
-
-    networks:
-      - chat-net
-    ports:
-      - ${DYNAMO_PORT}:8000
-
-    volumes:
-      - dynamodb-data:/home/dynamodblocal/data
-
-    healthcheck:
-      test: ["CMD", "curl", "-s", "-w", "%{http_code}", "http://localhost:8000"]
-      interval: 10s
-      retries: 5
-      start_period: 10s
-
 include:
   - ./infra/docker-compose.yml
   - ./project/consumers/docker-compose.yml
@@ -98,9 +62,3 @@ networks:
   chat-net:
     name: chat-net
     driver: bridge
-
-volumes:
-  redis-data:
-    driver: local
-  dynamodb-data:
-    driver: local
