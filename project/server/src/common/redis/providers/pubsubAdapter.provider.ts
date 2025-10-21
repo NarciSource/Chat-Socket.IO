@@ -1,10 +1,12 @@
 import { Redis } from 'ioredis';
+import { createAdapter } from '@socket.io/redis-adapter';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createAdapter } from '@socket.io/redis-adapter';
+
+export const REDIS_PUBSUB_ADAPTER = Symbol('REDIS_PUBSUB_ADAPTER');
 
 export default {
-  provide: 'REDIS_PUBSUB_ADAPTER',
+  provide: REDIS_PUBSUB_ADAPTER,
   useFactory: async (configService: ConfigService) => {
     const logger = new Logger('RedisPubSub');
     const host = configService.get<string>('REDIS_HOST', 'localhost');

@@ -2,6 +2,8 @@ import * as dynamoose from 'dynamoose';
 import { DynamoDBClientConfig } from '@aws-sdk/client-dynamodb';
 import { ConfigService } from '@nestjs/config';
 
+export const DYNAMO_STORAGE = Symbol('DYNAMO_STORAGE');
+
 /**
  * @module provider
  *
@@ -17,7 +19,7 @@ import { ConfigService } from '@nestjs/config';
  * @returns {typeof dynamoose} 설정된 Dynamoose 인스턴스를 반환합니다.
  */
 export default {
-  provide: 'DYNAMO_CLIENT',
+  provide: DYNAMO_STORAGE,
   useFactory: (configService: ConfigService) => {
     const DYNAMO_HOST = configService.get<string>('DYNAMO_HOST', 'localhost');
     const DYNAMO_PORT = configService.get<string>('DYNAMO_PORT', '8000');

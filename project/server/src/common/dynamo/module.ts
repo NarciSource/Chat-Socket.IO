@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 
-import DynamoProvider from './provider';
+import DynamoProvider, { DYNAMO_STORAGE } from './provider';
 
+@Global()
 @Module({
   providers: [DynamoProvider],
-  exports: ['DYNAMO_CLIENT'],
+  exports: [DYNAMO_STORAGE],
 })
 export default class DynamoModule {}

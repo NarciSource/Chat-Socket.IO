@@ -2,8 +2,10 @@ import Redis from 'ioredis';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+export const REDIS_STORAGE = Symbol('REDIS_STORAGE');
+
 export default {
-  provide: 'REDIS_CLIENT',
+  provide: REDIS_STORAGE,
   useFactory: async (configService: ConfigService) => {
     const logger = new Logger('RedisStorage');
     const host = configService.get<string>('REDIS_HOST', 'localhost');

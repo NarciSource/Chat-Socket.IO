@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { Injectable } from '@nestjs/common';
 
-import { Message } from 'src/model/schemaDefinition';
+import Message from 'src/model/Message';
 import IRepository from './interface';
 
 @Injectable()
@@ -116,6 +116,10 @@ export default class InMemoryRepository implements IRepository {
   }
 
   async getMessageHistory(_roomId: string): Promise<Message[]> {
+    return [];
+  }
+
+  async searchByKeyword(roomIds: string[], keyword: string) {
     return [];
   }
 }

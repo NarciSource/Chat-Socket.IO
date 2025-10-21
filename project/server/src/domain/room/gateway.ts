@@ -1,8 +1,8 @@
 import { Namespace, Socket } from 'socket.io';
 import { CommandBus } from '@nestjs/cqrs';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
 import { CreateRoomEvent, JoinRoomEvent, LeaveRoomEvent } from './commands';
-import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
 export interface Payload {
   userId?: string; // 유저 식별자

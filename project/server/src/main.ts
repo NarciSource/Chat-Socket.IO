@@ -1,7 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express';
 import { createAdapter } from '@socket.io/redis-adapter';
+import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express';
 
+import { REDIS_STREAMS_ADAPTER } from './common/symbols';
 import { RedisIoAdapter } from './common/redis';
 import { CoreModule } from './core/module';
 
@@ -9,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(CoreModule, new ExpressAdapter());
 
   // RedisIoAdapter(WS)를 사용하여 WebSocket 어댑터 설정
-  const adapterConstructor = app.get<ReturnType<typeof createAdapter>>('REDIS_STREAMS_ADAPTER');
+  const adapterConstructor = app.get<ReturnType<typeof createAdapter>>(REDIS_STREAMS_ADAPTER);
   const redisIoAdapter = new RedisIoAdapter(app, adapterConstructor);
   app.useWebSocketAdapter(redisIoAdapter); // 어댑터 적용
 
