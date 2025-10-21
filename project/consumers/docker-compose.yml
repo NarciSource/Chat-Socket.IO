@@ -1,10 +1,10 @@
 services:
-  consumer-stream-dynamo:
-    image: chat/consumer/stream-dynamo:${STREAM_DYNAMO_CONSUMER_VERSION}
-    container_name: consumer-stream-dynamo
+  streams-dynamo-consumer:
+    image: chat/consumers/streams-dynamo:${STREAMS_DYNAMO_CONSUMER_VERSION}
+    container_name: consumer-streams-dynamo
     build:
-      context: stream-dynamo-consumer
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: sink/dynamo-consumer/Dockerfile
 
     networks:
       - chat-net
@@ -13,13 +13,46 @@ services:
         condition: service_healthy
       dynamodb:
         condition: service_healthy
-    ports:
-      - ${STREAM_DYNAMO_CONSUMER_PORT}:3000
 
     env_file:
-      - ./stream-dynamo-consumer/.env
+      - .env
     environment:
       - REDIS_HOST=redis-container
-      - REDIS_STREAM_KEY=${REDIS_STREAM_KEY}
-      - REDIS_STREAM_PARSER=${REDIS_STREAM_PARSER}
+      - REDIS_STREAMS_KEY=${REDIS_STREAMS_KEY}
+      - REDIS_STREAMS_PARSER=${REDIS_STREAMS_PARSER}
       - DYNAMO_HOST=dynamodb-container
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  streams-elasticsearch-consumer:
+    image: chat/consumers/streams-elasticsearch:${STREAMS_ES_CONSUMER_VERSION}
+    container_name: consumer-streams-elasticsearch
+    build:
+      context: .
+      dockerfile: sink/elasticsearch-consumer/Dockerfile
+
+    networks:
+      - chat-net
+    depends_on:
+      redis:
+        condition: service_healthy
+      dynamodb:
+        condition: service_healthy
+
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis-container
+      - REDIS_STREAMS_KEY=${REDIS_STREAMS_KEY}
+      - REDIS_STREAMS_PARSER=${REDIS_STREAMS_PARSER}
+      - ES_HOST=es-container
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
