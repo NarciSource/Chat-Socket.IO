@@ -4,9 +4,7 @@
       <q-list>
         <q-item v-for="participant in room!.participants" :key="participant.id">
           <q-item-section avatar>
-            <q-avatar>
-              <img :src="participant.avatar_url" />
-            </q-avatar>
+            <avatar :user="participant" />
           </q-item-section>
 
           <q-item-section>
@@ -21,6 +19,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
+import { Avatar } from "@/shared/components";
 import useChatStore from "../store/useChatStore";
 
 const { room } = storeToRefs(useChatStore());

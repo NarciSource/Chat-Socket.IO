@@ -36,3 +36,15 @@ export type TypingPayload = {
 };
 
 export type UserDTO = string[];
+
+export type SearchRequestDTO = {
+  userId: string;
+  keyword: string;
+};
+
+export type SearchResponseDTO = {
+  roomId: string;
+  userId: string;
+  content: string;
+  createdAt: string;
+};

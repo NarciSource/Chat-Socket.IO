@@ -4,13 +4,16 @@
     v-for="(message, index) in filtered_messages"
     :key="index"
     :name="!message.is_system ? message.name : ''"
-    :avatar="!message.is_system ? message.owner.avatar_url : undefined"
     :label="message.is_system ? message.text[0] : ''"
     :text="!message.is_system ? message.text : []"
     :stamp="message.created_at.toLocaleTimeString()"
     :sent="message.name === current_user?.name"
     :bg-color="message.name === current_user?.name ? 'yellow' : 'white'"
-  />
+  >
+    <template v-if="!message.is_system" #avatar>
+      <avatar class="q-mx-sm" :user="message.owner" />
+    </template>
+  </q-chat-message>
   <!-- 타이핑 알림 -->
   <q-chat-message
     v-show="!!typing_user"
@@ -26,6 +29,7 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 
+import { Avatar } from "@/shared/components";
 import useChatStore from "../store/useChatStore";
 
 const { current_user, messages, query, typing_user } = storeToRefs(useChatStore());

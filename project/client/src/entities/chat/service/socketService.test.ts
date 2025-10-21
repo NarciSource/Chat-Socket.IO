@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, afterEach, vi, expect } from "vitest";
 import { io, Socket } from "socket.io-client";
 
-import { SOCKET_EVENT, SOCKET_SERVER_URL } from "@/shared/socket_constants";
+import { SOCKET_EVENT, SOCKET_SERVER_URL } from "@/shared/constants";
 import { emit_mappers_dictionary, on_mappers_dictionary } from "./mapper/dictionary";
 import { connect, disconnect, subscribe_on, emit_event } from "./socketService";
 

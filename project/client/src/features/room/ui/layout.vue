@@ -5,6 +5,7 @@
     show-if-above
     :mini="!toggle_room || mini_toggle_room"
     :width="200"
+    :mini-width="65"
     :breakpoint="WINDOW_WIDTH - 1"
     bordered
     @mouseenter="!side_fixed && (mini_toggle_room = false)"

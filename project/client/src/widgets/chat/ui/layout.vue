@@ -8,7 +8,9 @@
   >
     <slot name="room" />
 
-    <slot name="chat" />
+    <q-page-container>
+      <slot name="contents" />
+    </q-page-container>
   </q-layout>
 </template>
 

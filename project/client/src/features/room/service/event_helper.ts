@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Room, User } from "@/entities/chat/model";
 import { emit_event, subscribe_on } from "@/entities/chat/service/socketService";
-import { SOCKET_EVENT } from "@/shared/socket_constants";
+import { SOCKET_EVENT } from "@/shared/constants";
 
 type Callback = (data: any) => void;
 

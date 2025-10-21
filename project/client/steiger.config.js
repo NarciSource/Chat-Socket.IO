@@ -11,4 +11,10 @@ export default defineConfig([
       "fsd/insignificant-slice": "off",
     },
   },
+  {
+    files: ["src/shared/store/**"],
+    rules: {
+      "fsd/forbidden-imports": "off",
+    },
+  },
 ]);

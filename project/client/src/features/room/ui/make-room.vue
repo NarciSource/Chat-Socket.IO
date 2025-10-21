@@ -1,5 +1,5 @@
 <template>
-  <q-item class="no-padding make-room" title="방 만들기" clickable>
+  <q-item class="no-padding bg-teal-8 text-white" title="방 만들기" clickable>
     <q-item-section avatar>
       <q-icon class="q-pa-md" name="meeting_room" size="2rem" />
     </q-item-section>
@@ -10,14 +10,17 @@
 
 <script setup lang="ts">
 import { watchEffect } from "vue";
+import { HistoryState, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import UserListPopup from "@/features/user-presence/index.vue";
 import { Room, User } from "@/entities/chat/model";
+import { RouterName } from "@/shared/constants";
 import { make_room, room_created } from "../service/event_helper";
 import useRoomStore from "../store/useRoomStore";
 
-const { connecting, current_user, rooms, selected_room } = storeToRefs(useRoomStore());
+const router = useRouter();
+const { connecting, current_user, rooms } = storeToRefs(useRoomStore());
 
 // 다대다 채팅으로 방 생성하고 초대
 const make = (selected_users: User[]) => {
@@ -29,15 +32,13 @@ watchEffect(() => {
     // 방 생성 후의 이벤트 리스너 등록
     room_created((room: Room) => {
       rooms.value.set(room.id, room); // 방 정보 업데이트
-      selected_room.value = room; // 선택 방 업데이트
+
+      router.push({
+        name: RouterName.Room,
+        params: { id: room.id },
+        state: { room } as unknown as HistoryState,
+      }); // 방 이동 및 방 상태 전달
     });
   }
 });
 </script>
-
-<style scoped>
-.make-room {
-  background: teal;
-  color: white;
-}
-</style>

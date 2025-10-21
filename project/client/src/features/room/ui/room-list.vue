@@ -3,23 +3,26 @@
     <q-item
       v-for="[, room] in rooms"
       :key="room.id"
-      :active="room === selected_room"
+      :to="`/room/${room.id}`"
       active-class="bg-teal-2"
       :title="room.name"
       clickable
-      @click="() => enter(room)"
+      @click="(e) => (e.preventDefault(), enter(room))"
     >
+      <q-item-section side>
+        <avatar :user="room.participants[0]">
+          <q-badge v-if="room.is_new" color="primary" rounded floating label="New" />
+          <q-badge v-else color="primary" rounded floating :label="room.participants.length" />
+        </avatar>
+      </q-item-section>
+
       <q-item-section>
         <q-item-label>
-          <q-input v-model="room.name" title="방 제목 수정" borderless dense />
+          <q-input v-model="room.name" borderless dense title="방 제목 수정" />
         </q-item-label>
       </q-item-section>
 
-      <q-item-section v-show="room.is_new" side>
-        <q-badge rounded color="primary" label="New" />
-      </q-item-section>
-
-      <q-item-section side>
+      <q-item-section>
         <leave-room :room="room" />
       </q-item-section>
     </q-item>
@@ -27,16 +30,25 @@
 </template>
 
 <script setup lang="ts">
+import { HistoryState, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import { Room } from "@/entities/chat/model";
+import { RouterName } from "@/shared/constants";
+import { Avatar } from "@/shared/components";
 import useRoomStore from "../store/useRoomStore";
 import LeaveRoom from "./leave-room.vue";
 
-const { rooms, selected_room } = storeToRefs(useRoomStore());
+const router = useRouter();
+const { rooms } = storeToRefs(useRoomStore());
 
 const enter = (room: Room) => {
-  selected_room.value = room; // 선택 방을 업데이트
   room.is_new = false; // 새로운 방 표시 해제
+
+  router.push({
+    name: RouterName.Room,
+    params: { id: room.id },
+    state: { room } as unknown as HistoryState,
+  }); // 방 이동 및 방 상태 전달
 };
 </script>

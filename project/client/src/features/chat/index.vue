@@ -19,27 +19,24 @@
 
 <script setup lang="ts">
 import { watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-import { Room, User } from "@/entities/chat/model";
-import useChatStore from "./store/useChatStore";
+import { Room } from "@/entities/chat/model";
+import { RouterName } from "@/shared/constants";
 import { Layout, Search, Title, Actions, Connect, Content, Submit } from "./ui";
+import useChatStore from "./store/useChatStore";
 
-const { connecting, room, current_user } = defineProps({
-  connecting: Boolean,
-  room: Room,
-  current_user: User,
-});
-
+const route = useRoute();
+const router = useRouter();
 const store = useChatStore();
 
-// store에 props를 업데이트
 watch(
-  () => ({ connecting, room, current_user }),
-  (props) => {
-    store.connecting = props.connecting;
-    store.room = props.room;
-    store.current_user = props.current_user!;
+  [() => route.name, () => route.params.id],
+  ([route_name]) => {
+    if (route_name === RouterName.Room) {
+      store.room = router.options.history.state["room"] as unknown as Room;
+    }
   },
-  { immediate: true, deep: true },
+  { immediate: true },
 );
 </script>

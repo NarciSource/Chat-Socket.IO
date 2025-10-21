@@ -1,5 +1,5 @@
 import { Message, Room, User } from "../../model";
-import { ResponsePayload, SendPayload } from "../../api/dto";
+import { ResponsePayload, SearchResponseDTO, SendPayload } from "../../api/dto";
 
 export const response_payload_to_message = ({
   content,
@@ -11,9 +11,9 @@ export const response_payload_to_message = ({
 
 export const response_payload_to_system_message = ({
   content,
-  userId,
-}: ResponsePayload): Message => {
-  return new Message(new User(userId), [content], true);
+  roomId,
+}: ResponsePayload): [Message, string] => {
+  return [new Message(new User("system"), [content], true), roomId];
 };
 
 export const message_to_send_payload = ({
@@ -50,3 +50,14 @@ export const response_payload_to_messages = ({
       new Message(new User(userId), [content], false, new Date(createdAt)),
   ),
 });
+
+export const search_response_to_grouped = (response: SearchResponseDTO[]) =>
+  response.reduce(
+    (acc, { roomId, userId, content, createdAt }) => {
+      const message = new Message(new User(userId), [content], false, new Date(createdAt));
+
+      (acc[roomId] ||= []).push(message);
+      return acc;
+    },
+    {} as Record<string, Message[]>,
+  );
